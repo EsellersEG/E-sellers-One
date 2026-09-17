@@ -1,0 +1,179 @@
+{%- comment -%}
+  ES Banner With Tabs - E-sellers One (v5.0.0)
+
+  Full-bleed hero where each block is a tab: clicking a tab swaps the
+  background image, heading, text and CTA in place. Unlike es-slideshow
+  (which auto-rotates), this is entirely visitor-controlled - useful for
+  "Shop for Him / Her / Kids" style category heroes.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_bwt_tabs = section.blocks | where: 'type', 'tab'
+-%}
+
+{%- if es_bwt_tabs.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} .es-bwt {
+      position: relative;
+      height: {{ section.settings.desktop_height | default: 560 }}px;
+      overflow: hidden;
+    }
+    @media screen and (max-width: 749px) {
+      #shopify-section-{{ section.id }} .es-bwt { height: {{ section.settings.mobile_height | default: 480 }}px; }
+    }
+
+    #shopify-section-{{ section.id }} .es-bwt__panel {
+      position: absolute; inset: 0;
+      opacity: 0; visibility: hidden;
+      transition: opacity var(--es-dur-slow) var(--es-ease);
+    }
+    #shopify-section-{{ section.id }} .es-bwt__panel.is-active { opacity: 1; visibility: visible; }
+    #shopify-section-{{ section.id }} .es-bwt__panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #shopify-section-{{ section.id }} .es-bwt__overlay { position: absolute; inset: 0; background: rgba(0,0,0,var(--es-bwt-overlay, .25)); }
+
+    #shopify-section-{{ section.id }} .es-bwt__content {
+      position: relative; z-index: 1;
+      height: 100%;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; color: #fff;
+      padding: var(--es-space-6);
+    }
+    #shopify-section-{{ section.id }} .es-bwt__content > * { max-width: 560px; }
+    #shopify-section-{{ section.id }} .es-bwt__heading { color: inherit; margin: 0 0 var(--es-space-2); text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+
+    #shopify-section-{{ section.id }} .es-bwt__tabs {
+      position: relative; z-index: 2;
+      display: flex; justify-content: center;
+      gap: var(--es-space-2);
+      margin-top: -1px;
+      background: var(--es-bg);
+      padding: var(--es-space-2);
+      flex-wrap: wrap;
+    }
+    #shopify-section-{{ section.id }} .es-bwt__tab {
+      background: none; border: none;
+      padding: var(--es-space-2) var(--es-space-4);
+      border-radius: var(--es-radius-pill);
+      font-size: var(--es-text-sm); font-weight: 650;
+      color: var(--es-fg-muted);
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: var(--es-space-2);
+    }
+    #shopify-section-{{ section.id }} .es-bwt__tab:hover { background: var(--es-surface); color: var(--es-fg); box-shadow: none; opacity: 1; }
+    #shopify-section-{{ section.id }} .es-bwt__tab.is-active { background: var(--es-fg); color: var(--es-bg); }
+    #shopify-section-{{ section.id }} .es-bwt__tab svg { width: 16px; height: 16px; }
+  {%- endstyle -%}
+
+  <div id="EsBwt-{{ section.id }}">
+    <div class="es-bwt">
+      {%- for block in es_bwt_tabs -%}
+        <div class="es-bwt__panel{% if forloop.first %} is-active{% endif %}" style="--es-bwt-overlay: {{ block.settings.image_overlay_opacity | default: 25 | divided_by: 100.0 }};" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {%- assign es_bwt_alt = block.settings.heading | escape -%}
+            {%- if forloop.first -%}
+              {%- assign es_bwt_loading = 'eager' -%}
+            {%- else -%}
+              {%- assign es_bwt_loading = 'lazy' -%}
+            {%- endif -%}
+            {{ block.settings.image | image_url: width: 1600 | image_tag: loading: es_bwt_loading, widths: '768,1200,1600', alt: es_bwt_alt }}
+          {%- else -%}
+            {{ 'hero-1' | placeholder_svg_tag: '' }}
+          {%- endif -%}
+          <div class="es-bwt__overlay"></div>
+          <div class="es-bwt__content">
+            {%- if block.settings.heading != blank -%}<h2 class="es-bwt__heading h1">{{ block.settings.heading | escape }}</h2>{%- endif -%}
+            {%- if block.settings.description != blank -%}<div>{{ block.settings.description }}</div>{%- endif -%}
+            {%- if block.settings.button_label != blank -%}
+              <a href="{{ block.settings.card_link | default: '#' }}" class="es-btn" style="margin-top: var(--es-space-3);">{{ block.settings.button_label | escape }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="es-bwt__tabs" role="tablist">
+      {%- for block in es_bwt_tabs -%}
+        <button type="button" class="es-bwt__tab{% if forloop.first %} is-active{% endif %}"
+                role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                onclick="esBwtSwitch{{ section.id | replace: '-', '' }}({{ forloop.index0 }})">
+          {%- if block.settings.tab_icon != blank -%}{%- render 'icon', name: block.settings.tab_icon -%}{%- endif -%}
+          {{ block.settings.tab_title | default: 'Tab ' | append: forloop.index | escape }}
+        </button>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      window['esBwtSwitch{{ section.id | replace: "-", "" }}'] = function (index) {
+        var root = document.getElementById('EsBwt-{{ section.id }}');
+        if (!root) return;
+        var tabs = root.querySelectorAll('.es-bwt__tab');
+        var panels = root.querySelectorAll('.es-bwt__panel');
+        tabs.forEach(function (t, i) {
+          var active = i === index;
+          t.classList.toggle('is-active', active);
+          t.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(function (p, i) { p.classList.toggle('is-active', i === index); });
+      };
+    })();
+  </script>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add tab blocks to populate this banner.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Banner With Tabs",
+  "tag": "section",
+  "class": "shopify-section--es-banner-with-tabs",
+  "settings": [
+    { "type": "range", "id": "desktop_height", "label": "Height (desktop)", "min": 300, "max": 900, "step": 20, "unit": "px", "default": 560 },
+    { "type": "range", "id": "mobile_height", "label": "Height (mobile)", "min": 240, "max": 700, "step": 20, "unit": "px", "default": 480 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 60, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 60, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "tab_title", "label": "Tab label", "default": "Tab" },
+        {
+          "type": "select",
+          "id": "tab_icon",
+          "label": "Tab icon (optional)",
+          "options": [
+            { "value": "", "label": "None" },
+            { "value": "account", "label": "Account" },
+            { "value": "star", "label": "Star" },
+            { "value": "check", "label": "Check" }
+          ]
+        },
+        { "type": "image_picker", "id": "image", "label": "Background image" },
+        { "type": "range", "id": "image_overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 25 },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the range" },
+        { "type": "richtext", "id": "description", "label": "Description" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "card_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "ES Banner With Tabs",
+      "blocks": [
+        { "type": "tab", "settings": { "tab_title": "Women" } },
+        { "type": "tab", "settings": { "tab_title": "Men" } },
+        { "type": "tab", "settings": { "tab_title": "Kids" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
