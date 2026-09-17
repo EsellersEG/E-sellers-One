@@ -1,0 +1,156 @@
+{%- comment -%}
+  ES Topbar - E-sellers One (v5.0.0)
+
+  Slim utility bar above the header: up to three independent zones (left,
+  center, right), each built from menu / text / social blocks. Typically used
+  for a support link, a promo line and social icons in one row.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_tb_blocks = section.blocks
+  assign es_tb_has_content = false
+  if es_tb_blocks.size > 0
+    assign es_tb_has_content = true
+  endif
+-%}
+
+{%- if es_tb_has_content -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      background: {{ section.settings.background | default: '#f5f5f5' }};
+      color: {{ section.settings.text_color | default: '#1a1a1a' }};
+      font-size: var(--es-text-xs);
+      padding-top: {{ section.settings.padding_top | default: 8 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 8 }}px;
+      {%- if section.settings.show_separator_line -%}
+        border-bottom: var(--es-rule-width) solid var(--es-rule);
+      {%- endif -%}
+    }
+
+    #shopify-section-{{ section.id }} .es-tb__inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: var(--es-space-2) var(--es-space-5);
+    }
+    @media screen and (min-width: 990px) {
+      #shopify-section-{{ section.id }} .es-tb__inner { justify-content: space-between; }
+      #shopify-section-{{ section.id }} .es-tb__zone--left { order: 1; }
+      #shopify-section-{{ section.id }} .es-tb__zone--center { order: 2; }
+      #shopify-section-{{ section.id }} .es-tb__zone--right { order: 3; }
+    }
+    #shopify-section-{{ section.id }} .es-tb__zone { display: flex; align-items: center; gap: var(--es-space-4); }
+
+    #shopify-section-{{ section.id }} .es-tb__menu { display: flex; gap: var(--es-space-4); list-style: none; margin: 0; padding: 0; }
+    #shopify-section-{{ section.id }} .es-tb__menu a { color: inherit; }
+
+    #shopify-section-{{ section.id }} .es-tb__socials { display: flex; gap: var(--es-space-3); }
+    #shopify-section-{{ section.id }} .es-tb__socials a { color: inherit; display: inline-flex; }
+    #shopify-section-{{ section.id }} .es-tb__socials svg { width: 15px; height: 15px; }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    <div class="es-tb__inner">
+      {%- for pos in 'left,center,right' | split: ',' -%}
+        {%- assign es_tb_zone_blocks = es_tb_blocks | where: 'settings.position', pos -%}
+        {%- if es_tb_zone_blocks.size > 0 -%}
+          <div class="es-tb__zone es-tb__zone--{{ pos }}">
+            {%- for block in es_tb_zone_blocks -%}
+              {%- case block.type -%}
+                {%- when 'menu' -%}
+                  <ul class="es-tb__menu" {{ block.shopify_attributes }}>
+                    {%- for link in linklists[block.settings.menu].links -%}
+                      <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                {%- when 'text' -%}
+                  <div {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+                {%- when 'social' -%}
+                  <div class="es-tb__socials" {{ block.shopify_attributes }}>
+                    {%- if settings.social_facebook_link != blank -%}<a href="{{ settings.social_facebook_link }}" aria-label="Facebook">{%- render 'icon', name: 'facebook' -%}</a>{%- endif -%}
+                    {%- if settings.social_instagram_link != blank -%}<a href="{{ settings.social_instagram_link }}" aria-label="Instagram">{%- render 'icon', name: 'instagram' -%}</a>{%- endif -%}
+                    {%- if settings.social_twitter_link != blank -%}<a href="{{ settings.social_twitter_link }}" aria-label="Twitter">{%- render 'icon', name: 'twitter' -%}</a>{%- endif -%}
+                    {%- if settings.social_tiktok_link != blank -%}<a href="{{ settings.social_tiktok_link }}" aria-label="TikTok">{%- render 'icon', name: 'tiktok' -%}</a>{%- endif -%}
+                    {%- if settings.social_youtube_link != blank -%}<a href="{{ settings.social_youtube_link }}" aria-label="YouTube">{%- render 'icon', name: 'youtube' -%}</a>{%- endif -%}
+                  </div>
+              {%- endcase -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Topbar",
+  "tag": "section",
+  "class": "shopify-section--es-topbar",
+  "settings": [
+    { "type": "color", "id": "background", "label": "Background", "default": "#f5f5f5" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#1a1a1a" },
+    { "type": "checkbox", "id": "show_separator_line", "label": "Show bottom border", "default": true },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 8 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 8 }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "link_list", "id": "menu", "label": "Menu" },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }],
+          "default": "left"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Free shipping over $50</p>" },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }],
+          "default": "center"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social icons",
+      "settings": [
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Position",
+          "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }],
+          "default": "right"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "ES Topbar",
+      "blocks": [
+        { "type": "text", "settings": { "position": "center" } },
+        { "type": "social", "settings": { "position": "right" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
