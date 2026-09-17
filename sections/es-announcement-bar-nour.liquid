@@ -1,0 +1,172 @@
+{%- comment -%}
+  E-sellers Announcement Bar (Nour) - E-sellers One (v5.0.0)
+
+  Alternate announcement bar supporting rotating multi-message slides AND a
+  countdown-timer block type, alongside the theme's existing es-announcement-bar
+  (single sticky ticker). Kept as a separate section so either can be chosen
+  independently in the header group.
+
+  Rotation is a small self-scoped interval swapping an "is-active" class - no
+  carousel library.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_abn_slides = section.blocks
+  assign es_abn_uid = section.id | replace: '-', '_'
+-%}
+
+{%- if es_abn_slides.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      background: {{ section.settings.background | default: '#1a1a1a' }};
+      color: {{ section.settings.text_color | default: '#ffffff' }};
+      padding-top: {{ section.settings.padding_top | default: 10 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 10 }}px;
+      font-size: var(--es-text-xs);
+    }
+
+    #shopify-section-{{ section.id }} .es-abn__viewport {
+      position: relative;
+      max-width: {{ section.settings.content_width | default: 60 }}%;
+      margin-inline: auto;
+      min-height: 1.6em;
+    }
+
+    #shopify-section-{{ section.id }} .es-abn__slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--es-space-3);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity var(--es-dur-base) var(--es-ease);
+      text-align: center;
+    }
+    #shopify-section-{{ section.id }} .es-abn__slide.is-active { opacity: 1; visibility: visible; position: relative; }
+
+    #shopify-section-{{ section.id }} .es-abn__text { margin: 0; }
+    #shopify-section-{{ section.id }} .es-abn__link { color: inherit; text-decoration: underline; }
+
+    #shopify-section-{{ section.id }} .es-abn__timer { display: flex; align-items: center; gap: var(--es-space-2); font-weight: 700; font-variant-numeric: tabular-nums; }
+    #shopify-section-{{ section.id }} .es-abn__btn {
+      font-size: inherit;
+      font-weight: 700;
+      text-decoration: underline;
+      color: inherit;
+      white-space: nowrap;
+    }
+  {%- endstyle -%}
+
+  <div class="es-abn__viewport" data-es-abn data-autoplay="{{ section.settings.autoplay | default: true }}" data-speed="{{ section.settings.autoplay_speed | default: 5 }}">
+    {%- for block in es_abn_slides -%}
+      <div class="es-abn__slide{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+        {%- case block.type -%}
+          {%- when 'announcement_bar' -%}
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}" class="es-abn__text es-abn__link">{{ block.settings.text | escape }}</a>
+            {%- else -%}
+              <p class="es-abn__text">{{ block.settings.text | escape }}</p>
+            {%- endif -%}
+          {%- when 'timer' -%}
+            {%- if block.settings.text != blank -%}<span>{{ block.settings.text | escape }}</span>{%- endif -%}
+            <span class="es-abn__timer" data-es-abn-timer data-target="{{ block.settings.duration }}">
+              <span data-days>00</span>d <span data-hours>00</span>h <span data-minutes>00</span>m <span data-seconds>00</span>s
+            </span>
+            {%- if block.settings.button_label != blank -%}
+              <a href="{{ block.settings.button_link | default: '#' }}" class="es-abn__btn">{{ block.settings.button_label | escape }}</a>
+            {%- endif -%}
+        {%- endcase -%}
+      </div>
+    {%- endfor -%}
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+      var wrap = root.querySelector('[data-es-abn]');
+      if (!wrap) return;
+      var slides = wrap.querySelectorAll('.es-abn__slide');
+
+      if (slides.length > 1 && wrap.dataset.autoplay !== 'false') {
+        var i = 0;
+        var speed = (parseFloat(wrap.dataset.speed) || 5) * 1000;
+        setInterval(function () {
+          slides[i].classList.remove('is-active');
+          i = (i + 1) % slides.length;
+          slides[i].classList.add('is-active');
+        }, speed);
+      }
+
+      function pad(n) { return String(n).padStart(2, '0'); }
+      wrap.querySelectorAll('[data-es-abn-timer]').forEach(function (timer) {
+        var target = new Date(timer.dataset.target).getTime();
+        if (isNaN(target)) return;
+        var days = timer.querySelector('[data-days]');
+        var hours = timer.querySelector('[data-hours]');
+        var minutes = timer.querySelector('[data-minutes]');
+        var seconds = timer.querySelector('[data-seconds]');
+        function tick() {
+          var diff = target - Date.now();
+          if (diff <= 0) { timer.style.display = 'none'; return; }
+          days.textContent = pad(Math.floor(diff / 86400000));
+          hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+          minutes.textContent = pad(Math.floor((diff % 3600000) / 60000));
+          seconds.textContent = pad(Math.floor((diff % 60000) / 1000));
+        }
+        tick();
+        setInterval(tick, 1000);
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Announcement Bar (Nour)",
+  "tag": "section",
+  "class": "shopify-section--es-announcement-bar-nour",
+  "settings": [
+    { "type": "color", "id": "background", "label": "Background", "default": "#1a1a1a" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#ffffff" },
+    { "type": "checkbox", "id": "autoplay", "label": "Auto-rotate slides", "default": true },
+    { "type": "range", "id": "autoplay_speed", "label": "Seconds per slide", "min": 2, "max": 15, "step": 1, "unit": "s", "default": 5 },
+    { "type": "range", "id": "content_width", "label": "Content max width", "min": 30, "max": 100, "step": 5, "unit": "%", "default": 60 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 10 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 10 }
+  ],
+  "blocks": [
+    {
+      "type": "announcement_bar",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Free shipping on orders over $50" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    },
+    {
+      "type": "timer",
+      "name": "Countdown",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text before timer", "default": "Sale ends in" },
+        { "type": "text", "id": "duration", "label": "Countdown to (ISO date)", "default": "2026-12-31T23:59:59" },
+        { "type": "text", "id": "button_label", "label": "Button label" },
+        { "type": "url", "id": "button_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "E-sellers Announcement Bar (Nour)",
+      "blocks": [{ "type": "announcement_bar" }]
+    }
+  ]
+}
+{% endschema %}
