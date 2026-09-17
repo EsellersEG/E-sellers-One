@@ -1,0 +1,157 @@
+{%- comment -%}
+  E-sellers Comparison Table - E-sellers One (v5.0.0)
+
+  Side-by-side spec comparison across up to 4 columns (each column optionally
+  tied to a real product, pulling its image/title/price automatically), plus
+  merchant-authored spec rows shared by every column. Rows scroll horizontally
+  on narrow screens rather than squeezing.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_ct2_columns = section.blocks | where: 'type', 'column'
+  assign es_ct2_rows = section.blocks | where: 'type', 'row'
+-%}
+
+{%- if es_ct2_columns.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-ct2__scroll { overflow-x: auto; }
+    #shopify-section-{{ section.id }} .es-ct2__table {
+      width: 100%;
+      min-width: 560px;
+      border-collapse: collapse;
+    }
+    #shopify-section-{{ section.id }} .es-ct2__table th,
+    #shopify-section-{{ section.id }} .es-ct2__table td {
+      padding: var(--es-space-3) var(--es-space-3);
+      border-bottom: var(--es-rule-width) solid var(--es-rule);
+      text-align: center;
+      vertical-align: middle;
+    }
+    #shopify-section-{{ section.id }} .es-ct2__table .es-ct2__row-label {
+      text-align: left;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    #shopify-section-{{ section.id }} .es-ct2__col-head { min-width: 140px; }
+    #shopify-section-{{ section.id }} .es-ct2__col-head img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--es-radius-md); margin: 0 auto var(--es-space-2); }
+    #shopify-section-{{ section.id }} .es-ct2__col-title { font-weight: 650; font-size: var(--es-text-sm); }
+    #shopify-section-{{ section.id }} .es-ct2__col-price { font-size: var(--es-text-xs); color: var(--es-fg-muted); }
+    #shopify-section-{{ section.id }} .es-ct2__col--featured { background: var(--es-surface); }
+
+    #shopify-section-{{ section.id }} .es-ct2__yes { color: var(--es-positive); }
+    #shopify-section-{{ section.id }} .es-ct2__no { color: var(--es-fg-subtle); }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        alignment: 'center' -%}
+
+    <div class="es-ct2__scroll">
+      <table class="es-ct2__table">
+        <thead>
+          <tr>
+            <th></th>
+            {%- for col in es_ct2_columns -%}
+              {%- assign es_ct2_product = col.settings.product -%}
+              <th class="es-ct2__col-head{% if col.settings.is_featured %} es-ct2__col--featured{% endif %}">
+                {%- if es_ct2_product != blank -%}
+                  {%- if es_ct2_product.featured_image != blank -%}
+                    {%- assign es_ct2_alt = es_ct2_product.title | escape -%}
+                    {{ es_ct2_product.featured_image | image_url: width: 128 | image_tag: loading: 'lazy', alt: es_ct2_alt }}
+                  {%- endif -%}
+                  <div class="es-ct2__col-title">{{ es_ct2_product.title }}</div>
+                  <div class="es-ct2__col-price">{{ es_ct2_product.price | money }}</div>
+                {%- else -%}
+                  <div class="es-ct2__col-title">{{ col.settings.title | escape }}</div>
+                {%- endif -%}
+              </th>
+            {%- endfor -%}
+          </tr>
+        </thead>
+        <tbody>
+          {%- for row in es_ct2_rows -%}
+            <tr>
+              <th scope="row" class="es-ct2__row-label">{{ row.settings.label | escape }}</th>
+              {%- for col in es_ct2_columns -%}
+                {%- assign es_ct2_key = 'value_' | append: forloop.index -%}
+                {%- assign es_ct2_val = row.settings[es_ct2_key] -%}
+                <td class="{% if col.settings.is_featured %}es-ct2__col--featured{% endif %}">
+                  {%- if es_ct2_val == 'true' -%}
+                    <span class="es-ct2__yes" aria-label="Yes">&#10003;</span>
+                  {%- elsif es_ct2_val == 'false' -%}
+                    <span class="es-ct2__no" aria-label="No">&#10005;</span>
+                  {%- else -%}
+                    {{ es_ct2_val }}
+                  {%- endif -%}
+                </td>
+              {%- endfor -%}
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add column and row blocks to build this table.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Comparison Table",
+  "tag": "section",
+  "class": "shopify-section--es-comparison-table",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Compare models" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product (optional)" },
+        { "type": "text", "id": "title", "label": "Column title (if no product)", "default": "Option" },
+        { "type": "checkbox", "id": "is_featured", "label": "Highlight this column", "default": false }
+      ]
+    },
+    {
+      "type": "row",
+      "name": "Spec row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Row label", "default": "Feature" },
+        { "type": "text", "id": "value_1", "label": "Column 1 value", "info": "Type true or false for a check/cross icon." },
+        { "type": "text", "id": "value_2", "label": "Column 2 value" },
+        { "type": "text", "id": "value_3", "label": "Column 3 value" },
+        { "type": "text", "id": "value_4", "label": "Column 4 value" }
+      ]
+    }
+  ],
+  "max_blocks": 24,
+  "presets": [
+    {
+      "name": "E-sellers Comparison Table",
+      "blocks": [
+        { "type": "column", "settings": { "title": "Standard" } },
+        { "type": "column", "settings": { "title": "Pro", "is_featured": true } },
+        { "type": "row", "settings": { "label": "Waterproof", "value_1": "false", "value_2": "true" } },
+        { "type": "row", "settings": { "label": "Warranty", "value_1": "1 year", "value_2": "3 years" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
