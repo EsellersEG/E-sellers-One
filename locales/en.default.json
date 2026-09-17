@@ -234,6 +234,9 @@
       "all_products": "All products",
       "cart": "Cart",
       "search": "Search"
+    },
+    "countdown": {
+      "expired": "Offer has ended"
     }
   },
   "gift_card": {

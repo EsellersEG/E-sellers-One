@@ -77,7 +77,8 @@
       <p class="es-ct__expired">{{ 'general.countdown.expired' | t | default: "Offer has ended" }}</p>
 
       {%- if section.settings.button_label != blank -%}
-        {%- render 'es-button', label: section.settings.button_label, url: section.settings.button_link, style: section.settings.button_style | default: 'solid' -%}
+        {%- assign es_ct_btn_style = section.settings.button_style | default: 'solid' -%}
+        {%- render 'es-button', label: section.settings.button_label, url: section.settings.button_link, style: es_ct_btn_style -%}
       {%- endif -%}
     </div>
   </div>

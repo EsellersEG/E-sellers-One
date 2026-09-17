@@ -1,5 +1,5 @@
 {%- comment -%}
-  E-sellers Products Bundle Selection - E-sellers One (v5.0.0)
+  ES Bundle Selection - E-sellers One (v5.0.0)
 
   "Mix and match" bundle builder: a collection's products in a grid with
   checkboxes; a sticky bar tracks how many are selected and which discount
@@ -87,8 +87,9 @@
       </p>
     {%- endif -%}
 
-    <div class="es-pbs__grid" data-es-pbs-grid data-max-items="{{ section.settings.limit | default: 12 }}">
-      {%- for product in es_pbs_collection.products limit: section.settings.limit | default: 12 -%}
+    {%- assign es_pbs_limit = section.settings.limit | default: 12 -%}
+    <div class="es-pbs__grid" data-es-pbs-grid data-max-items="{{ es_pbs_limit }}">
+      {%- for product in es_pbs_collection.products limit: es_pbs_limit -%}
         <div class="es-pbs__card" data-es-pbs-card data-variant-id="{{ product.selected_or_first_available_variant.id }}" data-title="{{ product.title | escape }}" tabindex="0" role="checkbox" aria-checked="false">
           {%- if product.featured_image != blank -%}
             {%- assign es_pbs_alt = product.title | escape -%}
@@ -175,7 +176,7 @@
 
 {% schema %}
 {
-  "name": "E-sellers Products Bundle Selection",
+  "name": "ES Bundle Selection",
   "tag": "section",
   "class": "shopify-section--es-products-bundle-selection",
   "settings": [
@@ -211,7 +212,7 @@
   "max_blocks": 5,
   "presets": [
     {
-      "name": "E-sellers Products Bundle Selection",
+      "name": "ES Bundle Selection",
       "blocks": [
         { "type": "tier", "settings": { "quantity": 2, "discount_label": "10% off" } },
         { "type": "tier", "settings": { "quantity": 3, "discount_label": "15% off" } }

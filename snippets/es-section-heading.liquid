@@ -45,7 +45,8 @@
       <div class="es-section-head__lede">{{ description }}</div>
     {%- endif -%}
     {%- if button_label != blank and button_url != blank -%}
-      {%- render 'es-button', label: button_label, url: button_url, style: button_style | default: 'link' -%}
+      {%- assign es_sh_btn_style = button_style | default: 'link' -%}
+    {%- render 'es-button', label: button_label, url: button_url, style: es_sh_btn_style -%}
     {%- endif -%}
   </div>
 {%- endif -%}
