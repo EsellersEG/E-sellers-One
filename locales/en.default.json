@@ -238,7 +238,8 @@
     "countdown": {
       "expired": "Offer has ended"
     },
-    "view_details": "View"
+    "view_details": "View",
+    "view_full_details": "View full details"
   },
   "gift_card": {
     "general": {

@@ -1,0 +1,211 @@
+{%- comment -%}
+  ES Quick View - E-sellers One (v5.0.0)
+
+  Site-wide modal that shows a product's gallery, price, variant picker and
+  add-to-cart without leaving the page. Add this section once (typically to
+  overlay-group.json). Any element anywhere in the theme can trigger it:
+
+    <button type="button" data-es-qv-trigger="{{ product.url }}">Quick view</button>
+
+  The modal fetches `{url}?section_id={{ section.id }}` - which re-renders
+  THIS section with `product` bound to that product, exactly like Shopify's
+  own product-recommendations pattern - and swaps the returned markup into
+  itself. No JSON API, no duplicate templating logic to maintain.
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .es-qv__overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,.5);
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--es-dur-base) var(--es-ease);
+  }
+  #shopify-section-{{ section.id }} .es-qv__overlay.is-open { opacity: 1; visibility: visible; }
+
+  #shopify-section-{{ section.id }} .es-qv__modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -46%);
+    z-index: 301;
+    width: min(880px, calc(100vw - 32px));
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--es-bg);
+    border-radius: var(--es-radius-lg);
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--es-dur-base) var(--es-ease), transform var(--es-dur-base) var(--es-ease);
+  }
+  #shopify-section-{{ section.id }} .es-qv__modal.is-open { opacity: 1; visibility: visible; transform: translate(-50%, -50%); }
+
+  #shopify-section-{{ section.id }} .es-qv__close {
+    position: absolute; top: var(--es-space-3); right: var(--es-space-3);
+    z-index: 2;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--es-bg);
+    box-shadow: var(--es-elev-1);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #shopify-section-{{ section.id }} .es-qv__close svg { width: 18px; height: 18px; }
+
+  #shopify-section-{{ section.id }} .es-qv__body { padding: var(--es-space-6); }
+  #shopify-section-{{ section.id }} .es-qv__loading {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 240px;
+  }
+  #shopify-section-{{ section.id }} .es-qv__spinner {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 3px solid var(--es-rule);
+    border-top-color: var(--es-fg);
+    animation: es-qv-spin 0.7s linear infinite;
+  }
+  @keyframes es-qv-spin { to { transform: rotate(360deg); } }
+
+  #shopify-section-{{ section.id }} .es-qv__product {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--es-space-5);
+  }
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .es-qv__product { grid-template-columns: 1fr 1fr; }
+  }
+  #shopify-section-{{ section.id }} .es-qv__media-main { aspect-ratio: 1/1; border-radius: var(--es-radius-md); overflow: hidden; position: relative; margin-bottom: var(--es-space-2); }
+  #shopify-section-{{ section.id }} .es-qv__media-main img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #shopify-section-{{ section.id }} .es-qv__thumbs { display: flex; gap: var(--es-space-2); }
+  #shopify-section-{{ section.id }} .es-qv__thumb { width: 56px; height: 56px; border-radius: var(--es-radius-sm); overflow: hidden; border: 1.5px solid transparent; cursor: pointer; padding: 0; background: none; }
+  #shopify-section-{{ section.id }} .es-qv__thumb.is-active { border-color: var(--es-fg); }
+  #shopify-section-{{ section.id }} .es-qv__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  #shopify-section-{{ section.id }} .es-qv__title { margin: 0 0 var(--es-space-2); }
+  #shopify-section-{{ section.id }} .es-qv__price { margin-bottom: var(--es-space-4); }
+  #shopify-section-{{ section.id }} .es-qv__link { display: inline-block; margin-top: var(--es-space-3); font-size: var(--es-text-sm); text-decoration: underline; }
+{%- endstyle -%}
+
+<div class="es-qv__overlay" data-es-qv-overlay></div>
+<div class="es-qv__modal" role="dialog" aria-modal="true" aria-label="Quick view" data-es-qv-modal>
+  <button type="button" class="es-qv__close" data-es-qv-close aria-label="Close">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <div class="es-qv__body" data-es-qv-body>
+    {%- if product != blank -%}
+      {%- comment -%}
+        Rendered when this section is fetched with ?section_id=... from a
+        product URL. The JS below extracts everything inside data-es-qv-fetched
+        and swaps it into the open modal.
+      {%- endcomment -%}
+      <div data-es-qv-fetched>
+        <div class="es-qv__product">
+          <div>
+            {%- assign es_qv_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media -%}
+            <div class="es-qv__media-main" data-es-qv-main>
+              {%- if es_qv_media != blank -%}
+                {%- assign es_qv_alt = product.title | escape -%}
+                {{ es_qv_media | image_url: width: 700 | image_tag: loading: 'eager', alt: es_qv_alt }}
+              {%- endif -%}
+            </div>
+            {%- if product.media.size > 1 -%}
+              <div class="es-qv__thumbs">
+                {%- for media in product.media limit: 6 -%}
+                  {%- assign es_qv_thumb_alt = product.title | escape -%}
+                  <button type="button" class="es-qv__thumb{% if forloop.first %} is-active{% endif %}" data-es-qv-thumb data-full="{{ media | image_url: width: 700 }}">
+                    {{ media | image_url: width: 112 | image_tag: loading: 'lazy', alt: es_qv_thumb_alt }}
+                  </button>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
+          <div>
+            <h2 class="es-qv__title h3">{{ product.title }}</h2>
+            <div class="es-qv__price">{%- render 'price', product: product -%}</div>
+            {%- assign es_qv_form_id = 'EsQvForm-' | append: section.id -%}
+            {%- render 'product-variant-picker', product: product, product_form_id: es_qv_form_id -%}
+            {%- render 'buy-buttons', product: product, product_form_id: es_qv_form_id, show_quantity: true -%}
+            <a href="{{ product.url }}" class="es-qv__link">{{ 'general.view_full_details' | t | default: 'View full details' }}</a>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('shopify-section-{{ section.id }}');
+    if (!root) return;
+    var overlay = root.querySelector('[data-es-qv-overlay]');
+    var modal = root.querySelector('[data-es-qv-modal]');
+    var closeBtn = root.querySelector('[data-es-qv-close]');
+    var body = root.querySelector('[data-es-qv-body]');
+    var sectionId = {{ section.id | json }};
+    var loadingHtml = '<div class="es-qv__loading"><span class="es-qv__spinner"></span></div>';
+
+    function open() {
+      overlay.classList.add('is-open');
+      modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      overlay.classList.remove('is-open');
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+    }
+
+    function bindThumbs(scope) {
+      var main = scope.querySelector('[data-es-qv-main] img');
+      scope.querySelectorAll('[data-es-qv-thumb]').forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+          scope.querySelectorAll('[data-es-qv-thumb]').forEach(function (t) { t.classList.remove('is-active'); });
+          thumb.classList.add('is-active');
+          if (main) main.src = thumb.dataset.full;
+        });
+      });
+    }
+
+    function loadProduct(url) {
+      body.innerHTML = loadingHtml;
+      open();
+      fetch(url + (url.indexOf('?') > -1 ? '&' : '?') + 'section_id=' + sectionId)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var fetched = doc.querySelector('[data-es-qv-fetched]');
+          if (fetched) {
+            body.innerHTML = '';
+            body.appendChild(fetched);
+            bindThumbs(body);
+          } else {
+            body.innerHTML = '<p>Could not load this product.</p>';
+          }
+        })
+        .catch(function () { body.innerHTML = '<p>Could not load this product.</p>'; });
+    }
+
+    overlay.addEventListener('click', close);
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-es-qv-trigger]');
+      if (!trigger) return;
+      e.preventDefault();
+      loadProduct(trigger.getAttribute('data-es-qv-trigger'));
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "ES Quick View",
+  "tag": "section",
+  "class": "shopify-section--es-quick-view",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Add this section once (typically inside overlay-group.json). Trigger it from any button anywhere in the theme with data-es-qv-trigger=\"{{ product.url }}\"."
+    }
+  ],
+  "presets": [
+    { "name": "ES Quick View" }
+  ]
+}
+{% endschema %}
