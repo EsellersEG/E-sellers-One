@@ -1,0 +1,582 @@
+/* Expandable Brands Section – Fully Responsive & Accessible
+   ------------------------------------------------------------
+   Desktop (≥990px): Horizontal expandable card list.
+   Mobile/Tablet (<989px): Vertical accordion with CSS grid smooth height expansion.
+*/
+
+/* ---------------------------------------------------------------------------
+   0. Helper utilities & CSS Variables
+   --------------------------------------------------------------------------- */
+.eb-no-transition * {
+  transition: none !important;
+}
+
+.expandable-brands {
+  overflow: hidden;
+  --eb-ease: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* ---------------------------------------------------------------------------
+   1. Section Header
+   --------------------------------------------------------------------------- */
+.expandable-brands__header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.expandable-brands__heading {
+  color: var(--eb-heading-color, #ffffff) !important;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.expandable-brands__heading.heading-size-small {
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem);
+}
+
+.expandable-brands__heading.heading-size-medium {
+  font-size: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+}
+
+.expandable-brands__heading.heading-size-large {
+  font-size: clamp(2.4rem, 1.8rem + 2.5vw, 4rem);
+}
+
+/* Container Width Options */
+.expandable-brands__container--full {
+  width: 100%;
+  max-width: none;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  box-sizing: border-box;
+}
+
+.expandable-brands__container--custom {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  box-sizing: border-box;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Shared Base Card & Media Styles
+   --------------------------------------------------------------------------- */
+.expandable-brands__list {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.expandable-brands__list::-webkit-scrollbar {
+  display: none;
+}
+
+.expandable-brands__card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--eb-border-radius, 12px);
+  background: #111;
+  contain: layout paint style;
+  box-sizing: border-box;
+}
+
+.expandable-brands__trigger {
+  all: unset;
+  display: block;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.expandable-brands__trigger:focus-visible {
+  outline: 2px solid var(--eb-accent-color, #ffffff);
+  outline-offset: -4px;
+}
+
+.expandable-brands__media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.expandable-brands__bg-image,
+.expandable-brands__bg-placeholder svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform calc(var(--eb-animation-duration, 500ms) * 1.5) var(--eb-ease);
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.expandable-brands__card:hover .expandable-brands__bg-image {
+  transform: translateZ(0) scale(1.04);
+}
+
+.expandable-brands__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, calc(var(--eb-overlay-opacity, 0.45) * 0.6)) 0%,
+    rgba(0, 0, 0, var(--eb-overlay-opacity, 0.45)) 60%,
+    rgba(0, 0, 0, calc(var(--eb-overlay-opacity, 0.45) + 0.25)) 100%
+  );
+  transition: background var(--eb-animation-duration, 500ms) var(--eb-ease);
+}
+
+.expandable-brands__logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.expandable-brands__logo,
+.expandable-brands__logo-text {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.expandable-brands__logo-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--eb-text-color, #ffffff) !important;
+  transition: opacity var(--eb-animation-duration, 500ms) var(--eb-ease),
+    visibility var(--eb-animation-duration, 500ms) var(--eb-ease);
+}
+
+/* Fluid Typography for Card Content — Default White */
+.expandable-brands__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: clamp(11px, 1vw, 14px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  overflow-wrap: anywhere;
+  color: var(--eb-eyebrow-color, var(--eb-text-color, #ffffff)) !important;
+}
+
+.expandable-brands__name {
+  margin: 0 0 0.85rem;
+  font-size: clamp(20px, 2.8vw, 42px);
+  line-height: 1.15;
+  color: var(--eb-name-color, var(--eb-text-color, #ffffff)) !important;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.expandable-brands__description,
+.expandable-brands__description p,
+.expandable-brands__description span,
+.expandable-brands__description strong,
+.expandable-brands__description em,
+.expandable-brands__description a {
+  font-size: clamp(13px, 1.1vw, 16px);
+  line-height: 1.5;
+  color: var(--eb-text-color, #ffffff) !important;
+  overflow-wrap: anywhere;
+}
+
+.expandable-brands__description {
+  margin: 0 0 1.25rem;
+}
+
+.expandable-brands__description p {
+  margin: 0 0 0.5rem;
+}
+
+.expandable-brands__description p:last-child {
+  margin-bottom: 0;
+}
+
+/* Metadata Items */
+.expandable-brands__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.5rem;
+  margin-bottom: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.expandable-brands__meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  flex: 1 1 90px;
+}
+
+.expandable-brands__meta-label {
+  font-size: clamp(10px, 0.9vw, 13px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+  overflow-wrap: anywhere;
+  color: var(--eb-text-color, #ffffff) !important;
+}
+
+.expandable-brands__meta-value,
+.expandable-brands__meta-value p,
+.expandable-brands__meta-value span,
+.expandable-brands__meta-value strong {
+  display: block;
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+  color: var(--eb-text-color, #ffffff) !important;
+}
+
+.expandable-brands__meta-value p {
+  margin: 0;
+}
+
+/* CTA Button */
+.expandable-brands__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.4rem;
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  background: transparent;
+  color: var(--eb-accent-color, #ffffff) !important;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: clamp(11px, 0.9vw, 14px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background var(--eb-animation-duration, 500ms) ease,
+    color var(--eb-animation-duration, 500ms) ease;
+}
+
+.expandable-brands__button:hover {
+  background: var(--eb-accent-color, #ffffff) !important;
+  color: var(--eb-button-text-color, #0b0b0c) !important;
+}
+
+.expandable-brands__button svg {
+  flex-shrink: 0;
+}
+
+.expandable-brands__empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--eb-text-color, #ffffff) !important;
+  opacity: 0.6;
+}
+
+/* ---------------------------------------------------------------------------
+   3. DESKTOP LAYOUT (≥990px) — Horizontal Cards
+   --------------------------------------------------------------------------- */
+@media screen and (min-width: 990px) {
+  .expandable-brands__list {
+    align-items: stretch;
+    gap: var(--eb-card-gap, 16px);
+    height: var(--eb-card-height, 520px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .expandable-brands__card {
+    flex: 0 0 clamp(48px, 5vw, var(--eb-collapsed-width, 110px));
+    min-width: 48px;
+    height: 100%;
+    transition: flex-grow var(--eb-animation-duration, 500ms) var(--eb-ease),
+      flex-basis var(--eb-animation-duration, 500ms) var(--eb-ease),
+      flex-shrink var(--eb-animation-duration, 500ms) var(--eb-ease);
+  }
+
+  .expandable-brands__card.is-active {
+    flex: 1 1 300px;
+  }
+
+  /* Expand-all mode: every card is expanded like the first active card */
+  [data-expand-all="true"] .expandable-brands__card,
+  [data-expand-all="true"] .expandable-brands__card.is-active {
+    flex: 1 0 clamp(320px, 32vw, 420px);
+    min-width: 300px;
+  }
+
+  [data-expand-all="true"] .expandable-brands__logo-wrap {
+    top: 2rem;
+    left: 2rem;
+    max-width: calc(100% - 4rem);
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  [data-expand-all="true"] .expandable-brands__logo-text {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  [data-expand-all="true"] .expandable-brands__panel {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  [data-expand-all="true"] .expandable-brands__content {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  [data-expand-all="true"] .expandable-brands__content > * {
+    transform: translateY(0);
+  }
+
+  .expandable-brands__trigger {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* Collapsed Logo: centered & rotated -90deg */
+  .expandable-brands__logo-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 5;
+    width: var(--eb-logo-width, 90px);
+    height: calc(var(--eb-logo-width, 90px) * 0.5);
+    max-width: calc(100% - 12px);
+    transform: translate(-50%, -50%) rotate(-90deg);
+    transform-origin: center center;
+    transition: top var(--eb-animation-duration, 500ms) var(--eb-ease),
+      left var(--eb-animation-duration, 500ms) var(--eb-ease),
+      transform var(--eb-animation-duration, 500ms) var(--eb-ease),
+      max-width var(--eb-animation-duration, 500ms) var(--eb-ease);
+  }
+
+  /* Active Logo: top-left & upright */
+  .expandable-brands__card.is-active .expandable-brands__logo-wrap {
+    top: 2rem;
+    left: 2rem;
+    max-width: calc(100% - 4rem);
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  .expandable-brands__card.is-active .expandable-brands__logo-text {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Desktop Panel at z-index: 3 (ABOVE the z-index: 1 trigger overlay) */
+  .expandable-brands__panel {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    pointer-events: none;
+    visibility: hidden;
+    transition: visibility var(--eb-animation-duration, 500ms) var(--eb-ease);
+  }
+
+  .expandable-brands__panel::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .expandable-brands__panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  .expandable-brands__card.is-active .expandable-brands__panel {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  /* Desktop Content */
+  .expandable-brands__content {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: var(--eb-text-width, 520px);
+    padding: calc(var(--eb-logo-width, 90px) * 0.45 + 2.5rem) 2rem 2rem;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    overflow-wrap: anywhere;
+    transition: opacity calc(var(--eb-animation-duration, 500ms) * 0.4) ease,
+      visibility calc(var(--eb-animation-duration, 500ms) * 0.4) ease;
+  }
+
+  .expandable-brands__card.is-active .expandable-brands__content {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity calc(var(--eb-animation-duration, 500ms) * 0.8) var(--eb-ease) calc(var(--eb-animation-duration, 500ms) * 0.15),
+      visibility calc(var(--eb-animation-duration, 500ms) * 0.8) var(--eb-ease) calc(var(--eb-animation-duration, 500ms) * 0.15);
+  }
+
+  /* Stagger children slide-up animation */
+  .expandable-brands__content > * {
+    transform: translateY(15px);
+    transition: transform calc(var(--eb-animation-duration, 500ms) * 0.4) ease;
+  }
+
+  .expandable-brands__card.is-active .expandable-brands__content > * {
+    transform: translateY(0);
+    transition: transform calc(var(--eb-animation-duration, 500ms) * 0.8) var(--eb-ease) calc(var(--eb-animation-duration, 500ms) * 0.15);
+  }
+
+  .expandable-brands__button {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. TABLET & MOBILE LAYOUT (<989px) — Vertical Accordion
+   --------------------------------------------------------------------------- */
+@media screen and (max-width: 989px) {
+  .expandable-brands__list {
+    flex-direction: column;
+    gap: var(--eb-card-gap, 16px);
+  }
+
+  .expandable-brands__card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    position: relative;
+    border-radius: var(--eb-border-radius, 12px);
+    overflow: hidden;
+    background: #111;
+  }
+
+  .expandable-brands__trigger {
+    position: static;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 80px;
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .expandable-brands__logo-wrap {
+    position: relative;
+    z-index: 5;
+    width: var(--eb-logo-width, 90px);
+    height: auto;
+    max-width: calc(100% - 2rem);
+  }
+
+  /* Mobile Panel (CSS Grid smooth height animation) */
+  .expandable-brands__panel {
+    position: relative;
+    z-index: 3;
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    overflow: hidden;
+    transition: grid-template-rows var(--eb-animation-duration, 500ms) var(--eb-ease),
+      visibility var(--eb-animation-duration, 500ms) var(--eb-ease);
+  }
+
+  .expandable-brands__card.is-active .expandable-brands__panel {
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+
+  /* Mobile Content (Normal flow inside grid panel) */
+  .expandable-brands__content {
+    position: relative;
+    z-index: 4;
+    min-height: 0;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity calc(var(--eb-animation-duration, 500ms) * 0.6) var(--eb-ease);
+  }
+
+  .expandable-brands__card.is-active .expandable-brands__content {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .expandable-brands__button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Expand-all mode on mobile: force all panels open, trigger is non-collapsible */
+  [data-expand-all="true"] .expandable-brands__panel {
+    grid-template-rows: 1fr;
+    visibility: visible;
+  }
+
+  [data-expand-all="true"] .expandable-brands__content {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  [data-expand-all="true"] .expandable-brands__trigger {
+    cursor: default;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .expandable-brands__content {
+    padding: 0 1.25rem 1.25rem 1.25rem;
+  }
+
+  .expandable-brands__meta {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5. Reduced Motion
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .expandable-brands__card,
+  .expandable-brands__bg-image,
+  .expandable-brands__overlay,
+  .expandable-brands__logo-wrap,
+  .expandable-brands__panel,
+  .expandable-brands__content,
+  .expandable-brands__content > *,
+  .expandable-brands__button {
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+  }
+}

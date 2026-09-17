@@ -1,0 +1,219 @@
+{%- comment -%}
+  E-sellers Privacy & Cookie Banner Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  .es-privacy-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    max-width: 480px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.18);
+    border: 1px solid #e2e8f0;
+    z-index: 9998;
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+    animation: esPrivacySlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @media screen and (max-width: 640px) {
+    .es-privacy-bar {
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      padding: 20px 16px;
+    }
+  }
+
+  @keyframes esPrivacySlideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .es-privacy-bar.is-visible {
+    display: flex;
+  }
+
+  .es-privacy-bar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .es-privacy-bar__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .es-privacy-bar__close {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .es-privacy-bar__close:hover {
+    color: #0f172a;
+  }
+
+  .es-privacy-bar__content {
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: #475569;
+    margin: 0;
+  }
+
+  .es-privacy-bar__content a {
+    color: #0f172a;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .es-privacy-bar__actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  .es-privacy-bar__btn-accept {
+    flex: 1;
+    padding: 10px 16px;
+    background-color: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .es-privacy-bar__btn-accept:hover {
+    background-color: #1e293b;
+  }
+
+  .es-privacy-bar__btn-decline {
+    flex: 1;
+    padding: 10px 16px;
+    background-color: transparent;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .es-privacy-bar__btn-decline:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+  }
+{%- endstyle -%}
+
+<aside id="EsPrivacyBar-{{ section.id }}" class="es-privacy-bar" role="region" aria-label="Privacy and cookies policy">
+  <div class="es-privacy-bar__header">
+    {%- if section.settings.privacy_bar_title != blank -%}
+      <h3 class="es-privacy-bar__title">{{ section.settings.privacy_bar_title | escape }}</h3>
+    {%- endif -%}
+
+    <button type="button" class="es-privacy-bar__close" aria-label="Close" onclick="dismissEsPrivacyBar('{{ section.id }}')">
+      &times;
+    </button>
+  </div>
+
+  {%- if section.settings.privacy_bar_content != blank -%}
+    <div class="es-privacy-bar__content">
+      {{ section.settings.privacy_bar_content }}
+    </div>
+  {%- endif -%}
+
+  <div class="es-privacy-bar__actions">
+    <button type="button" class="es-privacy-bar__btn-accept" onclick="acceptEsPrivacy('{{ section.id }}')">
+      {{ 'general.privacy_bar.accept' | t | default: 'Accept all' }}
+    </button>
+    <button type="button" class="es-privacy-bar__btn-decline" onclick="declineEsPrivacy('{{ section.id }}')">
+      {{ 'general.privacy_bar.decline' | t | default: 'Decline' }}
+    </button>
+  </div>
+</aside>
+
+<script>
+  (function() {
+    const barId = 'EsPrivacyBar-{{ section.id }}';
+    const bar = document.getElementById(barId);
+    if (!bar) return;
+
+    const consentKey = 'es-privacy-consent';
+    const currentConsent = localStorage.getItem(consentKey);
+
+    window.acceptEsPrivacy = function(secId) {
+      localStorage.setItem(consentKey, 'accepted');
+      if (window.Shopify && window.Shopify.customerPrivacy && window.Shopify.customerPrivacy.setTrackingConsent) {
+        window.Shopify.customerPrivacy.setTrackingConsent(true, () => {});
+      }
+      document.getElementById('EsPrivacyBar-' + secId).classList.remove('is-visible');
+    };
+
+    window.declineEsPrivacy = function(secId) {
+      localStorage.setItem(consentKey, 'declined');
+      if (window.Shopify && window.Shopify.customerPrivacy && window.Shopify.customerPrivacy.setTrackingConsent) {
+        window.Shopify.customerPrivacy.setTrackingConsent(false, () => {});
+      }
+      document.getElementById('EsPrivacyBar-' + secId).classList.remove('is-visible');
+    };
+
+    window.dismissEsPrivacyBar = function(secId) {
+      document.getElementById('EsPrivacyBar-' + secId).classList.remove('is-visible');
+    };
+
+    // Show if consent hasn't been chosen yet or in Theme Editor
+    if (!currentConsent || window.Shopify?.designMode) {
+      setTimeout(() => {
+        bar.classList.add('is-visible');
+      }, 1000);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Privacy banner",
+  "tag": "section",
+  "class": "shopify-section--privacy-banner",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Cookie & privacy consent bar complying with the Shopify Customer Privacy API and regional regulations."
+    },
+    {
+      "type": "text",
+      "id": "privacy_bar_title",
+      "label": "Heading",
+      "default": "Cookie & Privacy Policy"
+    },
+    {
+      "type": "richtext",
+      "id": "privacy_bar_content",
+      "label": "Content description",
+      "default": "<p>We use cookies to ensure you get the best browsing and shopping experience on our website. Read our <a href=\"/policies/privacy-policy\">Privacy Policy</a>.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Privacy banner"
+    }
+  ]
+}
+{% endschema %}

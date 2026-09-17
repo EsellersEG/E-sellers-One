@@ -1,0 +1,724 @@
+{%- comment -%}
+  E-sellers Hot Spots - E-sellers Professional (v4.9.0)
+
+  Lifestyle image with positioned hot spots. Each dot opens a small popover
+  holding a title, copy and an optional linked product.
+
+  Popovers are plain buttons + absolutely positioned panels: they open on
+  hover/focus on desktop and on tap on touch devices, close on Escape or an
+  outside click, and never trap the page.
+{%- endcomment -%}
+
+{%- liquid
+  assign spots = section.blocks | where: 'type', 'hot_spot'
+  assign has_mobile_image = false
+  if section.settings.mobile_image != blank
+    assign has_mobile_image = true
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-hs-overlay: {{ section.settings.overlay_color | default: '#000000' }};
+    --es-hs-overlay-opacity: {{ section.settings.overlay_opacity | default: 0 | divided_by: 100.0 }};
+    --es-hs-text: {{ section.settings.overlay_text_color | default: '#ffffff' }};
+    --es-hs-btn-bg: {{ section.settings.overlay_button_background | default: '#ffffff' }};
+    --es-hs-btn-text: {{ section.settings.overlay_button_text_color | default: '#121212' }};
+    --es-hs-dot-bg: {{ section.settings.hot_spot_dot_background | default: '#ffffff' }};
+    --es-hs-dot-text: {{ section.settings.hot_spot_dot_text_color | default: '#121212' }};
+    --es-hs-pop-bg: {{ section.settings.hot_spot_content_background | default: '#ffffff' }};
+    --es-hs-pop-text: {{ section.settings.hot_spot_content_text_color | default: '#121212' }};
+    --es-hs-pop-opacity: {{ section.settings.hot_spot_content_opacity | default: 100 | divided_by: 100.0 }};
+    --es-hs-pop-blur: {{ section.settings.hot_spot_content_blur_radius | default: 0 }}px;
+    --es-hs-radius: {{ section.settings.corner_radius | default: 0 }}px;
+
+    padding-top: {{ section.settings.padding_top | default: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+    {%- if section.settings.image_background_gradient != blank -%}
+      background-image: {{ section.settings.image_background_gradient }};
+    {%- elsif section.settings.image_background != blank -%}
+      background-color: {{ section.settings.image_background }};
+    {%- endif -%}
+  }
+
+  #shopify-section-{{ section.id }} .es-hs {
+    position: relative;
+    width: 100%;
+    border-radius: var(--es-hs-radius);
+    /* Dots sit on the edge, so the frame must not clip them. */
+    overflow: visible;
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__frame {
+    position: relative;
+    width: 100%;
+    border-radius: var(--es-hs-radius);
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__image--mobile { display: block; }
+  #shopify-section-{{ section.id }} .es-hs__image--desktop { display: none; }
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .es-hs__image--mobile { display: none; }
+    #shopify-section-{{ section.id }} .es-hs__image--desktop { display: block; }
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--es-hs-overlay);
+    opacity: var(--es-hs-overlay-opacity);
+    pointer-events: none;
+  }
+
+  /* ---- Overlaid intro (desktop) ---- */
+  #shopify-section-{{ section.id }} .es-hs__intro--over {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    padding: 4rem;
+    color: var(--es-hs-text);
+    pointer-events: none;
+    flex-direction: column;
+    justify-content: center;
+    {%- case section.settings.desktop_text_position -%}
+      {%- when 'right' -%}
+        align-items: flex-end;
+        text-align: right;
+      {%- when 'center' -%}
+        align-items: center;
+        text-align: center;
+      {%- else -%}
+        align-items: flex-start;
+        text-align: left;
+    {%- endcase -%}
+  }
+  #shopify-section-{{ section.id }} .es-hs__intro--over > * { max-width: 330px; }
+  #shopify-section-{{ section.id }} .es-hs__intro--over a { pointer-events: auto; }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .es-hs__intro--over { display: flex; }
+    #shopify-section-{{ section.id }} .es-hs__intro--below { display: none; }
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__intro--below {
+    margin-bottom: 2.4rem;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__title { margin: 0 0 1.2rem; color: inherit; }
+  #shopify-section-{{ section.id }} .es-hs__content > p:last-child { margin-bottom: 0; }
+  #shopify-section-{{ section.id }} .es-hs__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.6rem;
+    padding: 1.4rem 2.8rem;
+    border-radius: var(--button-radius, 8px);
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-decoration: none;
+    background-color: var(--es-hs-btn-bg);
+    color: var(--es-hs-btn-text);
+  }
+
+  /* ---- Hot spot dots ---- */
+  #shopify-section-{{ section.id }} .es-hs__spot {
+    position: absolute;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__dot {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--es-hs-dot-bg);
+    color: var(--es-hs-dot-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease;
+  }
+  #shopify-section-{{ section.id }} .es-hs__dot:hover,
+  #shopify-section-{{ section.id }} .es-hs__dot:focus-visible {
+    transform: scale(1.15);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  }
+  #shopify-section-{{ section.id }} .es-hs__dot svg { width: 14px; height: 14px; }
+
+  {%- if section.settings.pulse_dots -%}
+    #shopify-section-{{ section.id }} .es-hs__dot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: var(--es-hs-dot-bg);
+      animation: es-hs-pulse-{{ section.id | replace: '-', '_' }} 2.4s ease-out infinite;
+      z-index: -1;
+    }
+    @keyframes es-hs-pulse-{{ section.id | replace: '-', '_' }} {
+      0%   { transform: scale(1);   opacity: 0.7; }
+      70%  { transform: scale(2.2); opacity: 0; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+  {%- endif -%}
+
+  /* ---- Popover ---- */
+  #shopify-section-{{ section.id }} .es-hs__pop {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    max-width: 70vw;
+    padding: 1.6rem;
+    border-radius: 10px;
+    background-color: color-mix(in srgb, var(--es-hs-pop-bg) calc(var(--es-hs-pop-opacity) * 100%), transparent);
+    color: var(--es-hs-pop-text);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 6px;
+    transition: opacity 0.2s ease, translate 0.2s ease, visibility 0.2s;
+    z-index: 4;
+    text-align: left;
+  }
+  {%- if section.settings.hot_spot_content_blur_radius > 0 -%}
+    #shopify-section-{{ section.id }} .es-hs__pop {
+      backdrop-filter: blur(var(--es-hs-pop-blur));
+      -webkit-backdrop-filter: blur(var(--es-hs-pop-blur));
+    }
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .es-hs__spot[data-open="true"] .es-hs__pop {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+  }
+
+  /* Flip the popover above the dot when it sits low in the image. */
+  #shopify-section-{{ section.id }} .es-hs__spot[data-flip="true"] .es-hs__pop {
+    top: auto;
+    bottom: calc(100% + 12px);
+  }
+
+  #shopify-section-{{ section.id }} .es-hs__pop-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0 0 0.6rem;
+  }
+  #shopify-section-{{ section.id }} .es-hs__pop-content {
+    font-size: 1.4rem;
+    line-height: 1.5;
+  }
+  #shopify-section-{{ section.id }} .es-hs__pop-content > p:last-child { margin-bottom: 0; }
+
+  #shopify-section-{{ section.id }} .es-hs__product {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+    color: inherit;
+  }
+  #shopify-section-{{ section.id }} .es-hs__product img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  #shopify-section-{{ section.id }} .es-hs__product-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  #shopify-section-{{ section.id }} .es-hs__product-price {
+    font-size: 1.3rem;
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .es-hs__dot,
+    #shopify-section-{{ section.id }} .es-hs__pop { transition: none; }
+    #shopify-section-{{ section.id }} .es-hs__dot::before { animation: none; }
+  }
+{%- endstyle -%}
+
+<div class="{% if section.settings.full_width %}es-hs__full{% else %}page-width{% endif %}">
+
+  {%- comment -%} Small screens read the intro above the image. {%- endcomment -%}
+  {%- if section.settings.title != blank or section.settings.content != blank -%}
+    <div class="es-hs__intro--below">
+      {%- if section.settings.title != blank -%}
+        <h2 class="h2 es-hs__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+      {%- if section.settings.content != blank -%}
+        <div class="es-hs__content">{{ section.settings.content }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_text != blank and section.settings.button_url != blank -%}
+        <a href="{{ section.settings.button_url }}" class="es-hs__button">{{ section.settings.button_text | escape }}</a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="es-hs">
+    <div class="es-hs__frame">
+      {%- if section.settings.image != blank -%}
+        {%- assign es_tagarg_1 = section.settings.title | escape -%}{{ section.settings.image | image_url: width: 2000 | image_tag:
+           class: 'es-hs__image es-hs__image--desktop',
+           loading: 'lazy',
+           widths: '600,900,1200,1600,2000',
+           sizes: '100vw',
+           alt: es_tagarg_1}}
+      {%- else -%}
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'es-hs__image es-hs__image--desktop' }}
+      {%- endif -%}
+
+      {%- if has_mobile_image -%}
+        {%- assign es_tagarg_2 = section.settings.title | escape -%}{{ section.settings.mobile_image | image_url: width: 1200 | image_tag:
+           class: 'es-hs__image es-hs__image--mobile',
+           loading: 'lazy',
+           widths: '400,600,900,1200',
+           sizes: '100vw',
+           alt: es_tagarg_2}}
+      {%- endif -%}
+
+      <div class="es-hs__overlay"></div>
+
+      {%- if section.settings.title != blank or section.settings.content != blank -%}
+        <div class="es-hs__intro--over">
+          {%- if section.settings.title != blank -%}
+            <h2 class="h2 es-hs__title">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+          {%- if section.settings.content != blank -%}
+            <div class="es-hs__content">{{ section.settings.content }}</div>
+          {%- endif -%}
+          {%- if section.settings.button_text != blank and section.settings.button_url != blank -%}
+            <a href="{{ section.settings.button_url }}" class="es-hs__button">{{ section.settings.button_text | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- for block in spots -%}
+      {%- liquid
+        assign h_pos = block.settings.horizontal_position | default: 50
+        assign v_pos = block.settings.vertical_position | default: 50
+        assign h_pos_m = block.settings.horizontal_position_mobile | default: h_pos
+        assign v_pos_m = block.settings.vertical_position_mobile | default: v_pos
+        assign spot_product = block.settings.product
+        assign flip = false
+        if v_pos > 60
+          assign flip = true
+        endif
+      -%}
+
+      <div class="es-hs__spot"
+           id="EsHsSpot-{{ section.id }}-{{ block.id }}"
+           data-es-hs-spot
+           data-open="false"
+           data-flip="{{ flip }}"
+           style="left: {{ h_pos_m }}%; top: {{ v_pos_m }}%;"
+           {{ block.shopify_attributes }}>
+
+        {%- comment -%}
+          Desktop coordinates differ, so they are applied in a media query
+          scoped to this block's own id.
+        {%- endcomment -%}
+        {%- style -%}
+          @media screen and (min-width: 1000px) {
+            #EsHsSpot-{{ section.id }}-{{ block.id }} {
+              left: {{ h_pos }}% !important;
+              top: {{ v_pos }}% !important;
+            }
+          }
+        {%- endstyle -%}
+
+        <button type="button"
+                class="es-hs__dot"
+                data-es-hs-dot
+                aria-expanded="false"
+                aria-controls="EsHsPop-{{ section.id }}-{{ block.id }}"
+                aria-label="{{ block.settings.title | default: 'View details' | escape }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+               stroke-linecap="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+
+        <div class="es-hs__pop" id="EsHsPop-{{ section.id }}-{{ block.id }}" role="dialog"
+             aria-label="{{ block.settings.title | default: 'Hot spot' | escape }}">
+          {%- if block.settings.title != blank -%}
+            <p class="es-hs__pop-title">{{ block.settings.title | escape }}</p>
+          {%- endif -%}
+          {%- if block.settings.content != blank -%}
+            <div class="es-hs__pop-content">{{ block.settings.content }}</div>
+          {%- endif -%}
+
+          {%- if spot_product != blank -%}
+            <a href="{{ spot_product.url }}" class="es-hs__product">
+              {%- if spot_product.featured_image != blank -%}
+                {%- assign es_tagarg_3 = spot_product.title | escape -%}{{ spot_product.featured_image | image_url: width: 120 | image_tag:
+                   loading: 'lazy', alt: es_tagarg_3}}
+              {%- endif -%}
+              <span>
+                <span class="es-hs__product-title">{{ spot_product.title | escape }}</span><br>
+                <span class="es-hs__product-price">{{ spot_product.price | money }}</span>
+              </span>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('shopify-section-{{ section.id }}');
+    if (!root) return;
+
+    var spots = Array.prototype.slice.call(root.querySelectorAll('[data-es-hs-spot]'));
+    if (!spots.length) return;
+
+    var canHover = window.matchMedia('(hover: hover)').matches;
+
+    function close(spot) {
+      spot.dataset.open = 'false';
+      var dot = spot.querySelector('[data-es-hs-dot]');
+      if (dot) dot.setAttribute('aria-expanded', 'false');
+    }
+
+    function open(spot) {
+      spots.forEach(function (other) { if (other !== spot) close(other); });
+      spot.dataset.open = 'true';
+      var dot = spot.querySelector('[data-es-hs-dot]');
+      if (dot) dot.setAttribute('aria-expanded', 'true');
+    }
+
+    spots.forEach(function (spot) {
+      var dot = spot.querySelector('[data-es-hs-dot]');
+      if (!dot) return;
+
+      dot.addEventListener('click', function (event) {
+        event.stopPropagation();
+        if (spot.dataset.open === 'true') {
+          close(spot);
+        } else {
+          open(spot);
+        }
+      });
+
+      if (canHover) {
+        spot.addEventListener('mouseenter', function () { open(spot); });
+        spot.addEventListener('mouseleave', function () { close(spot); });
+      }
+
+      spot.addEventListener('focusin', function () { open(spot); });
+      spot.addEventListener('focusout', function (event) {
+        if (!spot.contains(event.relatedTarget)) close(spot);
+      });
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!root.contains(event.target)) {
+        spots.forEach(close);
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') spots.forEach(close);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hot spots",
+  "class": "shopify-section--es-hot-spots",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image",
+      "info": "Optional. Falls back to the main image."
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop the look"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "desktop_text_position",
+      "label": "Text position (desktop)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Image colors"
+    },
+    {
+      "type": "color",
+      "id": "image_background",
+      "label": "Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "image_background_gradient",
+      "label": "Section background gradient"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Image overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "overlay_text_color",
+      "label": "Overlaid text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_button_background",
+      "label": "Button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_button_text_color",
+      "label": "Button text",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Hot spot styling"
+    },
+    {
+      "type": "checkbox",
+      "id": "pulse_dots",
+      "label": "Pulse the dots",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "hot_spot_dot_background",
+      "label": "Dot background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "hot_spot_dot_text_color",
+      "label": "Dot icon color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "hot_spot_content_background",
+      "label": "Popover background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "hot_spot_content_text_color",
+      "label": "Popover text",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "hot_spot_content_opacity",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Popover opacity",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "hot_spot_content_blur_radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Popover background blur",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hot_spot",
+      "name": "Hot spot",
+      "settings": [
+        {
+          "type": "range",
+          "id": "horizontal_position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Horizontal position (desktop)",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "vertical_position",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Vertical position (desktop)",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "horizontal_position_mobile",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Horizontal position (mobile)",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "vertical_position_mobile",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "label": "Vertical position (mobile)",
+          "default": 50
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Hot spot"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Linked product",
+          "info": "Optional. Shows a small product card inside the popover."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hot spots",
+      "blocks": [
+        { "type": "hot_spot", "settings": { "horizontal_position": 30, "vertical_position": 40 } },
+        { "type": "hot_spot", "settings": { "horizontal_position": 65, "vertical_position": 60 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

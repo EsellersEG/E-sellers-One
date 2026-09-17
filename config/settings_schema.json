@@ -1,0 +1,486 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "E-sellers One",
+    "theme_author": "E-sellers",
+    "theme_version": "5.0.0",
+    "theme_documentation_url": "https://e-sellers.net/docs",
+    "theme_support_email": "info@e-sellers.net"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "header",
+            "content": "Scheme"
+          },
+          {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color_background",
+            "id": "background_gradient",
+            "label": "Background gradient"
+          },
+          {
+            "type": "color",
+            "id": "text",
+            "label": "Text",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
+            "id": "button",
+            "label": "Solid button background",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
+            "id": "button_label",
+            "label": "Solid button label",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "outline_button",
+            "label": "Outline button",
+            "default": "#121212"
+          },
+          {
+            "type": "color",
+            "id": "shadow",
+            "label": "Shadow",
+            "default": "#121212"
+          }
+        ],
+        "role": {
+          "text": "text",
+          "background": {
+            "solid": "background",
+            "gradient": "background_gradient"
+          },
+          "links": "text",
+          "icons": "text",
+          "primary_button": "button",
+          "on_primary_button": "button_label",
+          "primary_button_border": "button",
+          "secondary_button": "background",
+          "on_secondary_button": "text",
+          "secondary_button_border": "outline_button"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Favicon & Brand",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon image",
+        "info": "Will be scaled down to 32x32px"
+      },
+      {
+        "type": "image_picker",
+        "id": "brand_logo",
+        "label": "Brand logo",
+        "info": "Used in header and footer by default"
+      },
+      {
+        "type": "range",
+        "id": "brand_logo_width",
+        "min": 50,
+        "max": 300,
+        "step": 5,
+        "default": 140,
+        "unit": "px",
+        "label": "Brand logo width"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Headings"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_header_font",
+        "label": "Heading font",
+        "default": "sans-serif"
+      },
+      {
+        "type": "range",
+        "id": "heading_scale",
+        "min": 80,
+        "max": 140,
+        "step": 5,
+        "unit": "%",
+        "label": "Heading scale",
+        "default": 100
+      },
+      {
+        "type": "select",
+        "id": "heading_text_transform",
+        "options": [
+          { "value": "none", "label": "Default (None)" },
+          { "value": "uppercase", "label": "Uppercase" },
+          { "value": "capitalize", "label": "Capitalize" }
+        ],
+        "default": "none",
+        "label": "Heading case"
+      },
+      {
+        "type": "header",
+        "content": "Body Text"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_body_font",
+        "label": "Body font",
+        "default": "sans-serif"
+      },
+      {
+        "type": "range",
+        "id": "body_scale",
+        "min": 85,
+        "max": 125,
+        "step": 5,
+        "unit": "%",
+        "label": "Body text scale",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Layout & Sizing",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1000,
+        "max": 1600,
+        "step": 20,
+        "unit": "px",
+        "label": "Maximum page width",
+        "default": 1360
+      },
+      {
+        "type": "range",
+        "id": "grid_gap",
+        "min": 8,
+        "max": 40,
+        "step": 4,
+        "unit": "px",
+        "label": "Grid column gap",
+        "default": 24
+      },
+      {
+        "type": "header",
+        "content": "Corner Radius & Shapes"
+      },
+      {
+        "type": "range",
+        "id": "card_corner_radius",
+        "min": 0,
+        "max": 32,
+        "step": 2,
+        "unit": "px",
+        "label": "Card corner radius",
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "button_corner_radius",
+        "min": 0,
+        "max": 40,
+        "step": 2,
+        "unit": "px",
+        "label": "Button corner radius",
+        "default": 8
+      },
+      {
+        "type": "range",
+        "id": "input_corner_radius",
+        "min": 0,
+        "max": 24,
+        "step": 2,
+        "unit": "px",
+        "label": "Input field corner radius",
+        "default": 8
+      },
+      {
+        "type": "range",
+        "id": "badge_corner_radius",
+        "min": 0,
+        "max": 20,
+        "step": 2,
+        "unit": "px",
+        "label": "Badge corner radius",
+        "default": 6
+      }
+    ]
+  },
+  {
+    "name": "Design system",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "These four controls retune the entire storefront at once. Every section reads from them, so spacing, geometry, depth and motion stay consistent everywhere."
+      },
+      {
+        "type": "select",
+        "id": "es_density",
+        "label": "Spacing density",
+        "info": "Compact suits large catalogues; spacious suits editorial storefronts.",
+        "options": [
+          { "value": "compact", "label": "Compact" },
+          { "value": "comfortable", "label": "Comfortable" },
+          { "value": "spacious", "label": "Spacious" }
+        ],
+        "default": "comfortable"
+      },
+      {
+        "type": "select",
+        "id": "es_geometry",
+        "label": "Corner geometry",
+        "info": "Scales every corner radius in the theme.",
+        "options": [
+          { "value": "sharp", "label": "Sharp (square)" },
+          { "value": "soft", "label": "Soft" },
+          { "value": "round", "label": "Round" }
+        ],
+        "default": "soft"
+      },
+      {
+        "type": "select",
+        "id": "es_elevation",
+        "label": "Depth",
+        "info": "How much shadow separates cards and overlays from the page.",
+        "options": [
+          { "value": "flat", "label": "Flat (rules only)" },
+          { "value": "raised", "label": "Raised" },
+          { "value": "lifted", "label": "Lifted" }
+        ],
+        "default": "raised"
+      },
+      {
+        "type": "select",
+        "id": "es_motion",
+        "label": "Motion",
+        "info": "Visitors who ask for reduced motion always get none, whatever is set here.",
+        "options": [
+          { "value": "none", "label": "None" },
+          { "value": "subtle", "label": "Subtle" },
+          { "value": "expressive", "label": "Expressive" }
+        ],
+        "default": "subtle"
+      }
+    ]
+  },
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "The overlay header sits transparently on top of the first section and turns solid on scroll. Use it only on templates whose first section is a full-bleed hero."
+      },
+      {
+        "type": "text",
+        "id": "overlay_header_templates",
+        "label": "Templates using the overlay header",
+        "info": "Comma-separated template names, e.g. index, page. Leave blank to use the standard header everywhere."
+      }
+    ]
+  },
+  {
+    "name": "Cart & Checkout",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "options": [
+          { "value": "drawer", "label": "Drawer (Slide-out)" },
+          { "value": "page", "label": "Page" }
+        ],
+        "default": "drawer",
+        "label": "Cart type"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_cart_note",
+        "default": true,
+        "label": "Enable order notes"
+      },
+      {
+        "type": "header",
+        "content": "Free Shipping Calculator"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_free_shipping_bar",
+        "default": true,
+        "label": "Enable free shipping goal bar"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping threshold amount (in store currency)",
+        "default": 100
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_text_progress",
+        "label": "Progress message",
+        "default": "Add [amount] more to unlock FREE shipping!",
+        "info": "Use [amount] as dynamic placeholder"
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_text_success",
+        "label": "Success message",
+        "default": "Congratulations! You unlocked FREE standard shipping!"
+      }
+    ]
+  },
+  {
+    "name": "Product Cards",
+    "settings": [
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "options": [
+          { "value": "natural", "label": "Natural (Original image ratio)" },
+          { "value": "square", "label": "Square (1:1)" },
+          { "value": "portrait", "label": "Portrait (3:4)" },
+          { "value": "landscape", "label": "Landscape (4:3)" }
+        ],
+        "default": "portrait",
+        "label": "Image aspect ratio"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_secondary_image",
+        "default": true,
+        "label": "Show second image on hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "default": false,
+        "label": "Show product vendor"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_rating",
+        "default": true,
+        "label": "Show product star rating"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_quick_add",
+        "default": true,
+        "label": "Enable Quick Add / Choose options button"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_color_swatches",
+        "default": true,
+        "label": "Show color swatch previews"
+      },
+      {
+        "type": "header",
+        "content": "Badges"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sale_badge",
+        "default": true,
+        "label": "Show sale badge"
+      },
+      {
+        "type": "select",
+        "id": "sale_badge_type",
+        "options": [
+          { "value": "percentage", "label": "Percentage off (e.g. -25%)" },
+          { "value": "amount", "label": "Fixed save amount (e.g. Save $15)" },
+          { "value": "text", "label": "Text only (Sale)" }
+        ],
+        "default": "percentage",
+        "label": "Sale badge style"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_sold_out_badge",
+        "default": true,
+        "label": "Show sold out badge"
+      }
+    ]
+  },
+  {
+    "name": "Social Media Links",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "X / Twitter URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest URL"
+      },
+      {
+        "type": "text",
+        "id": "social_linkedin_link",
+        "label": "LinkedIn URL"
+      }
+    ]
+  },
+  {
+    "name": "Animations & Motion",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_hover_zoom",
+        "default": true,
+        "label": "Enable subtle image zoom on hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_button_animation",
+        "default": true,
+        "label": "Enable interactive button hover animations"
+      }
+    ]
+  }
+]

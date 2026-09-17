@@ -1,0 +1,213 @@
+{%- comment -%}
+  E-sellers Video Hero - E-sellers One (v5.0.0)
+
+  Full-bleed background video (hosted or YouTube/Vimeo) with a text + CTA
+  overlay, independent desktop/mobile heights, and an optional CSS parallax
+  drift. External embeds only load once they are near the viewport.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_vh_native = section.settings.video
+  assign es_vh_url = section.settings.video_url
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-vh-overlay-opacity: {{ section.settings.overlay_opacity | default: 30 | divided_by: 100.0 }};
+    padding-top: {{ section.settings.padding_top | default: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .es-vh {
+    position: relative;
+    height: {{ section.settings.video_height | default: 560 }}px;
+    overflow: hidden;
+  }
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .es-vh { height: {{ section.settings.video_mobile_height | default: 420 }}px; }
+  }
+
+  #shopify-section-{{ section.id }} .es-vh__media,
+  #shopify-section-{{ section.id }} .es-vh__media video,
+  #shopify-section-{{ section.id }} .es-vh__media iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+  }
+  {%- if section.settings.enable_parallax -%}
+    #shopify-section-{{ section.id }} .es-vh__media {
+      inset: -10% 0;
+      height: 120%;
+      transition: transform 0.1s linear;
+    }
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .es-vh__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--es-vh-overlay-opacity));
+    pointer-events: none;
+  }
+
+  #shopify-section-{{ section.id }} .es-vh__content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: {% case section.settings.content_position %}{% when 'top' %}flex-start{% when 'bottom' %}flex-end{% else %}center{% endcase %};
+    align-items: {% case section.settings.content_alignment %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+    text-align: {{ section.settings.content_alignment | default: 'center' }};
+    color: #fff;
+    padding: var(--es-space-6);
+    gap: var(--es-space-3);
+  }
+  #shopify-section-{{ section.id }} .es-vh__content > * { max-width: 640px; }
+  #shopify-section-{{ section.id }} .es-vh__eyebrow { font-size: var(--es-text-xs); font-weight: 700; letter-spacing: var(--es-track-caps); text-transform: uppercase; opacity: .9; }
+  #shopify-section-{{ section.id }} .es-vh__heading { color: inherit; margin: 0; text-shadow: 0 2px 12px rgba(0,0,0,.35); }
+  #shopify-section-{{ section.id }} .es-vh__text { opacity: .95; }
+{%- endstyle -%}
+
+<div class="{% if section.settings.container != 'full' %}page-width{% endif %}">
+  <div class="es-vh" data-es-vh {% if section.settings.enable_parallax %}data-parallax{% endif %}>
+    <div class="es-vh__media" data-es-vh-media
+         {% if es_vh_url != blank %}data-embed-type="{{ es_vh_url.type }}" data-embed-id="{{ es_vh_url.id }}"{% endif %}>
+      {%- if es_vh_native != blank -%}
+        {{ es_vh_native | video_tag: image_size: '1600x', autoplay: true, loop: true, muted: true, controls: false, playsinline: true }}
+      {%- endif -%}
+    </div>
+    <div class="es-vh__overlay"></div>
+    <div class="es-vh__content">
+      {%- if section.settings.subheading != blank -%}<span class="es-vh__eyebrow">{{ section.settings.subheading | escape }}</span>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="es-vh__heading h1">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div class="es-vh__text">{{ section.settings.text }}</div>{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        {%- render 'es-button', label: section.settings.button_label, url: section.settings.button_link, style: section.settings.button_style | default: 'solid' -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{%- if es_vh_url != blank and es_vh_native == blank -%}
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+      var target = root.querySelector('[data-es-vh-media]');
+      if (!target || !('IntersectionObserver' in window)) return;
+
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var type = target.dataset.embedType;
+          var id = target.dataset.embedId;
+          var src = type === 'youtube'
+            ? 'https://www.youtube.com/embed/' + id + '?autoplay=1&mute=1&controls=0&loop=1&playlist=' + id + '&playsinline=1'
+            : type === 'vimeo'
+              ? 'https://player.vimeo.com/video/' + id + '?autoplay=1&muted=1&loop=1&background=1'
+              : '';
+          if (!src) return;
+          var iframe = document.createElement('iframe');
+          iframe.setAttribute('src', src);
+          iframe.setAttribute('allow', 'autoplay; encrypted-media');
+          iframe.setAttribute('title', 'Background video');
+          target.appendChild(iframe);
+          io.disconnect();
+        });
+      }, { rootMargin: '200px' });
+      io.observe(root);
+    })();
+  </script>
+{%- endif -%}
+
+{%- if section.settings.enable_parallax -%}
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var media = root.querySelector('[data-es-vh-media]');
+      var wrap = root.querySelector('[data-es-vh]');
+      if (!media || !wrap) return;
+      var dir = {{ section.settings.parallax_direction | default: 'vertical' | json }};
+      var ticking = false;
+      function update() {
+        var rect = wrap.getBoundingClientRect();
+        var vh = window.innerHeight || 1;
+        var progress = (rect.top / vh);
+        var offset = progress * 40;
+        media.style.transform = dir === 'horizontal' ? 'translateX(' + offset + 'px)' : 'translateY(' + offset + 'px)';
+        ticking = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      update();
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Video Hero",
+  "tag": "section",
+  "class": "shopify-section--es-video-hero",
+  "settings": [
+    { "type": "select", "id": "container", "label": "Container", "options": [{ "value": "fixed", "label": "Fixed width" }, { "value": "full", "label": "Full width" }], "default": "full" },
+    { "type": "video", "id": "video", "label": "Video" },
+    { "type": "video_url", "id": "video_url", "label": "Or video URL", "accept": ["youtube", "vimeo"] },
+    { "type": "range", "id": "video_height", "label": "Height (desktop)", "min": 300, "max": 900, "step": 20, "unit": "px", "default": 560 },
+    { "type": "range", "id": "video_mobile_height", "label": "Height (mobile)", "min": 240, "max": 700, "step": 20, "unit": "px", "default": 420 },
+    { "type": "checkbox", "id": "enable_parallax", "label": "Enable parallax drift", "default": false },
+    {
+      "type": "select",
+      "id": "parallax_direction",
+      "label": "Parallax direction",
+      "options": [{ "value": "vertical", "label": "Vertical" }, { "value": "horizontal", "label": "Horizontal" }],
+      "default": "vertical"
+    },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 30 },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "See it in motion" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Vertical position",
+      "options": [{ "value": "top", "label": "Top" }, { "value": "middle", "label": "Middle" }, { "value": "bottom", "label": "Bottom" }],
+      "default": "middle"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Alignment",
+      "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }],
+      "default": "center"
+    },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [{ "value": "solid", "label": "Solid" }, { "value": "secondary", "label": "Outline" }],
+      "default": "solid"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "E-sellers Video Hero" }
+  ]
+}
+{% endschema %}

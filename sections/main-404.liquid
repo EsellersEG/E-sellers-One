@@ -1,0 +1,210 @@
+{%- comment -%}
+  Main 404 Page Not Found Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 64 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 80 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+  }
+
+  .es-404-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .es-404-badge {
+    font-size: clamp(5rem, 12vw, 9rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    background: linear-gradient(135deg, #0f172a 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
+
+  .es-404-heading {
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .es-404-subtext {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #64748b;
+    margin: 0;
+    max-width: 480px;
+  }
+
+  /* Search Bar */
+  .es-404-search {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    margin-top: 8px;
+  }
+
+  .es-404-search__input {
+    width: 100%;
+    padding: 14px 48px 14px 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .es-404-search__input:focus {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+  }
+
+  .es-404-search__btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 8px;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .es-404-search__btn:hover {
+    color: #0f172a;
+  }
+
+  /* CTAs */
+  .es-404-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .es-404-btn-primary {
+    padding: 14px 32px;
+    background-color: #0f172a;
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .es-404-btn-primary:hover {
+    background-color: #1e293b;
+    transform: translateY(-1px);
+  }
+
+  .es-404-btn-secondary {
+    padding: 14px 28px;
+    background-color: transparent;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .es-404-btn-secondary:hover {
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <div class="es-404-container">
+    <p class="es-404-badge">404</p>
+    
+    <h1 class="es-404-heading">
+      {{ '404.general.title' | t | default: 'Page Not Found' }}
+    </h1>
+
+    <p class="es-404-subtext">
+      {{ '404.general.subtext' | t | default: 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.' }}
+    </p>
+
+    <!-- Search Bar -->
+    <form action="{{ routes.search_url }}" method="get" role="search" class="es-404-search">
+      <input
+        type="search"
+        name="q"
+        placeholder="{{ 'general.search.search' | t | default: 'Search our store...' }}"
+        class="es-404-search__input"
+        aria-label="Search"
+      >
+      <button type="submit" class="es-404-search__btn" aria-label="Submit search">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </form>
+
+    <!-- Action Buttons -->
+    <div class="es-404-actions">
+      <a href="{{ routes.all_products_collection_url }}" class="es-404-btn-primary">
+        {{ '404.general.continue_shopping' | t | default: 'Browse Catalog' }}
+      </a>
+      <a href="{{ routes.root_url }}" class="es-404-btn-secondary">
+        Return to Home
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404",
+  "tag": "section",
+  "class": "shopify-section--404",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    }
+  ]
+}
+{% endschema %}

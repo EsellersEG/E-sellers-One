@@ -1,0 +1,488 @@
+{%- comment -%}
+  E-sellers Before/After Image Comparison Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#0f172a' }};
+  }
+
+  .es-ba-container {
+    display: grid;
+    gap: 48px;
+    align-items: center;
+    {% if section.settings.text_position == 'center' %}
+      grid-template-columns: 1fr;
+      text-align: center;
+    {% elsif section.settings.text_position == 'end' %}
+      grid-template-columns: 1.25fr 0.75fr;
+    {% else %}
+      grid-template-columns: 0.75fr 1.25fr;
+    {% endif %}
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-ba-container {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  .es-ba-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 600px;
+    {% if section.settings.text_position == 'center' %}
+      margin: 0 auto;
+    {% endif %}
+  }
+
+  .es-ba-subheading {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .es-ba-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: inherit;
+  }
+
+  .es-ba-body {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  /* Comparison Widget */
+  .es-ba-widget {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.18);
+    background: #0f172a;
+    user-select: none;
+    cursor: col-resize;
+    aspect-ratio: 16 / 10;
+    touch-action: pan-y;
+  }
+
+  .es-ba-image-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-ba-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  .es-ba-layer--before {
+    z-index: 1;
+  }
+
+  .es-ba-layer--after {
+    z-index: 2;
+    overflow: hidden;
+    width: {{ section.settings.drag_initial_position | default: 50 }}%;
+  }
+
+  .es-ba-layer--after .es-ba-img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  /* Before / After Badges */
+  .es-ba-badge {
+    position: absolute;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    z-index: 5;
+    pointer-events: none;
+    {% if section.settings.before_after_text_position == 'bottom' %}
+      bottom: 20px;
+    {% else %}
+      top: 20px;
+    {% endif %}
+  }
+
+  .es-ba-badge--before {
+    right: 20px;
+    color: {{ section.settings.before_text_color | default: '#ffffff' }};
+  }
+
+  .es-ba-badge--after {
+    left: 20px;
+    color: {{ section.settings.after_text_color | default: '#ffffff' }};
+  }
+
+  /* Draggable Divider Handle */
+  .es-ba-divider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: {{ section.settings.drag_initial_position | default: 50 }}%;
+    width: 3px;
+    background: #ffffff;
+    z-index: 10;
+    transform: translateX(-50%);
+    pointer-events: none;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .es-ba-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: {{ section.settings.drag_cursor_background | default: '#ffffff' }};
+    color: {{ section.settings.drag_cursor_color | default: '#0f172a' }};
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+{%- endstyle -%}
+
+<div class="es-before-after-section" id="BeforeAfter-{{ section.id }}">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    <div class="es-ba-container">
+      
+      <!-- Intro Story Content -->
+      {%- if section.settings.title != blank or section.settings.content != blank or section.settings.subheading != blank -%}
+        <div class="es-ba-content">
+          {%- if section.settings.subheading != blank -%}
+            <p class="es-ba-subheading">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="es-ba-title">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.content != blank -%}
+            <div class="es-ba-body">
+              {{ section.settings.content }}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <!-- Comparison Slider Widget -->
+      <div class="es-ba-widget" id="Widget-{{ section.id }}">
+        
+        <!-- Before Layer (Underneath) -->
+        <div class="es-ba-image-layer es-ba-layer--before">
+          {%- if section.settings.before_image != blank -%}
+            {%- assign es_tagarg_1 = section.settings.before_text | default: 'Before' | escape -%}{{ section.settings.before_image | image_url: width: 2000 | image_tag:
+              loading: 'lazy',
+              class: 'es-ba-img',
+              alt: es_tagarg_1}}
+          {%- else -%}
+            <div style="width: 100%; height: 100%; background: #334155; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 700;">Before Image</div>
+          {%- endif -%}
+
+          {%- if section.settings.before_text != blank -%}
+            <span class="es-ba-badge es-ba-badge--before">{{ section.settings.before_text | escape }}</span>
+          {%- endif -%}
+        </div>
+
+        <!-- After Layer (Clipped Top) -->
+        <div class="es-ba-image-layer es-ba-layer--after" id="AfterLayer-{{ section.id }}">
+          {%- if section.settings.after_image != blank -%}
+            {%- assign es_tagarg_2 = section.settings.after_text | default: 'After' | escape -%}{{ section.settings.after_image | image_url: width: 2000 | image_tag:
+              loading: 'lazy',
+              class: 'es-ba-img',
+              alt: es_tagarg_2}}
+          {%- else -%}
+            <div style="width: 100%; height: 100%; background: #0f172a; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 700;">After Image</div>
+          {%- endif -%}
+
+          {%- if section.settings.after_text != blank -%}
+            <span class="es-ba-badge es-ba-badge--after">{{ section.settings.after_text | escape }}</span>
+          {%- endif -%}
+        </div>
+
+        <!-- Divider Drag Handle -->
+        <div class="es-ba-divider" id="Divider-{{ section.id }}">
+          <div class="es-ba-handle">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="8 16 4 12 8 8"></polyline>
+              <polyline points="16 8 20 12 16 16"></polyline>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function initBeforeAfter(sectionId) {
+      const widget = document.getElementById('Widget-' + sectionId);
+      const afterLayer = document.getElementById('AfterLayer-' + sectionId);
+      const divider = document.getElementById('Divider-' + sectionId);
+      if (!widget || !afterLayer || !divider) return;
+
+      let isDragging = false;
+
+      function updateSliderPosition(clientX) {
+        const rect = widget.getBoundingClientRect();
+        let x = clientX - rect.left;
+        if (x < 0) x = 0;
+        if (x > rect.width) x = rect.width;
+
+        const percent = (x / rect.width) * 100;
+        afterLayer.style.width = percent + '%';
+        divider.style.left = percent + '%';
+
+        const afterImg = afterLayer.querySelector('.es-ba-img');
+        if (afterImg) {
+          afterImg.style.width = rect.width + 'px';
+        }
+      }
+
+      function syncImageWidth() {
+        const rect = widget.getBoundingClientRect();
+        const afterImg = afterLayer.querySelector('.es-ba-img');
+        if (afterImg) {
+          afterImg.style.width = rect.width + 'px';
+        }
+      }
+
+      widget.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        updateSliderPosition(e.clientX);
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        updateSliderPosition(e.clientX);
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      widget.addEventListener('touchstart', (e) => {
+        isDragging = true;
+        updateSliderPosition(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        updateSliderPosition(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      window.addEventListener('resize', syncImageWidth);
+      syncImageWidth();
+    }
+
+    initBeforeAfter('{{ section.id }}');
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Before/after image",
+  "tag": "section",
+  "class": "shopify-section--before-after-image",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width container",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Proven Results"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Before & After Transformation"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Description",
+      "default": "<p>Drag the slider to compare the visible difference and experience the true transformative quality of our craftsmanship.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "header",
+      "content": "Images & Badges"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image",
+      "label": "Before image",
+      "info": "2000 x 1200px recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image",
+      "label": "After image",
+      "info": "Dimensions must match before image."
+    },
+    {
+      "type": "text",
+      "id": "before_text",
+      "label": "Before badge label",
+      "default": "Before"
+    },
+    {
+      "type": "text",
+      "id": "after_text",
+      "label": "After badge label",
+      "default": "After"
+    },
+    {
+      "type": "select",
+      "id": "before_after_text_position",
+      "label": "Badge vertical position",
+      "options": [
+        { "value": "top", "label": "Top corners" },
+        { "value": "bottom", "label": "Bottom corners" }
+      ],
+      "default": "top"
+    },
+    {
+      "type": "range",
+      "id": "drag_initial_position",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Initial divider position",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "before_text_color",
+      "label": "Before label color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "after_text_color",
+      "label": "After label color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "drag_cursor_background",
+      "label": "Drag handle background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "drag_cursor_color",
+      "label": "Drag handle icon color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before/after image"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,438 @@
+{%- comment -%}
+  E-sellers Images & Text Scrolling (Sticky Storytelling) - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+    position: relative;
+  }
+
+  /* Desktop Layout */
+  .es-scrolling-story {
+    display: grid;
+    grid-template-columns: {% if section.settings.image_position == 'start' %}1.1fr 1fr{% else %}1fr 1.1fr{% endif %};
+    gap: 64px;
+    align-items: start;
+  }
+
+  /* Media Sticky Column */
+  .es-scrolling-story__media-col {
+    position: sticky;
+    top: 100px;
+    {% if section.settings.image_position == 'start' %}order: 1;{% else %}order: 2;{% endif %}
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+    box-shadow: 0 10px 40px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  .es-scrolling-story__media-item {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out, transform 0.5s ease-out;
+    transform: scale(1.04);
+  }
+
+  .es-scrolling-story__media-item.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .es-scrolling-story__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Narrative Content Steps Column */
+  .es-scrolling-story__content-col {
+    {% if section.settings.image_position == 'start' %}order: 2;{% else %}order: 1;{% endif %}
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+    padding-block: 40px;
+  }
+
+  .es-scrolling-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px;
+    border-radius: 16px;
+    background-color: rgba(248, 250, 252, 0.6);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+  }
+
+  .es-scrolling-step.is-active {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.06);
+  }
+
+  .es-scrolling-step__counter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .es-scrolling-step__icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  .es-scrolling-step__heading {
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0;
+    color: {{ section.settings.heading_color | default: '#0f172a' }};
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-scrolling-step__desc {
+    font-size: 1rem;
+    line-height: 1.65;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  /* Mobile Layout */
+  @media screen and (max-width: 989px) {
+    .es-scrolling-story {
+      display: {% if section.settings.stack_on_mobile %}flex{% else %}flex{% endif %};
+      flex-direction: {% if section.settings.stack_on_mobile %}column{% else %}row{% endif %};
+      gap: 20px;
+      {% unless section.settings.stack_on_mobile %}
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 16px;
+        scrollbar-width: none;
+      {% endunless %}
+    }
+
+    .es-scrolling-story::-webkit-scrollbar {
+      display: none;
+    }
+
+    .es-scrolling-story__media-col {
+      display: none;
+    }
+
+    .es-scrolling-story__content-col {
+      display: contents;
+    }
+
+    .es-scrolling-step {
+      {% unless section.settings.stack_on_mobile %}
+        flex: 0 0 82vw;
+        scroll-snap-align: start;
+      {% endunless %}
+      padding: 24px 20px;
+    }
+
+    .es-scrolling-step__mobile-media {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      background-color: #f1f5f9;
+    }
+
+    .es-scrolling-step__mobile-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .es-scrolling-step__mobile-media {
+      display: none;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-images-scrolling-section" data-section-id="{{ section.id }}">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    <div class="es-scrolling-story">
+      <!-- Sticky Media Column (Desktop) -->
+      <div class="es-scrolling-story__media-col" id="MediaSticky-{{ section.id }}">
+        {%- for block in section.blocks -%}
+          <div class="es-scrolling-story__media-item {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}">
+            {%- if block.settings.image != blank -%}
+              {%- assign es_tagarg_1 = block.settings.image.alt | default: block.settings.title | escape -%}{{ block.settings.image | image_url: width: 1400 | image_tag:
+                loading: 'lazy',
+                class: 'es-scrolling-story__img',
+                alt: es_tagarg_1}}
+            {%- else -%}
+              <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e2e8f0; color: #64748b;">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Narrative Step Cards -->
+      <div class="es-scrolling-story__content-col">
+        {%- for block in section.blocks -%}
+          <div class="es-scrolling-step {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            <!-- Mobile Image -->
+            <div class="es-scrolling-step__mobile-media">
+              {%- if block.settings.image != blank -%}
+                {%- assign es_tagarg_2 = block.settings.title | escape -%}{{ block.settings.image | image_url: width: 800 | image_tag:
+                  loading: 'lazy',
+                  alt: es_tagarg_2}}
+              {%- endif -%}
+            </div>
+
+            {%- if section.settings.show_counter -%}
+              <span class="es-scrolling-step__counter">
+                {{ forloop.index | prepend: '00' | slice: -2, 2 }}
+              </span>
+            {%- endif -%}
+
+            {%- if block.settings.custom_icon != blank -%}
+              <img src="{{ block.settings.custom_icon | image_url: width: 120 }}" width="{{ block.settings.custom_icon.width }}" height="{{ block.settings.custom_icon.height }}" alt="Icon" class="es-scrolling-step__icon" loading="lazy">
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <h3 class="es-scrolling-step__heading">{{ block.settings.title | escape }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.content != blank -%}
+              <div class="es-scrolling-step__desc">{{ block.settings.content }}</div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function initStoryScroll(section) {
+      if (!section || window.innerWidth < 990) return;
+      const mediaItems = section.querySelectorAll('.es-scrolling-story__media-item');
+      const stepItems = section.querySelectorAll('.es-scrolling-step');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = entry.target.getAttribute('data-index');
+            mediaItems.forEach((media, mIdx) => {
+              if (mIdx.toString() === idx) {
+                media.classList.add('is-active');
+              } else {
+                media.classList.remove('is-active');
+              }
+            });
+
+            stepItems.forEach((step, sIdx) => {
+              if (sIdx.toString() === idx) {
+                step.classList.add('is-active');
+              } else {
+                step.classList.remove('is-active');
+              }
+            });
+          }
+        });
+      }, { rootMargin: '-20% 0px -40% 0px', threshold: 0.3 });
+
+      stepItems.forEach(step => observer.observe(step));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.es-images-scrolling-section').forEach(initStoryScroll);
+    });
+
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      document.querySelectorAll('.es-images-scrolling-section').forEach(initStoryScroll);
+    }
+
+    document.addEventListener('shopify:section:load', (e) => {
+      e.target.querySelectorAll('.es-images-scrolling-section').forEach(initStoryScroll);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "E-sellers Story Scrolling",
+  "class": "shopify-section--es-scrolling-story",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Sticky image position (Desktop)",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "end"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counter",
+      "label": "Show step number badges (01, 02...)",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_on_mobile",
+      "label": "Stack vertically on mobile",
+      "info": "When disabled, steps become a horizontal swipe carousel on mobile devices.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Story step",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Step media / image",
+          "info": "1200 x 1500px recommended"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step title",
+          "default": "Sustainable Sourcing & Craft"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description",
+          "default": "<p>Every component is sourced with ethical precision and constructed to last through generations of use.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Story Scrolling",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "01. Pure Craftsmanship",
+            "content": "<p>Carefully engineered from raw elements into precision goods made to elevate everyday rituals.</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "02. Tested for Longevity",
+            "content": "<p>Undergoes rigorous stress testing to meet the uncompromising standards of our community.</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "03. Direct to Your Door",
+            "content": "<p>Packaged in biodegradable protective casing and delivered seamlessly with express worldwide transit.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

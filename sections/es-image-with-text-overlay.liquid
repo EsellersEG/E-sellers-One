@@ -1,0 +1,467 @@
+{%- comment -%}
+  E-sellers Image With Text Overlay (Hero Banner) - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-hero-height-sm: 360px;
+    --es-hero-height-md: 480px;
+    --es-hero-height-lg: 640px;
+    --es-hero-height-fill: 100vh;
+    position: relative;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} {
+      --es-hero-height-sm: 280px;
+      --es-hero-height-md: 380px;
+      --es-hero-height-lg: 480px;
+      --es-hero-height-fill: 85vh;
+    }
+  }
+
+  .es-hero-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    min-height: {% if section.settings.image_size == 'sm' %}var(--es-hero-height-sm){% elsif section.settings.image_size == 'md' %}var(--es-hero-height-md){% elsif section.settings.image_size == 'lg' %}var(--es-hero-height-lg){% elsif section.settings.image_size == 'fill' %}var(--es-hero-height-fill){% else %}auto{% endif %};
+    background-color: #0f172a;
+  }
+
+  {% unless section.settings.full_width %}
+    .es-hero-banner--contained {
+      max-width: 1400px;
+      margin: 24px auto;
+      border-radius: 16px;
+    }
+  {% endunless %}
+
+  /* Media Layers */
+  .es-hero-banner__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-hero-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .es-hero-banner__image--mobile {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .es-hero-banner__image--desktop {
+      display: none;
+    }
+    .es-hero-banner__image--mobile {
+      display: block;
+    }
+  }
+
+  .es-hero-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: {{ section.settings.overlay_color | default: '#000000' }};
+    opacity: {{ section.settings.overlay_opacity | default: 30 | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  /* Content Wrapper */
+  .es-hero-banner__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 60px 24px;
+    box-sizing: border-box;
+    display: flex;
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+  }
+
+  /* Alignment Classes */
+  .es-hero-banner__content--top-left { align-items: flex-start; justify-content: flex-start; text-align: left; }
+  .es-hero-banner__content--top-center { align-items: flex-start; justify-content: center; text-align: center; }
+  .es-hero-banner__content--top-right { align-items: flex-start; justify-content: flex-end; text-align: right; }
+  .es-hero-banner__content--middle-left { align-items: center; justify-content: flex-start; text-align: left; }
+  .es-hero-banner__content--middle-center { align-items: center; justify-content: center; text-align: center; }
+  .es-hero-banner__content--middle-right { align-items: center; justify-content: flex-end; text-align: right; }
+  .es-hero-banner__content--bottom-left { align-items: flex-end; justify-content: flex-start; text-align: left; }
+  .es-hero-banner__content--bottom-center { align-items: flex-end; justify-content: center; text-align: center; }
+  .es-hero-banner__content--bottom-right { align-items: flex-end; justify-content: flex-end; text-align: right; }
+
+  .es-hero-banner__box {
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .es-hero-banner__subheading {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+    color: inherit;
+    opacity: 0.9;
+  }
+
+  .es-hero-banner__heading {
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0;
+    color: inherit;
+  }
+
+  .es-hero-banner__heading--h0 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+  .es-hero-banner__heading--h1 { font-size: clamp(2rem, 4vw, 3.5rem); }
+  .es-hero-banner__heading--h2 { font-size: clamp(1.75rem, 3vw, 2.75rem); }
+  .es-hero-banner__heading--h3 { font-size: clamp(1.4rem, 2.5vw, 2rem); }
+
+  .es-hero-banner__text {
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    line-height: 1.6;
+    margin: 0;
+    opacity: 0.95;
+  }
+
+  .es-hero-banner__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    align-self: flex-start;
+  }
+
+  .es-hero-banner__content--top-center .es-hero-banner__btn,
+  .es-hero-banner__content--middle-center .es-hero-banner__btn,
+  .es-hero-banner__content--bottom-center .es-hero-banner__btn {
+    align-self: center;
+  }
+
+  .es-hero-banner__content--top-right .es-hero-banner__btn,
+  .es-hero-banner__content--middle-right .es-hero-banner__btn,
+  .es-hero-banner__content--bottom-right .es-hero-banner__btn {
+    align-self: flex-end;
+  }
+
+  .es-hero-banner__btn--sm { padding: 10px 20px; font-size: 0.875rem; }
+  .es-hero-banner__btn--base { padding: 12px 28px; font-size: 0.95rem; }
+  .es-hero-banner__btn--lg { padding: 15px 36px; font-size: 1.05rem; }
+  .es-hero-banner__btn--xl { padding: 18px 44px; font-size: 1.15rem; }
+
+  .es-hero-banner__btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+{%- endstyle -%}
+
+<div class="es-hero-banner {% unless section.settings.full_width %}es-hero-banner--contained{% endunless %}">
+  <!-- Background Image Layer -->
+  <div class="es-hero-banner__media">
+    {%- if section.settings.image != blank -%}
+      {{ section.settings.image | image_url: width: 3200 | image_tag:
+        loading: 'eager',
+        fetchpriority: 'high',
+        sizes: '100vw',
+        widths: '400, 600, 800, 1200, 1600, 2000, 2600, 3200',
+        class: 'es-hero-banner__image es-hero-banner__image--desktop'
+      }}
+
+      {%- if section.settings.mobile_image != blank -%}
+        {{ section.settings.mobile_image | image_url: width: 1400 | image_tag:
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw',
+          widths: '300, 400, 600, 800, 1000, 1400',
+          class: 'es-hero-banner__image es-hero-banner__image--mobile'
+        }}
+      {%- endif -%}
+    {%- else -%}
+      <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);"></div>
+    {%- endif -%}
+  </div>
+
+  <div class="es-hero-banner__overlay"></div>
+
+  <!-- Content Box -->
+  <div class="page-width es-hero-banner__content es-hero-banner__content--{{ section.settings.desktop_content_position | default: 'middle-center' }}">
+    <div class="es-hero-banner__box">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'subheading' -%}
+            {%- if block.settings.text != blank -%}
+              <p class="es-hero-banner__subheading" {{ block.shopify_attributes }}>
+                {{ block.settings.text | escape }}
+              </p>
+            {%- endif -%}
+
+          {%- when 'heading' -%}
+            {%- if block.settings.text != blank -%}
+              <h2 class="es-hero-banner__heading es-hero-banner__heading--{{ block.settings.heading_tag | default: 'h1' }}" {{ block.shopify_attributes }}>
+                {{ block.settings.text | escape }}
+              </h2>
+            {%- endif -%}
+
+          {%- when 'richtext' -%}
+            {%- if block.settings.content != blank -%}
+              <div class="es-hero-banner__text" {{ block.shopify_attributes }}>
+                {{ block.settings.content }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'liquid' -%}
+            {%- if block.settings.liquid != blank -%}
+              <div class="es-hero-banner__liquid" {{ block.shopify_attributes }}>
+                {{ block.settings.liquid }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'button' -%}
+            {%- if block.settings.text != blank -%}
+              {%- assign btn_bg = block.settings.background | default: '#ffffff' -%}
+              {%- assign btn_text = block.settings.text_color | default: '#121212' -%}
+              <a
+                href="{{ block.settings.url | default: '#' }}"
+                class="es-hero-banner__btn es-hero-banner__btn--{{ block.settings.size | default: 'lg' }}"
+                style="
+                  {% if block.settings.style == 'outline' %}
+                    background: transparent;
+                    color: {{ btn_bg }};
+                    border: 2px solid {{ btn_bg }};
+                  {% else %}
+                    background-color: {{ btn_bg }};
+                    color: {{ btn_text }};
+                    border: 2px solid transparent;
+                  {% endif %}
+                "
+                {{ block.shopify_attributes }}
+              >
+                {{ block.settings.text | escape }}
+              </a>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Hero Banner",
+  "class": "shopify-section--es-image-overlay",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop background image",
+      "info": "3200 x 1600px recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile background image",
+      "info": "1200 x 1400px recommended"
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "Banner height",
+      "options": [
+        { "value": "auto", "label": "Original ratio / Auto" },
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" },
+        { "value": "fill", "label": "Full screen viewport" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "label": "Content placement",
+      "options": [
+        { "value": "top-left", "label": "Top left" },
+        { "value": "top-center", "label": "Top center" },
+        { "value": "top-right", "label": "Top right" },
+        { "value": "middle-left", "label": "Middle left" },
+        { "value": "middle-center", "label": "Middle center" },
+        { "value": "middle-right", "label": "Middle right" },
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "bottom-center", "label": "Bottom center" },
+        { "value": "bottom-right", "label": "Bottom right" }
+      ],
+      "default": "middle-center"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Overlay"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 35
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subheading",
+      "name": "Subheading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Subheading text",
+          "default": "New Season Arrival"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Heading text",
+          "default": "Crafted for Performance & Style"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Heading size",
+          "options": [
+            { "value": "h0", "label": "Hero / Extra Large" },
+            { "value": "h1", "label": "Large (H1)" },
+            { "value": "h2", "label": "Medium (H2)" },
+            { "value": "h3", "label": "Small (H3)" }
+          ],
+          "default": "h1"
+        }
+      ]
+    },
+    {
+      "type": "richtext",
+      "name": "Paragraph",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Discover the latest elevated collection designed to transform your everyday lifestyle.</p>"
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid code"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Button text",
+          "default": "Shop the Collection"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Button link"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Button style",
+          "options": [
+            { "value": "fill", "label": "Solid fill" },
+            { "value": "outline", "label": "Outline" }
+          ],
+          "default": "fill"
+        },
+        {
+          "type": "select",
+          "id": "size",
+          "label": "Button size",
+          "options": [
+            { "value": "sm", "label": "Small" },
+            { "value": "base", "label": "Medium" },
+            { "value": "lg", "label": "Large" },
+            { "value": "xl", "label": "Extra Large" }
+          ],
+          "default": "lg"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Button background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Button text color",
+          "default": "#121212"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text overlay",
+      "blocks": [
+        { "type": "subheading" },
+        { "type": "heading" },
+        { "type": "richtext" },
+        { "type": "button" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,347 @@
+{%- comment -%}
+  E-sellers Breadcrumbs - E-sellers One (v5.0.0)
+
+  Location trail for every page type except the homepage.
+
+  The trail is built once as two parallel lists (titles and URLs) and then
+  rendered twice: as an accessible ordered list, and optionally as
+  BreadcrumbList structured data. Building it once keeps the visible trail and
+  the data search engines read from ever disagreeing.
+
+  Product trails prefer, in order: the collection the visitor browsed through,
+  the product's `breadcrumb.primary_collection` metafield, its first collection,
+  and finally the all-products collection.
+{%- endcomment -%}
+
+{%- liquid
+  assign crumb_sep = '::es-crumb::'
+  assign current_marker = '#es-current'
+
+  assign label_home = 'general.breadcrumbs.home' | t | default: 'Home'
+  assign label_collections = 'general.breadcrumbs.collections' | t | default: 'Collections'
+  assign label_all_products = 'general.breadcrumbs.all_products' | t | default: 'All products'
+  assign label_cart = 'general.breadcrumbs.cart' | t | default: 'Cart'
+  assign label_search = 'general.breadcrumbs.search' | t | default: 'Search'
+
+  assign crumb_titles = label_home
+  assign crumb_urls = routes.root_url
+
+  case request.page_type
+    when 'product'
+      assign crumb_collection = collection
+      if crumb_collection == blank
+        assign primary_collection = product.metafields.breadcrumb.primary_collection.value
+        if primary_collection != blank
+          assign crumb_collection = primary_collection
+        else
+          assign crumb_collection = product.collections | first
+        endif
+      endif
+
+      if crumb_collection != blank
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: crumb_collection.title
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: crumb_collection.url
+      else
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: label_all_products
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: routes.all_products_collection_url
+      endif
+
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: product.title
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+
+    when 'collection'
+      if collection.handle != 'all'
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: label_collections
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: routes.collections_url
+      endif
+
+      if current_tags
+        assign tag_trail = current_tags | join: ' + '
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: collection.title | append: crumb_sep | append: tag_trail
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: collection.url | append: crumb_sep | append: current_marker
+      else
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: collection.title
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+      endif
+
+    when 'list-collections'
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: label_collections
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+
+    when 'blog'
+      if current_tags
+        assign tag_trail = current_tags | join: ' + '
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: blog.title | append: crumb_sep | append: tag_trail
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: blog.url | append: crumb_sep | append: current_marker
+      else
+        assign crumb_titles = crumb_titles | append: crumb_sep | append: blog.title
+        assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+      endif
+
+    when 'article'
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: blog.title | append: crumb_sep | append: article.title
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: blog.url | append: crumb_sep | append: current_marker
+
+    when 'cart'
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: label_cart
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+
+    when 'search'
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: label_search
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+
+    when 'page'
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: page.title
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+
+    else
+      assign crumb_titles = crumb_titles | append: crumb_sep | append: page_title
+      assign crumb_urls = crumb_urls | append: crumb_sep | append: current_marker
+  endcase
+
+  comment
+    A trailing empty string would be dropped by split, which is why the current
+    page carries a marker rather than a blank URL.
+  endcomment
+  assign crumb_title_list = crumb_titles | split: crumb_sep
+  assign crumb_url_list = crumb_urls | split: crumb_sep
+
+  assign align = section.settings.text_alignment | default: 'start'
+-%}
+
+{%- unless request.page_type == 'index' -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-bc-bg: {{ section.settings.background | default: 'transparent' }};
+      --es-bc-text: {{ section.settings.text_color | default: 'var(--es-fg-muted)' }};
+      --es-bc-link: {{ section.settings.link_color | default: 'var(--es-fg)' }};
+      --es-bc-pt: {{ section.settings.padding_top | default: 16 }}px;
+      --es-bc-pb: {{ section.settings.padding_bottom | default: 20 }}px;
+
+      background-color: var(--es-bc-bg);
+      padding-top: var(--es-bc-pt);
+      padding-bottom: var(--es-bc-pb);
+    }
+
+    {%- if section.settings.container == 'full' -%}
+      #shopify-section-{{ section.id }} .page-width { max-width: none; }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .es-bc__list {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--es-space-1) var(--es-space-2);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: var(--es-text-sm);
+      line-height: var(--es-leading-snug);
+      color: var(--es-bc-text);
+    }
+
+    {%- comment -%} Mobile always reads from the start; alignment applies from tablet up. {%- endcomment -%}
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-bc__list {
+        justify-content: {% case align %}{% when 'center' %}center{% when 'end' %}flex-end{% else %}flex-start{% endcase %};
+      }
+    }
+
+    #shopify-section-{{ section.id }} .es-bc__item {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--es-space-2);
+      min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .es-bc__link {
+      color: var(--es-bc-link);
+      text-decoration: none;
+      transition: opacity var(--es-dur-fast) var(--es-ease);
+    }
+
+    #shopify-section-{{ section.id }} .es-bc__link:hover {
+      opacity: 1;
+      text-decoration: underline;
+      text-underline-offset: 0.25em;
+    }
+
+    #shopify-section-{{ section.id }} .es-bc__current {
+      color: var(--es-bc-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 60vw;
+    }
+
+    #shopify-section-{{ section.id }} .es-bc__sep {
+      display: inline-flex;
+      align-items: center;
+      color: var(--es-bc-text);
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    #shopify-section-{{ section.id }} .es-bc__sep svg {
+      width: 10px;
+      height: 10px;
+    }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    <nav class="es-bc" aria-label="{{ 'general.breadcrumbs.label' | t | default: 'Breadcrumb' }}">
+      <ol class="es-bc__list" role="list">
+        {%- for crumb_title in crumb_title_list -%}
+          {%- assign crumb_url = crumb_url_list[forloop.index0] -%}
+          <li class="es-bc__item">
+            {%- unless forloop.first -%}
+              <span class="es-bc__sep" aria-hidden="true">
+                {%- if section.settings.separator == 'slash' -%}
+                  /
+                {%- else -%}
+                  <svg viewBox="0 0 10 10" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3.5 1.5 7 5l-3.5 3.5"/></svg>
+                {%- endif -%}
+              </span>
+            {%- endunless -%}
+
+            {%- if forloop.last or crumb_url == current_marker or crumb_url == blank -%}
+              <span class="es-bc__current" aria-current="page">{{ crumb_title | escape }}</span>
+            {%- else -%}
+              <a class="es-bc__link" href="{{ crumb_url }}">{{ crumb_title | escape }}</a>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ol>
+    </nav>
+  </div>
+
+  {%- if section.settings.enable_structured_data -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {%- for crumb_title in crumb_title_list -%}
+            {%- liquid
+              assign crumb_url = crumb_url_list[forloop.index0]
+              if forloop.last or crumb_url == current_marker or crumb_url == blank
+                assign crumb_absolute = canonical_url
+              else
+                assign crumb_absolute = request.origin | append: crumb_url
+              endif
+            -%}
+            {
+              "@type": "ListItem",
+              "position": {{ forloop.index }},
+              "name": {{ crumb_title | strip_html | json }},
+              "item": {{ crumb_absolute | json }}
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+  {%- endif -%}
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "E-sellers Breadcrumbs",
+  "tag": "section",
+  "class": "shopify-section--es-breadcrumbs",
+  "limit": 1,
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"],
+    "templates": ["index"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "container",
+      "label": "Container",
+      "options": [
+        { "value": "fixed", "label": "Fixed width" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "fixed"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alignment",
+      "info": "Applies from tablet width up. Mobile always aligns to the start.",
+      "options": [
+        { "value": "start", "label": "Start" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "End" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "separator",
+      "label": "Separator",
+      "options": [
+        { "value": "chevron", "label": "Chevron" },
+        { "value": "slash", "label": "Slash" }
+      ],
+      "default": "chevron"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_structured_data",
+      "label": "Output breadcrumb structured data",
+      "info": "Helps search engines show the trail in results.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text and separator"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Links"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Breadcrumbs"
+    }
+  ]
+}
+{% endschema %}

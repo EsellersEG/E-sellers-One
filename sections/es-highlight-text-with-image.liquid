@@ -1,0 +1,197 @@
+{%- comment -%}
+  E-sellers Highlight Text With Image - E-sellers One (v5.0.0)
+
+  A single large statement where merchant-placed [img1], [img2]... tokens in
+  the text are swapped for small inline images supplied by blocks - useful for
+  "Shop [img1] our new arrivals" style editorial headlines.
+
+  Token replacement happens server-side with a capture loop rather than a
+  client-side template stamp, so the images are present in the first response
+  (no flash of missing content, nothing to hydrate).
+{%- endcomment -%}
+
+{%- liquid
+  assign es_htwi_text = section.settings.text
+  assign es_htwi_blocks = section.blocks
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 50 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 50 }}px;
+  }
+
+  #shopify-section-{{ section.id }} .es-htwi {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--es-space-2);
+    font-family: var(--font-heading-family, inherit);
+    font-weight: var(--font-heading-weight, 700);
+    line-height: 1.15;
+    letter-spacing: var(--es-track-snug);
+    justify-content: {% case section.settings.alignment %}{% when 'left' %}flex-start{% when 'right' %}flex-end{% else %}center{% endcase %};
+    text-align: {{ section.settings.alignment | default: 'center' }};
+  }
+
+  #shopify-section-{{ section.id }} .es-htwi--h1 { font-size: var(--es-text-3xl); }
+  #shopify-section-{{ section.id }} .es-htwi--h2 { font-size: var(--es-text-2xl); }
+  #shopify-section-{{ section.id }} .es-htwi--h3 { font-size: var(--es-text-xl); }
+  #shopify-section-{{ section.id }} .es-htwi--hd1 { font-size: var(--es-text-4xl); }
+  #shopify-section-{{ section.id }} .es-htwi--hd2 { font-size: var(--es-text-3xl); }
+
+  #shopify-section-{{ section.id }} .es-htwi__img {
+    display: inline-flex;
+    border-radius: var(--es-radius-lg);
+    overflow: hidden;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .es-htwi__img img {
+    display: block;
+    width: var(--es-htwi-w, 220px);
+    height: var(--es-htwi-w, 220px);
+    object-fit: cover;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .es-htwi__img img {
+      width: var(--es-htwi-w-mobile, 110px);
+      height: var(--es-htwi-w-mobile, 110px);
+    }
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <div class="es-htwi es-htwi--{{ section.settings.heading_size | default: 'hd1' }}">
+    {%- assign es_htwi_remaining = es_htwi_text -%}
+    {%- for block in es_htwi_blocks -%}
+      {%- assign es_htwi_token = '[img' | append: forloop.index | append: ']' -%}
+      {%- if es_htwi_remaining contains es_htwi_token -%}
+        {%- assign es_htwi_parts = es_htwi_remaining | split: es_htwi_token -%}
+        <span>{{ es_htwi_parts[0] }}</span>
+        <span
+          class="es-htwi__img"
+          style="--es-htwi-w: {{ block.settings.image_width | default: 220 }}px; --es-htwi-w-mobile: {{ block.settings.image_width_mobile | default: 110 }}px;"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.image_link != blank -%}<a href="{{ block.settings.image_link }}">{%- endif -%}
+          {%- if block.settings.image != blank -%}
+            {%- assign es_htwi_alt = block.settings.image.alt | default: section.settings.text | escape -%}
+            {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '110,220,330,440', alt: es_htwi_alt }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+          {%- if block.settings.image_link != blank -%}</a>{%- endif -%}
+        </span>
+        {%- assign es_htwi_remaining = es_htwi_parts[1] -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <span>{{ es_htwi_remaining }}</span>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Highlight Text With Image",
+  "tag": "section",
+  "class": "shopify-section--es-highlight-text-with-image",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "Highlight products, [img1] a collection, or [img2] images alongside a brand message [img3]",
+      "info": "Use [img1], [img2], [img3]... as placeholders - each matches the block in that position."
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Text size",
+      "options": [
+        { "value": "h3", "label": "Small" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h1", "label": "Large" },
+        { "value": "hd2", "label": "Extra large" },
+        { "value": "hd1", "label": "Display" }
+      ],
+      "default": "hd1"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 50
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "image_link", "label": "Link" },
+        {
+          "type": "range",
+          "id": "image_width",
+          "label": "Size (desktop)",
+          "min": 50,
+          "max": 250,
+          "step": 2,
+          "unit": "px",
+          "default": 220
+        },
+        {
+          "type": "range",
+          "id": "image_width_mobile",
+          "label": "Size (mobile)",
+          "min": 50,
+          "max": 150,
+          "step": 2,
+          "unit": "px",
+          "default": 110
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Highlight Text With Image",
+      "blocks": [{ "type": "image" }, { "type": "image" }, { "type": "image" }]
+    }
+  ]
+}
+{% endschema %}

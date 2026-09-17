@@ -1,0 +1,368 @@
+{%- comment -%}
+  E-sellers Scrolling Text - E-sellers Professional (v4.9.0)
+
+  Oversized marquee headline in two modes:
+    - Automatic: continuous CSS marquee, no JS needed.
+    - On scroll: the strip advances in proportion to how far the section has
+      travelled through the viewport (scroll-linked, JS + rAF).
+
+  Namespaced per section id so several instances can run at different speeds.
+{%- endcomment -%}
+
+{%- liquid
+  assign uid = section.id | replace: '-', '_'
+  assign mode = section.settings.scrolling_mode | default: 'auto'
+  assign size = section.settings.text_size | default: 'large'
+
+  case size
+    when 'xsmall'
+      assign fs_mobile = '1.8rem'
+      assign fs_desktop = '2.4rem'
+    when 'small'
+      assign fs_mobile = '4rem'
+      assign fs_desktop = '6rem'
+    when 'medium'
+      assign fs_mobile = '6rem'
+      assign fs_desktop = '8rem'
+    when 'large'
+      assign fs_mobile = '8rem'
+      assign fs_desktop = '14rem'
+    else
+      assign fs_mobile = '12rem'
+      assign fs_desktop = '20rem'
+  endcase
+-%}
+
+{%- if section.settings.text != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-sx-font-size: {{ fs_mobile }};
+      --es-sx-speed: {{ section.settings.scrolling_speed | default: 10 }}s;
+      --es-sx-gap: {{ section.settings.item_gap | default: 40 }}px;
+      --es-sx-text: {{ section.settings.text_color | default: 'inherit' }};
+
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- elsif section.settings.background != blank -%}
+        background-color: {{ section.settings.background }};
+      {%- endif -%}
+      color: var(--es-sx-text);
+      padding-top: {{ section.settings.padding_top | default: 20 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 20 }}px;
+      overflow: hidden;
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} {
+        --es-sx-font-size: {{ fs_desktop }};
+      }
+    }
+
+    #shopify-section-{{ section.id }} .es-sx {
+      width: 100%;
+      overflow: hidden;
+    }
+
+    #shopify-section-{{ section.id }} .es-sx__track {
+      display: flex;
+      align-items: center;
+      gap: var(--es-sx-gap);
+      width: max-content;
+      will-change: transform;
+    }
+
+    #shopify-section-{{ section.id }} .es-sx__item {
+      font-family: var(--font-heading-family, inherit);
+      font-size: var(--es-sx-font-size);
+      font-weight: var(--font-heading-weight, 800);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      {%- if section.settings.text_style == 'outline' -%}
+        -webkit-text-stroke: {{ section.settings.outline_width | default: 2 }}px currentColor;
+        color: transparent;
+      {%- endif -%}
+    }
+
+    {%- if section.settings.text_gradient != blank -%}
+      #shopify-section-{{ section.id }} .es-sx__item {
+        background-image: {{ section.settings.text_gradient }};
+        -webkit-background-clip: text;
+        background-clip: text;
+        {%- if section.settings.text_style == 'outline' -%}
+          /* Stroke and gradient fill cannot coexist; the gradient wins. */
+          -webkit-text-stroke: 0;
+        {%- endif -%}
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+      }
+    {%- endif -%}
+
+    {%- if mode == 'auto' -%}
+      @keyframes es-sx-marquee-{{ uid }} {
+        from { transform: translateX(0); }
+        to   { transform: translateX(calc(-50% - (var(--es-sx-gap) / 2))); }
+      }
+
+      #shopify-section-{{ section.id }} .es-sx__track {
+        animation: es-sx-marquee-{{ uid }} var(--es-sx-speed) linear infinite;
+        {%- if section.settings.direction == 'right' -%}
+          animation-direction: reverse;
+        {%- endif -%}
+      }
+
+      {%- if section.settings.pause_on_hover -%}
+        #shopify-section-{{ section.id }} .es-sx:hover .es-sx__track {
+          animation-play-state: paused;
+        }
+      {%- endif -%}
+    {%- endif -%}
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .es-sx__track {
+        animation: none !important;
+        transform: none !important;
+        justify-content: center;
+        width: 100%;
+      }
+      #shopify-section-{{ section.id }} .es-sx__item[aria-hidden="true"] {
+        display: none;
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="es-sx" data-es-sx data-mode="{{ mode }}">
+    <div class="es-sx__track" data-es-sx-track>
+      {%- comment -%}
+        The first copy carries the readable text; the rest are decorative
+        duplicates that make the strip long enough to loop seamlessly.
+      {%- endcomment -%}
+      {%- for i in (1..10) -%}
+        <span class="es-sx__item" {% unless forloop.first %}aria-hidden="true"{% endunless %}>
+          {{- section.settings.text | escape -}}
+        </span>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- if mode == 'scroll' -%}
+    <script>
+      (function () {
+        var root = document.getElementById('shopify-section-{{ section.id }}');
+        if (!root) return;
+
+        var viewport = root.querySelector('[data-es-sx]');
+        var track = root.querySelector('[data-es-sx-track]');
+        if (!viewport || !track) return;
+
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        var direction = {{ section.settings.direction | default: 'left' | json }};
+        var intensity = {{ section.settings.scroll_intensity | default: 30 }} / 100;
+        var ticking = false;
+
+        function update() {
+          var rect = viewport.getBoundingClientRect();
+          var vh = window.innerHeight || document.documentElement.clientHeight;
+
+          // 0 while the section is entering from below, 1 once it has left the top.
+          var progress = (vh - rect.top) / (vh + rect.height);
+          progress = Math.min(Math.max(progress, 0), 1);
+
+          var travel = (track.scrollWidth - viewport.clientWidth) * intensity;
+          var offset = direction === 'right'
+            ? -travel * (1 - progress)
+            : -travel * progress;
+
+          track.style.transform = 'translateX(' + offset + 'px)';
+          ticking = false;
+        }
+
+        function onScroll() {
+          if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(update);
+          }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        update();
+      })();
+    </script>
+  {%- endif -%}
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add text to this section to render the marquee.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Scrolling text",
+  "class": "shopify-section--es-scrolling-text",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Promotion text"
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "Text size",
+      "options": [
+        { "value": "xsmall", "label": "X-small" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "xlarge", "label": "X-large" }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "text_style",
+      "label": "Text style",
+      "options": [
+        { "value": "fill", "label": "Fill" },
+        { "value": "outline", "label": "Outline" }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "range",
+      "id": "outline_width",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "label": "Outline thickness",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 8,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between repeats",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "type": "select",
+      "id": "scrolling_mode",
+      "label": "Scrolling mode",
+      "options": [
+        { "value": "auto", "label": "Automatic" },
+        { "value": "scroll", "label": "On scroll" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "options": [
+        { "value": "left", "label": "Right to left" },
+        { "value": "right", "label": "Left to right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "scrolling_speed",
+      "min": 3,
+      "max": 40,
+      "step": 1,
+      "unit": "s",
+      "label": "Automatic speed",
+      "default": 10,
+      "info": "Seconds per loop. Automatic mode only."
+    },
+    {
+      "type": "range",
+      "id": "scroll_intensity",
+      "min": 5,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Scroll-linked travel",
+      "default": 30,
+      "info": "How far the text moves as the page scrolls. On-scroll mode only."
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors",
+      "info": "A text gradient replaces the outline style when both are set."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color_background",
+      "id": "text_gradient",
+      "label": "Text gradient"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scrolling text"
+    }
+  ]
+}
+{% endschema %}

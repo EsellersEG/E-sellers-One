@@ -1,0 +1,371 @@
+{%- comment -%}
+  E-sellers Brand Timeline Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 64 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 64 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#0f172a' }};
+  }
+
+  .es-timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  /* Story Stage */
+  .es-timeline-stage {
+    position: relative;
+    min-height: 400px;
+  }
+
+  .es-timeline-slide {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    animation: esTimelineFade 0.4s ease forwards;
+  }
+
+  .es-timeline-slide.is-active {
+    display: grid;
+  }
+
+  @keyframes esTimelineFade {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .es-timeline-media {
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.12);
+    background: #f1f5f9;
+  }
+
+  .es-timeline-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .es-timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .es-timeline-subheading {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .es-timeline-heading {
+    font-size: clamp(1.85rem, 3.2vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: inherit;
+  }
+
+  .es-timeline-body {
+    font-size: 1rem;
+    line-height: 1.65;
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  /* Chronological Navigation Bar */
+  .es-timeline-nav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .es-timeline-track {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 8px 0;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+  }
+
+  .es-timeline-pill {
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    background: transparent;
+    color: #475569;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .es-timeline-pill:hover {
+    border-color: #0f172a;
+    color: #0f172a;
+  }
+
+  .es-timeline-pill.is-active {
+    background-color: #0f172a;
+    border-color: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+  }
+
+  .es-timeline-arrow-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .es-timeline-arrow-btn:hover {
+    background-color: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-timeline-slide {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-timeline-section" id="Timeline-{{ section.id }}">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    <div class="es-timeline-container">
+      
+      <!-- Stage -->
+      <div class="es-timeline-stage">
+        {%- for block in section.blocks -%}
+          <div class="es-timeline-slide {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            <div class="es-timeline-media">
+              {%- if block.settings.image != blank -%}
+                {%- assign es_tagarg_1 = block.settings.title | default: 'Milestone event' | escape -%}{{ block.settings.image | image_url: width: 1400 | image_tag:
+                  loading: 'lazy',
+                  class: 'es-timeline-img',
+                  alt: es_tagarg_1}}
+              {%- else -%}
+                <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 700; font-size: 1.25rem;">
+                  {{ block.settings.navigation_label | default: 'Era' }}
+                </div>
+              {%- endif -%}
+            </div>
+
+            <div class="es-timeline-content">
+              {%- if block.settings.subheading != blank -%}
+                <p class="es-timeline-subheading">{{ block.settings.subheading | escape }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.title != blank -%}
+                <h3 class="es-timeline-heading">{{ block.settings.title | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.content != blank -%}
+                <div class="es-timeline-body">
+                  {{ block.settings.content }}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Chronological Nav -->
+      {%- if section.blocks.size > 1 -%}
+        <div class="es-timeline-nav-wrapper">
+          <button type="button" class="es-timeline-arrow-btn" onclick="switchTimeline('{{ section.id }}', -1)" aria-label="Previous era">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+
+          <div class="es-timeline-track">
+            {%- for block in section.blocks -%}
+              <button
+                type="button"
+                class="es-timeline-pill {% if forloop.first %}is-active{% endif %}"
+                data-index="{{ forloop.index0 }}"
+                onclick="goToTimelineSlide('{{ section.id }}', {{ forloop.index0 }})"
+              >
+                {{ block.settings.navigation_label | default: forloop.index }}
+              </button>
+            {%- endfor -%}
+          </div>
+
+          <button type="button" class="es-timeline-arrow-btn" onclick="switchTimeline('{{ section.id }}', 1)" aria-label="Next era">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    let timelineIndices = {};
+
+    window.goToTimelineSlide = function(sectionId, index) {
+      const container = document.getElementById('Timeline-' + sectionId);
+      if (!container) return;
+
+      const slides = container.querySelectorAll('.es-timeline-slide');
+      const pills = container.querySelectorAll('.es-timeline-pill');
+
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+
+      timelineIndices[sectionId] = index;
+
+      slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+      pills.forEach((p, i) => {
+        const active = (i === index);
+        p.classList.toggle('is-active', active);
+        if (active) p.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+    };
+
+    window.switchTimeline = function(sectionId, delta) {
+      const current = timelineIndices[sectionId] || 0;
+      window.goToTimelineSlide(sectionId, current + delta);
+    };
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Timeline",
+  "tag": "section",
+  "class": "shopify-section--timeline",
+  "max_blocks": 8,
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors & Padding"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Timeline milestone",
+      "settings": [
+        {
+          "type": "text",
+          "id": "navigation_label",
+          "label": "Year / Navigation pill label",
+          "default": "2018"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Milestone photo"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "The Beginning"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Milestone title",
+          "default": "Founded with a bold vision"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Story description",
+          "default": "<p>We started in a small workshop with a single mission: create uncompromising products engineered for longevity and everyday luxury.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Timeline",
+      "blocks": [
+        { "type": "slide", "settings": { "navigation_label": "2018", "title": "Brand Foundation" } },
+        { "type": "slide", "settings": { "navigation_label": "2021", "title": "Global Expansion" } },
+        { "type": "slide", "settings": { "navigation_label": "2024", "title": "Sustainable Innovation" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

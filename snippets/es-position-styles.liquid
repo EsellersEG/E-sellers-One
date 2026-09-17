@@ -1,0 +1,34 @@
+{%- comment -%}
+  E-sellers Position Styles - E-sellers Professional (v4.9.0)
+
+  Emits the flexbox alignment declarations for a nine-point position keyword.
+  Intended for use inside a {%- style -%} block, within an existing rule.
+
+  Parameters
+    position : string - one of
+      top-left    top-center    top-right
+      middle-left middle-center middle-right
+      bottom-left bottom-center bottom-right
+
+  Usage
+    .my-overlay { {%- render 'es-position-styles', position: 'bottom-left' -%} }
+{%- endcomment -%}
+
+{%- liquid
+  assign es_pos = position | default: 'bottom-left'
+  assign es_parts = es_pos | split: '-'
+  assign es_vertical = es_parts | first
+  assign es_horizontal = es_parts | last
+-%}
+
+{%- case es_vertical -%}
+  {%- when 'top' -%}justify-content: flex-start;
+  {%- when 'middle' -%}justify-content: center;
+  {%- else -%}justify-content: flex-end;
+{%- endcase -%}
+
+{%- case es_horizontal -%}
+  {%- when 'left' -%}align-items: flex-start; text-align: left;
+  {%- when 'center' -%}align-items: center; text-align: center;
+  {%- else -%}align-items: flex-end; text-align: right;
+{%- endcase -%}

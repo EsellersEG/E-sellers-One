@@ -1,0 +1,393 @@
+{%- comment -%}
+  Main Customer Order Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+  }
+
+  .es-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .es-order-title {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    color: #0f172a;
+  }
+
+  .es-order-date {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .es-order-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Status Banners */
+  .es-order-banner {
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .es-order-banner--success {
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+  }
+
+  .es-order-banner--error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  .es-order-banner__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #065f46;
+    color: #ffffff;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Layout */
+  .es-order-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-order-layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  /* Table */
+  .es-order-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .es-order-table th {
+    text-align: left;
+    padding: 14px 20px;
+    background: #f8fafc;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .es-order-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+    vertical-align: middle;
+  }
+
+  .es-order-item {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .es-order-item__image {
+    width: 64px;
+    height: 76px;
+    border-radius: 6px;
+    object-fit: cover;
+    background: #f1f5f9;
+    flex-shrink: 0;
+  }
+
+  /* Summary Foot */
+  .es-order-totals-box {
+    padding: 20px;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .es-order-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: #475569;
+  }
+
+  .es-order-total-row--final {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    padding-top: 10px;
+    border-top: 1px solid #cbd5e1;
+  }
+
+  /* Address Cards */
+  .es-order-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .es-order-address-card {
+    padding: 24px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .es-order-address-card__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <!-- Header -->
+  <div class="es-order-header">
+    <div>
+      <h1 class="es-order-title">{{ 'customer.order.order_name' | t: name: order.name | default: order.name }}</h1>
+      <p class="es-order-date">Placed on {{ order.created_at | date: "%B %d, %Y at %I:%M %p" }}</p>
+    </div>
+
+    <a href="{{ routes.account_url }}" class="es-order-back-link">
+      &larr; {{ 'customer.order.back' | t | default: 'Return to Account' }}
+    </a>
+  </div>
+
+  <!-- Cancellation Notice -->
+  {%- if order.cancelled -%}
+    <div class="es-order-banner es-order-banner--error" role="alert">
+      <div>
+        <strong>Order Cancelled on {{ order.cancelled_at | date: "%B %d, %Y" }}</strong>
+        <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Reason: {{ order.cancel_reason_label }}</p>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <!-- Fulfillment & Tracking Notice -->
+  {%- assign fulfillment = order.line_items | where: 'fulfillment' | map: 'fulfillment' | sort: 'created_at' | last -%}
+  {%- if fulfillment -%}
+    <div class="es-order-banner es-order-banner--success" role="status">
+      <div>
+        <strong>Order Fulfilled</strong>
+        {%- if fulfillment.tracking_number -%}
+          <p style="margin: 4px 0 0 0; font-size: 0.9rem;">Tracking #: {{ fulfillment.tracking_number }} ({{ fulfillment.tracking_company }})</p>
+        {%- endif -%}
+      </div>
+      {%- if fulfillment.tracking_url -%}
+        <a href="{{ fulfillment.tracking_url }}" target="_blank" rel="noopener noreferrer" class="es-order-banner__btn">
+          {{ 'customer.order.track_shipment' | t | default: 'Track Package' }} &rarr;
+        </a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <!-- Main Order Grid -->
+  <div class="es-order-layout">
+    
+    <!-- Left Column: Items Table & Totals -->
+    <div class="es-order-main">
+      <table class="es-order-table">
+        <thead>
+          <tr>
+            <th>{{ 'customer.order.product' | t | default: 'Product' }}</th>
+            <th style="text-align: center;">{{ 'customer.order.quantity' | t | default: 'Qty' }}</th>
+            <th style="text-align: right;">{{ 'customer.order.total' | t | default: 'Total' }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- for line_item in order.line_items -%}
+            <tr>
+              <td>
+                <div class="es-order-item">
+                  {%- if line_item.image -%}
+                    <img
+                      src="{{ line_item.image | image_url: width: 200 }}"
+                      width="{{ line_item.image.width }}"
+                      height="{{ line_item.image.height }}"
+                      alt="{{ line_item.title | escape }}"
+                      class="es-order-item__image"
+                      loading="lazy"
+                    >
+                  {%- endif -%}
+                  <div>
+                    <strong style="display: block; color: #0f172a; font-size: 1rem; margin-bottom: 2px;">
+                      {{ line_item.title }}
+                    </strong>
+                    {%- unless line_item.product.has_only_default_variant -%}
+                      <span style="font-size: 0.85rem; color: #64748b;">{{ line_item.variant.title }}</span>
+                    {%- endunless -%}
+                    {%- if line_item.sku != blank -%}
+                      <span style="display: block; font-size: 0.8rem; color: #94a3b8;">SKU: {{ line_item.sku }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </td>
+              <td style="text-align: center; font-weight: 600; color: #475569;">
+                {{ line_item.quantity }}
+              </td>
+              <td style="text-align: right; font-weight: 700; color: #0f172a;">
+                {{ line_item.final_line_price | money }}
+              </td>
+            </tr>
+          {%- endfor -%}
+        </tbody>
+      </table>
+
+      <!-- Order Financial Summary -->
+      <div class="es-order-totals-box" style="border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 14px 14px;">
+        <div class="es-order-total-row">
+          <span>Subtotal</span>
+          <span>{{ order.line_items_subtotal_price | money }}</span>
+        </div>
+
+        {%- for discount_application in order.cart_level_discount_applications -%}
+          <div class="es-order-total-row" style="color: #15803d;">
+            <span>Discount ({{ discount_application.title }})</span>
+            <span>-{{ discount_application.total_allocated_amount | money }}</span>
+          </div>
+        {%- endfor -%}
+
+        {%- for shipping_method in order.shipping_methods -%}
+          <div class="es-order-total-row">
+            <span>Shipping ({{ shipping_method.title }})</span>
+            <span>{{ shipping_method.price | money }}</span>
+          </div>
+        {%- endfor -%}
+
+        {%- for tax_line in order.tax_lines -%}
+          <div class="es-order-total-row">
+            <span>Tax ({{ tax_line.title }} {{ tax_line.rate_percentage }}%)</span>
+            <span>{{ tax_line.price | money }}</span>
+          </div>
+        {%- endfor -%}
+
+        {%- if order.total_refunded_amount > 0 -%}
+          <div class="es-order-total-row" style="color: #ef4444;">
+            <span>Refunded</span>
+            <span>-{{ order.total_refunded_amount | money }}</span>
+          </div>
+        {%- endif -%}
+
+        <div class="es-order-total-row es-order-total-row--final">
+          <span>Total Paid</span>
+          <span>{{ order.total_net_amount | default: order.total_price | money_with_currency }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Shipping & Billing Addresses -->
+    <div class="es-order-sidebar">
+      {%- if order.shipping_address -%}
+        <div class="es-order-address-card">
+          <h2 class="es-order-address-card__title">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            <span>Shipping Address</span>
+          </h2>
+          <div style="font-size: 0.95rem; line-height: 1.6; color: #475569;">
+            {{ order.shipping_address | format_address }}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if order.billing_address -%}
+        <div class="es-order-address-card">
+          <h2 class="es-order-address-card__title">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>Billing Address</span>
+          </h2>
+          <div style="font-size: 0.95rem; line-height: 1.6; color: #475569;">
+            {{ order.billing_address | format_address }}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer order",
+  "tag": "section",
+  "class": "shopify-section--main-customers-order",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ]
+}
+{% endschema %}

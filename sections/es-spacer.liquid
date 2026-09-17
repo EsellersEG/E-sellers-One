@@ -1,0 +1,112 @@
+{%- comment -%}
+  E-sellers Spacer - E-sellers One (v5.0.0)
+
+  Empty vertical space with independent desktop/mobile heights and an optional
+  hairline divider. Used to fine-tune rhythm between two other sections.
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 80 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 80 }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_mobile | default: 24 }}px;
+      padding-bottom: {{ section.settings.padding_bottom_mobile | default: 24 }}px;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .es-spacer__divider {
+    border: 0;
+    border-top: var(--es-rule-width) solid var(--es-rule);
+  }
+
+  #shopify-section-{{ section.id }} .es-spacer__divider--full {
+    width: 100%;
+  }
+{%- endstyle -%}
+
+{%- if section.settings.show_divider -%}
+  <div class="{% if section.settings.divider_width == 'full' %}es-spacer__divider--full{% else %}page-width{% endif %}">
+    <hr class="es-spacer__divider">
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Spacer",
+  "tag": "section",
+  "class": "shopify-section--es-spacer",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider line",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "divider_width",
+      "label": "Divider width",
+      "options": [
+        { "value": "fixed", "label": "Fixed width" },
+        { "value": "full", "label": "Full width" }
+      ],
+      "default": "fixed"
+    },
+    {
+      "type": "header",
+      "content": "Spacing (desktop)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Spacing (mobile)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    }
+  ],
+  "presets": [
+    { "name": "E-sellers Spacer" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,30 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "contact": {
+      "type": "es-contact",
+      "settings": {
+        "heading": "Get in Touch",
+        "text": "<p>Have questions about an order or our collections? Send us a message and our support team will get back to you within 24 hours.</p>",
+        "bg_color": "#ffffff",
+        "heading_color": "#121212",
+        "text_color": "#121212",
+        "btn_bg_color": "#121212",
+        "btn_text_color": "#ffffff",
+        "padding_top": 60,
+        "padding_bottom": 80
+      }
+    }
+  },
+  "order": [
+    "contact"
+  ]
+}

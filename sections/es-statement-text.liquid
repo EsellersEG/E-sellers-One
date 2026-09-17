@@ -1,0 +1,442 @@
+{%- comment -%}
+  E-sellers Statement Text / Big Stats Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#0f172a' }};
+  }
+
+  .es-statement-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 1300px;
+  }
+
+  .es-statement-item {
+    display: flex;
+    flex-direction: column;
+    align-items: {% if section.settings.text_alignment == 'start' %}flex-start{% elsif section.settings.text_alignment == 'end' %}flex-end{% else %}center{% endif %};
+    text-align: {{ section.settings.text_alignment | default: 'center' }};
+    flex: 1 1 280px;
+    max-width: 400px;
+    gap: 12px;
+  }
+
+  /* Big Display Typography */
+  .es-statement-num {
+    font-size: clamp(3.2rem, 7vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin: 0;
+    {% if section.settings.statement_style == 'outline' %}
+      -webkit-text-stroke: 2px {{ section.settings.heading_text_color | default: '#0f172a' }};
+      color: transparent;
+    {% else %}
+      color: {{ section.settings.heading_text_color | default: '#0f172a' }};
+      {% if section.settings.heading_gradient != blank %}
+        background: {{ section.settings.heading_gradient }};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      {% endif %}
+    {% endif %}
+  }
+
+  .es-statement-subheading {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    color: inherit;
+  }
+
+  .es-statement-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .es-statement-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    margin-top: 8px;
+    background-color: {{ section.settings.button_background | default: '#0f172a' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .es-statement-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+
+  /* Dividers */
+  .es-statement-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #cbd5e1;
+  }
+
+  .es-statement-divider--circle {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #94a3b8;
+  }
+
+  .es-statement-divider--diamond {
+    width: 8px;
+    height: 8px;
+    background-color: #94a3b8;
+    transform: rotate(45deg);
+  }
+
+  .es-statement-divider--square {
+    width: 8px;
+    height: 8px;
+    background-color: #94a3b8;
+  }
+
+  .es-statement-divider--line {
+    width: 1px;
+    height: 80px;
+    background-color: #e2e8f0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .es-statement-divider {
+      display: none;
+    }
+    {% if section.settings.stack_mobile %}
+      .es-statement-grid {
+        flex-direction: column;
+        gap: 36px;
+      }
+      .es-statement-item {
+        max-width: 100%;
+      }
+    {% else %}
+      .es-statement-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 12px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .es-statement-item {
+        flex: 0 0 80vw;
+        scroll-snap-align: center;
+      }
+    {% endif %}
+  }
+{%- endstyle -%}
+
+<div class="es-statement-text-section" id="StatementText-{{ section.id }}">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    
+    <div class="es-statement-grid">
+      {%- for block in section.blocks -%}
+        <div class="es-statement-item" {{ block.shopify_attributes }}>
+          
+          {%- if block.settings.title != blank -%}
+            <h2
+              class="es-statement-num"
+              {% if block.settings.animate_metric %}
+                data-animate="countup"
+                data-duration="{{ block.settings.animate_metric_duration | default: 2 }}"
+                data-target="{{ block.settings.title | escape }}"
+              {% endif %}
+            >
+              {{ block.settings.title | escape }}
+            </h2>
+          {%- endif -%}
+
+          {%- if block.settings.subheading != blank -%}
+            <p class="es-statement-subheading">{{ block.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if block.settings.content != blank -%}
+            <div class="es-statement-body">
+              {{ block.settings.content }}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.button_text != blank and block.settings.button_url != blank -%}
+            <a href="{{ block.settings.button_url }}" class="es-statement-btn">
+              {{ block.settings.button_text | escape }}
+            </a>
+          {%- endif -%}
+
+        </div>
+
+        {%- unless forloop.last or section.settings.text_divider == 'none' -%}
+          <div class="es-statement-divider">
+            <span class="es-statement-divider--{{ section.settings.text_divider }}"></span>
+          </div>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function() {
+    function initCountUp(sectionId) {
+      const section = document.getElementById('StatementText-' + sectionId);
+      if (!section) return;
+
+      const animatedElements = section.querySelectorAll('[data-animate="countup"]');
+      if (animatedElements.length === 0) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            observer.unobserve(el);
+
+            const rawText = el.getAttribute('data-target') || '';
+            const match = rawText.match(/(\d+)/);
+            if (!match) return;
+
+            const targetNum = parseInt(match[0], 10);
+            const prefix = rawText.slice(0, match.index);
+            const suffix = rawText.slice(match.index + match[0].length);
+            const duration = parseFloat(el.getAttribute('data-duration') || '2') * 1000;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+              const elapsed = currentTime - startTime;
+              const progress = Math.min(elapsed / duration, 1);
+              // Ease out quart
+              const easeProgress = 1 - Math.pow(1 - progress, 4);
+              const currentNum = Math.floor(easeProgress * targetNum);
+
+              el.textContent = `${prefix}${currentNum}${suffix}`;
+
+              if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+              } else {
+                el.textContent = rawText;
+              }
+            }
+
+            requestAnimationFrame(updateCounter);
+          }
+        });
+      }, { threshold: 0.3 });
+
+      animatedElements.forEach(el => observer.observe(el));
+    }
+
+    initCountUp('{{ section.id }}');
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Statement text",
+  "tag": "section",
+  "class": "shopify-section--statement-text",
+  "max_blocks": 4,
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack on mobile",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "statement_style",
+      "label": "Typography style",
+      "options": [
+        { "value": "fill", "label": "Solid fill" },
+        { "value": "outline", "label": "Stroke outline" }
+      ],
+      "default": "fill"
+    },
+    {
+      "type": "select",
+      "id": "text_divider",
+      "label": "Column divider shape",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "circle", "label": "Circle dot" },
+        { "value": "diamond", "label": "Diamond" },
+        { "value": "square", "label": "Square" },
+        { "value": "line", "label": "Vertical line" }
+      ],
+      "default": "line"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "heading_text_color",
+      "label": "Big number color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Big number gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Statement metric",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Headline metric",
+          "default": "99.8%"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Customer Satisfaction"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description",
+          "default": "<p>Over 50,000+ verified 5-star reviews worldwide.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "animate_metric",
+          "label": "Enable count-up animation",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "animate_metric_duration",
+          "min": 0.5,
+          "max": 5,
+          "step": 0.5,
+          "unit": "s",
+          "label": "Count-up duration",
+          "default": 2
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Statement text",
+      "blocks": [
+        { "type": "item", "settings": { "title": "99.8%", "subheading": "Customer Satisfaction", "content": "<p>Rated 4.9/5 stars across 50,000+ verified customer reviews.</p>" } },
+        { "type": "item", "settings": { "title": "24/7", "subheading": "Dedicated Concierge", "content": "<p>Live expert customer support available around the clock.</p>" } },
+        { "type": "item", "settings": { "title": "100%", "subheading": "Carbon Neutral", "content": "<p>Eco-friendly packaging with offset shipping on all orders.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

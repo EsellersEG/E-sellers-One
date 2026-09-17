@@ -1,0 +1,131 @@
+{%- comment -%}
+  E-sellers Custom Liquid - E-sellers Professional (v4.9.0)
+  Drops merchant-authored Liquid or app snippets straight into the page,
+  with the same colour and spacing controls as every other E-sellers section.
+{%- endcomment -%}
+
+{%- if section.settings.liquid != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-cl-bg: {{ section.settings.background | default: 'transparent' }};
+      --es-cl-text: {{ section.settings.text_color | default: 'inherit' }};
+
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- endif -%}
+      background-color: var(--es-cl-bg);
+      color: var(--es-cl-text);
+
+      {%- if section.settings.remove_vertical_spacing -%}
+        padding-top: 0;
+        padding-bottom: 0;
+      {%- else -%}
+        padding-top: {{ section.settings.padding_top | default: 40 }}px;
+        padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+      {%- endif -%}
+    }
+
+    {%- if section.settings.remove_horizontal_spacing -%}
+      #shopify-section-{{ section.id }} .es-cl__inner {
+        padding-left: 0;
+        padding-right: 0;
+        max-width: none;
+      }
+    {%- endif -%}
+  {%- endstyle -%}
+
+  <div class="es-cl__inner {% unless section.settings.full_width %}page-width{% endunless %}">
+    {{ section.settings.liquid }}
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add Liquid code to this section to render it.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Custom Liquid",
+  "class": "shopify-section--es-custom-liquid",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "liquid",
+      "label": "Liquid",
+      "info": "Add app snippets or other Liquid code for advanced customisations.",
+      "default": "<p style=\"text-align: center\">Write or paste Liquid code</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_vertical_spacing",
+      "label": "Remove vertical spacing",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_horizontal_spacing",
+      "label": "Remove horizontal spacing",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors",
+      "info": "A gradient replaces the solid background when set."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Liquid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,58 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "Footer group",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "es-footer",
+      "blocks": {
+        "footer_about": {
+          "type": "text",
+          "settings": {
+            "heading": "About E-sellers",
+            "subtext": "<p>E-sellers Professional is engineered for high conversion, speed, and unforgettable brand experiences.</p>"
+          }
+        },
+        "footer_links": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick links",
+            "menu": "footer"
+          }
+        },
+        "footer_newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Stay in the loop",
+            "subtext": "Subscribe to receive special offers, free giveaways, and once-in-a-lifetime deals."
+          }
+        }
+      },
+      "block_order": [
+        "footer_about",
+        "footer_links",
+        "footer_newsletter"
+      ],
+      "settings": {
+        "bg_color": "#121212",
+        "text_color": "#a1a1aa",
+        "heading_color": "#ffffff",
+        "hover_color": "#ffffff",
+        "border_color": "#27272a",
+        "padding_top": 64,
+        "padding_bottom": 40
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

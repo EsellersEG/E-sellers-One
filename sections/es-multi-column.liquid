@@ -1,0 +1,396 @@
+{%- comment -%}
+  E-sellers Multi-Column Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#0f172a' }};
+  }
+
+  .es-multi-col-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: {% if section.settings.gap == 'small' %}16px{% elsif section.settings.gap == 'large' %}36px{% elsif section.settings.gap == 'x-large' %}48px{% else %}24px{% endif %};
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .es-multi-col-item {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: {{ section.settings.text_alignment | default: 'left' }};
+  }
+
+  .es-multi-col-item--span-3 { grid-column: span 3; }
+  .es-multi-col-item--span-4 { grid-column: span 4; }
+  .es-multi-col-item--span-6 { grid-column: span 6; }
+  .es-multi-col-item--span-8 { grid-column: span 8; }
+  .es-multi-col-item--span-12 { grid-column: span 12; }
+
+  .es-multi-col-media {
+    border-radius: 14px;
+    overflow: hidden;
+    background: #f1f5f9;
+    aspect-ratio: 16 / 10;
+  }
+
+  .es-multi-col-media img,
+  .es-multi-col-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .es-multi-col-heading {
+    font-weight: 700;
+    margin: 0;
+    color: inherit;
+    line-height: 1.3;
+  }
+
+  .es-multi-col-heading.h1 { font-size: 2.25rem; }
+  .es-multi-col-heading.h2 { font-size: 1.85rem; }
+  .es-multi-col-heading.h3 { font-size: 1.5rem; }
+  .es-multi-col-heading.h4 { font-size: 1.25rem; }
+  .es-multi-col-heading.h5 { font-size: 1.1rem; }
+  .es-multi-col-heading.h6 { font-size: 0.95rem; }
+
+  .es-multi-col-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .es-multi-col-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 22px;
+    border-radius: 8px;
+    background-color: #0f172a;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    align-self: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'end' %}flex-end{% else %}flex-start{% endif %};
+    transition: background-color 0.2s ease;
+  }
+
+  .es-multi-col-btn:hover {
+    background-color: #1e293b;
+  }
+
+  .es-multi-col-link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    align-self: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'end' %}flex-end{% else %}flex-start{% endif %};
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-multi-col-item--span-3,
+    .es-multi-col-item--span-4 {
+      grid-column: span 6;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    {% if section.settings.stack_on_mobile %}
+      .es-multi-col-grid {
+        grid-template-columns: 1fr;
+      }
+      .es-multi-col-item {
+        grid-column: 1 / -1 !important;
+      }
+    {% else %}
+      .es-multi-col-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 12px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .es-multi-col-item {
+        flex: 0 0 78vw;
+        scroll-snap-align: start;
+      }
+    {% endif %}
+  }
+{%- endstyle -%}
+
+<div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+  {%- if section.settings.title != blank or section.settings.subheading != blank or section.settings.content != blank -%}
+    {% render 'section-header',
+      subheading: section.settings.subheading,
+      heading: section.settings.title,
+      content: section.settings.content,
+      text_alignment: section.settings.text_alignment
+    %}
+  {%- endif -%}
+
+  <div class="es-multi-col-grid">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'item' -%}
+          {%- assign col_size = block.settings.column_size | default: '3' -%}
+          {%- case col_size -%}
+            {%- when '4' -%}{%- assign span_class = 'es-multi-col-item--span-3' -%}
+            {%- when '3' -%}{%- assign span_class = 'es-multi-col-item--span-4' -%}
+            {%- when '2' -%}{%- assign span_class = 'es-multi-col-item--span-6' -%}
+            {%- when '1.5' -%}{%- assign span_class = 'es-multi-col-item--span-8' -%}
+            {%- else -%}{%- assign span_class = 'es-multi-col-item--span-4' -%}
+          {%- endcase -%}
+
+          <div class="es-multi-col-item {{ span_class }}" {{ block.shopify_attributes }}>
+            {%- if block.settings.video != blank -%}
+              <div class="es-multi-col-media">
+                {{ block.settings.video | video_tag: playsinline: true, muted: true, loop: true, autoplay: true, preload: 'metadata' }}
+              </div>
+            {%- elsif block.settings.image != blank -%}
+              <div class="es-multi-col-media">
+                {%- assign es_tagarg_1 = block.settings.title | default: 'Feature item' | escape -%}{{ block.settings.image | image_url: width: 1000 | image_tag:
+                  loading: 'lazy',
+                  alt: es_tagarg_1}}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <h3 class="es-multi-col-heading {{ block.settings.heading_tag | default: 'h4' }}">
+                {{ block.settings.title | escape }}
+              </h3>
+            {%- endif -%}
+
+            {%- if block.settings.content != blank -%}
+              <div class="es-multi-col-body">
+                {{ block.settings.content }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.link_text != blank -%}
+              {%- if block.settings.link_style == 'button' -%}
+                <a href="{{ block.settings.link_url | default: '#' }}" class="es-multi-col-btn">
+                  {{ block.settings.link_text | escape }}
+                </a>
+              {%- else -%}
+                <a href="{{ block.settings.link_url | default: '#' }}" class="es-multi-col-link">
+                  {{ block.settings.link_text | escape }} &rarr;
+                </a>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+
+        {%- when 'spacer' -%}
+          <div class="es-multi-col-item es-multi-col-item--span-3 hidden md:block" {{ block.shopify_attributes }}></div>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Multi-column",
+  "tag": "section",
+  "class": "shopify-section--multi-column",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_on_mobile",
+      "label": "Stack vertically on mobile",
+      "default": false,
+      "info": "If disabled, columns will scroll horizontally on mobile devices."
+    },
+    {
+      "type": "select",
+      "id": "gap",
+      "label": "Column gap spacing",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" },
+        { "value": "x-large", "label": "Extra Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Section subheading",
+      "default": "Our Values"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section heading",
+      "default": "Why Shop With Us"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Section description"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Column item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video (MP4)"
+        },
+        {
+          "type": "select",
+          "id": "column_size",
+          "label": "Desktop column width",
+          "options": [
+            { "value": "4", "label": "25% (4 Columns)" },
+            { "value": "3", "label": "33% (3 Columns)" },
+            { "value": "2", "label": "50% (2 Columns)" },
+            { "value": "1.5", "label": "66% (Wide)" }
+          ],
+          "default": "3"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Feature highlight"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Heading size",
+          "options": [
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h4", "label": "H4" },
+            { "value": "h5", "label": "H5" },
+            { "value": "h6", "label": "H6" }
+          ],
+          "default": "h4"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description",
+          "default": "<p>Share details about your services, warranties, material sourcing, or product care.</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "CTA Link text",
+          "default": "Learn more"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "CTA Link URL"
+        },
+        {
+          "type": "select",
+          "id": "link_style",
+          "label": "CTA display style",
+          "options": [
+            { "value": "link", "label": "Text link with arrow" },
+            { "value": "button", "label": "Solid button" }
+          ],
+          "default": "link"
+        }
+      ]
+    },
+    {
+      "type": "spacer",
+      "name": "Column spacer"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multi-column",
+      "blocks": [
+        { "type": "item", "settings": { "title": "Fast Shipping", "column_size": "3" } },
+        { "type": "item", "settings": { "title": "Premium Quality", "column_size": "3" } },
+        { "type": "item", "settings": { "title": "24/7 Support", "column_size": "3" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

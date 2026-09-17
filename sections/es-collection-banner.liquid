@@ -1,0 +1,385 @@
+{%- comment -%}
+  E-sellers Collection Banner Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- liquid
+  assign show_image = false
+  if section.settings.show_collection_image and collection.image != blank
+    assign show_image = true
+  elsif section.settings.image != blank
+    assign show_image = true
+  endif
+
+  assign desktop_image = section.settings.image | default: collection.image
+  assign mobile_image = section.settings.mobile_image | default: section.settings.image | default: collection.image
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-banner-height-sm: 220px;
+    --es-banner-height-md: 320px;
+    --es-banner-height-lg: 440px;
+    position: relative;
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} {
+      --es-banner-height-sm: 280px;
+      --es-banner-height-md: 400px;
+      --es-banner-height-lg: 540px;
+    }
+  }
+
+  .es-collection-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    {% if show_image %}
+      min-height: {% if section.settings.image_size == 'sm' %}var(--es-banner-height-sm){% elsif section.settings.image_size == 'md' %}var(--es-banner-height-md){% elsif section.settings.image_size == 'lg' %}var(--es-banner-height-lg){% else %}auto{% endif %};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #0f172a;
+    {% else %}
+      padding-top: {{ section.settings.padding_top | default: 40 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+      background-color: {{ section.settings.background | default: '#ffffff' }};
+      color: {{ section.settings.text_color_plain | default: '#121212' }};
+    {% endif %}
+  }
+
+  {% unless section.settings.full_width %}
+    .es-collection-banner--contained {
+      max-width: 1400px;
+      margin: 20px auto;
+      border-radius: 16px;
+    }
+  {% endunless %}
+
+  /* Image Layer */
+  .es-collection-banner__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-collection-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .es-collection-banner__image--mobile {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .es-collection-banner__image--desktop {
+      display: none;
+    }
+    .es-collection-banner__image--mobile {
+      display: block;
+    }
+  }
+
+  .es-collection-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: {{ section.settings.overlay_color | default: '#000000' }};
+    opacity: {{ section.settings.overlay_opacity | default: 30 | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  /* Content Box */
+  .es-collection-banner__content-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 40px 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    {% if show_image %}
+      color: {{ section.settings.text_color | default: '#ffffff' }};
+    {% endif %}
+  }
+
+  /* Positions */
+  .es-collection-banner__content--center {
+    align-items: center;
+    text-align: center;
+    margin-inline: auto;
+    max-width: 800px;
+  }
+
+  .es-collection-banner__content--left {
+    align-items: flex-start;
+    text-align: left;
+    max-width: 720px;
+  }
+
+  .es-collection-banner__content--right {
+    align-items: flex-end;
+    text-align: right;
+    margin-left: auto;
+    max-width: 720px;
+  }
+
+  .es-collection-banner__title {
+    margin: 0 0 12px 0;
+    font-weight: 700;
+    line-height: 1.2;
+    color: inherit;
+  }
+
+  .es-collection-banner__title--h0 { font-size: clamp(2rem, 4vw, 3.5rem); }
+  .es-collection-banner__title--h1 { font-size: clamp(1.75rem, 3.2vw, 2.75rem); }
+  .es-collection-banner__title--h2 { font-size: clamp(1.5rem, 2.5vw, 2.25rem); }
+
+  .es-collection-banner__description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  /* Featured Product Spotlight Widget */
+  .es-collection-banner__featured-product {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    z-index: 3;
+    max-width: 320px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-collection-banner__featured-product {
+      display: none;
+    }
+  }
+
+  .es-collection-banner__featured-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    margin: 0 0 6px 4px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+{%- endstyle -%}
+
+<div class="es-collection-banner {% unless section.settings.full_width %}es-collection-banner--contained{% endunless %}">
+  {%- if show_image -%}
+    <!-- Media Layer -->
+    <div class="es-collection-banner__media">
+      {%- if desktop_image != blank -%}
+        {{ desktop_image | image_url: width: 2800 | image_tag:
+          loading: 'eager',
+          fetchpriority: 'high',
+          sizes: '100vw',
+          widths: '400, 600, 800, 1200, 1600, 2000, 2600',
+          class: 'es-collection-banner__image es-collection-banner__image--desktop'
+        }}
+      {%- endif -%}
+
+      {%- if mobile_image != blank -%}
+        {{ mobile_image | image_url: width: 1200 | image_tag:
+          loading: 'eager',
+          sizes: '100vw',
+          widths: '300, 400, 600, 800, 1000',
+          class: 'es-collection-banner__image es-collection-banner__image--mobile'
+        }}
+      {%- endif -%}
+    </div>
+    <div class="es-collection-banner__overlay"></div>
+  {%- endif -%}
+
+  <div class="page-width es-collection-banner__content-wrapper">
+    <div class="es-collection-banner__content es-collection-banner__content--{{ section.settings.content_alignment | default: 'center' }}">
+      {%- if section.settings.show_collection_title -%}
+        <h1 class="es-collection-banner__title es-collection-banner__title--{{ section.settings.collection_title_size | default: 'h1' }}">
+          {{ collection.title | default: 'Collection title' | escape }}
+        </h1>
+      {%- endif -%}
+
+      {%- if section.settings.show_collection_description and collection.description != blank -%}
+        <div class="es-collection-banner__description">
+          {{ collection.description }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if show_image and section.settings.featured_product != blank -%}
+    <div class="es-collection-banner__featured-product">
+      {%- if section.settings.featured_product_heading != blank -%}
+        <p class="es-collection-banner__featured-title">{{ section.settings.featured_product_heading | escape }}</p>
+      {%- endif -%}
+      <a href="{{ section.settings.featured_product.url }}" style="text-decoration: none;">
+        {% render 'horizontal-product', product: section.settings.featured_product, size: 'sm' %}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "ES Collection Banner",
+  "class": "shopify-section--es-collection-banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width banner",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_title",
+      "label": "Show collection title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "Use collection featured image",
+      "info": "Uses the collection's uploaded image if no custom image is selected below.",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Custom desktop image",
+      "info": "2800 x 800px recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Custom mobile image",
+      "info": "1200 x 800px recommended"
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "Banner height",
+      "options": [
+        { "value": "auto", "label": "Original image ratio / Auto" },
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "select",
+      "id": "collection_title_size",
+      "label": "Title font size",
+      "options": [
+        { "value": "h0", "label": "Hero / Extra Large" },
+        { "value": "h1", "label": "Large (H1)" },
+        { "value": "h2", "label": "Medium (H2)" }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Featured Spotlight Product"
+    },
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Spotlight product"
+    },
+    {
+      "type": "text",
+      "id": "featured_product_heading",
+      "label": "Spotlight label",
+      "default": "Featured in this collection"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Overlay"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Banner text color (with image)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color_plain",
+      "label": "Text color (without image)",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background (without image)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top (no image)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom (no image)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Collection Banner"
+    }
+  ]
+}
+{% endschema %}

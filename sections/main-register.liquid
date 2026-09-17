@@ -1,0 +1,425 @@
+{%- comment -%}
+  Main Customer Register Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+  }
+
+  .es-register-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: {% if section.settings.image != blank %}960px{% else %}520px{% endif %};
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px -4px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+  }
+
+  .es-register-media {
+    flex: 1 1 50%;
+    align-self: stretch;
+    background: #f1f5f9;
+  }
+
+  .es-register-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .es-register-card {
+    flex: 1 1 50%;
+    padding: 44px 36px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  @media screen and (max-width: 768px) {
+    .es-register-wrapper {
+      flex-direction: column;
+      max-width: 100%;
+      border-radius: 16px;
+    }
+
+    .es-register-media {
+      display: none;
+    }
+
+    .es-register-card {
+      padding: 32px 20px;
+    }
+  }
+
+  .es-register-heading {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #0f172a;
+    text-align: center;
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-register-subtext {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0 0 24px 0;
+    text-align: center;
+  }
+
+  .es-register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .es-register-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media screen and (max-width: 480px) {
+    .es-register-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .es-register-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .es-register-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .es-register-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .es-register-input:focus {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+  }
+
+  .es-register-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #475569;
+    margin-top: 4px;
+    cursor: pointer;
+  }
+
+  .es-register-consent input {
+    margin-top: 3px;
+  }
+
+  .es-register-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: {{ section.settings.button_background | default: '#0f172a' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .es-register-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .es-register-footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+
+  .es-register-footer a {
+    color: #0f172a;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .es-register-errors {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .es-register-errors ul {
+    margin: 4px 0 0 0;
+    padding-left: 18px;
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <div class="es-register-wrapper">
+    {%- if section.settings.image != blank -%}
+      <div class="es-register-media">
+        {%- assign es_tagarg_1 = shop.name | escape -%}{{ section.settings.image | image_url: width: 1000 | image_tag:
+          loading: 'eager',
+          alt: es_tagarg_1}}
+      </div>
+    {%- endif -%}
+
+    <div class="es-register-card">
+      <h1 class="es-register-heading">{{ 'customer.register.title' | t | default: 'Create Account' }}</h1>
+      <p class="es-register-subtext">{{ 'customer.register.subtext' | t | default: 'Sign up for a faster checkout and exclusive VIP deals' }}</p>
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {% render block %}
+
+          {%- when 'liquid' -%}
+            {%- if block.settings.liquid != blank -%}
+              <div {{ block.shopify_attributes }}>
+                {{ block.settings.liquid }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'fields' -%}
+            <div {{ block.shopify_attributes }}>
+              {%- form 'create_customer', class: 'es-register-form' -%}
+                {%- if form.errors -%}
+                  <div class="es-register-errors" role="alert">
+                    <strong>{{ 'templates.contact.form.error_heading' | t | default: 'Please fix the errors below:' }}</strong>
+                    <ul>
+                      {%- for field in form.errors -%}
+                        <li>
+                          {%- if field == 'form' -%}
+                            {{ form.errors.messages[field] }}
+                          {%- else -%}
+                            {{ form.errors.translated_fields[field] | capitalize }}: {{ form.errors.messages[field] }}
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+
+                <div class="es-register-row">
+                  <div class="es-register-field">
+                    <label class="es-register-label" for="RegisterFirstName">{{ 'customer.register.first_name' | t | default: 'First name' }}</label>
+                    <input
+                      type="text"
+                      name="customer[first_name]"
+                      id="RegisterFirstName"
+                      autocomplete="given-name"
+                      placeholder="Jane"
+                      class="es-register-input"
+                      value="{{ form.first_name }}"
+                      required
+                    >
+                  </div>
+
+                  <div class="es-register-field">
+                    <label class="es-register-label" for="RegisterLastName">{{ 'customer.register.last_name' | t | default: 'Last name' }}</label>
+                    <input
+                      type="text"
+                      name="customer[last_name]"
+                      id="RegisterLastName"
+                      autocomplete="family-name"
+                      placeholder="Doe"
+                      class="es-register-input"
+                      value="{{ form.last_name }}"
+                      required
+                    >
+                  </div>
+                </div>
+
+                <div class="es-register-field">
+                  <label class="es-register-label" for="RegisterEmail">{{ 'customer.register.email' | t | default: 'Email address' }}</label>
+                  <input
+                    type="email"
+                    name="customer[email]"
+                    id="RegisterEmail"
+                    autocomplete="email"
+                    placeholder="jane@example.com"
+                    class="es-register-input"
+                    value="{{ form.email }}"
+                    required
+                  >
+                </div>
+
+                <div class="es-register-field">
+                  <label class="es-register-label" for="RegisterPassword">{{ 'customer.register.password' | t | default: 'Password' }}</label>
+                  <input
+                    type="password"
+                    name="customer[password]"
+                    id="RegisterPassword"
+                    autocomplete="new-password"
+                    placeholder="At least 6 characters"
+                    minlength="6"
+                    class="es-register-input"
+                    required
+                  >
+                </div>
+
+                {%- if block.settings.show_email_consent -%}
+                  <label class="es-register-consent">
+                    <input type="checkbox" name="customer[accepts_marketing]" value="true" checked>
+                    <span>{{ 'customer.register.accepts_marketing' | t | default: 'Subscribe to email newsletter and VIP offers' }}</span>
+                  </label>
+                {%- endif -%}
+
+                <button type="submit" class="es-register-btn">
+                  {{ 'customer.register.submit' | t | default: 'Create Account' }}
+                </button>
+
+                <div class="es-register-footer">
+                  <span>{{ 'customer.register.already_have_account' | t | default: 'Already have an account?' }}</span>
+                  <a href="{{ routes.account_login_url }}">{{ 'customer.register.login' | t | default: 'Sign in' }}</a>
+                </div>
+              {%- endform -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer register",
+  "tag": "section",
+  "class": "shopify-section--main-customers-register",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Side visual image",
+      "info": "1200 x 1400px recommended. Hidden on mobile."
+    },
+    {
+      "type": "header",
+      "content": "Colors & Padding"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "fields",
+      "name": "Register fields",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_email_consent",
+          "label": "Show marketing email consent checkbox",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    },
+    {
+      "type": "liquid",
+      "name": "Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer register",
+      "blocks": [
+        { "type": "fields" }
+      ]
+    }
+  ]
+}
+{% endschema %}

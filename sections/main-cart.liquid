@@ -1,0 +1,410 @@
+{%- comment -%}
+  Main Cart Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color | default: '#ffffff' }};
+    padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .main-cart__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .main-cart__title {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 700;
+    margin: 0;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+  }
+
+  .main-cart__continue-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: {{ section.settings.text_color | default: '#121212' }};
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: opacity 0.2s ease;
+  }
+
+  .main-cart__continue-link:hover {
+    opacity: 0.7;
+  }
+
+  /* Cart Layout */
+  .main-cart__layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .main-cart__layout {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+
+  /* Items Table */
+  .main-cart__items {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .main-cart__item {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #f1f5f9;
+    align-items: center;
+  }
+
+  .main-cart__item-image-wrapper {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f8fafc;
+  }
+
+  .main-cart__item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .main-cart__item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .main-cart__item-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: inherit;
+    text-decoration: none;
+    line-height: 1.3;
+  }
+
+  .main-cart__item-options {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+  }
+
+  .main-cart__item-price {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .main-cart__item-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .main-cart__item-total {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .main-cart__item-remove {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 0;
+  }
+
+  .main-cart__item-remove:hover {
+    color: #dc2626;
+  }
+
+  /* Summary Card */
+  .main-cart__summary {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 28px;
+    position: sticky;
+    top: 90px;
+  }
+
+  .main-cart__summary-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .main-cart__summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+  }
+
+  .main-cart__summary-row--total {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .main-cart__estimated-total {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+  }
+
+  .main-cart__disclaimer {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 14px 0 20px 0;
+    line-height: 1.4;
+  }
+
+  .main-cart__checkout-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background-color: {{ section.settings.btn_bg_color | default: '#121212' }};
+    color: {{ section.settings.btn_text_color | default: '#ffffff' }};
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .main-cart__checkout-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Empty Cart State */
+  .main-cart__empty {
+    text-align: center;
+    padding: 64px 20px;
+    max-width: 500px;
+    margin-inline: auto;
+  }
+
+  .main-cart__empty-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .main-cart__empty-text {
+    font-size: 1rem;
+    color: #64748b;
+    margin-bottom: 28px;
+  }
+
+  .main-cart__empty-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: {{ section.settings.btn_bg_color | default: '#121212' }};
+    color: {{ section.settings.btn_text_color | default: '#ffffff' }};
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .main-cart__empty-btn:hover {
+    opacity: 0.85;
+  }
+{%- endstyle -%}
+
+<div class="main-cart page-width">
+  {%- if cart.item_count > 0 -%}
+    <div class="main-cart__header">
+      <h1 class="main-cart__title">{{ 'templates.cart.title' | t | default: 'Shopping Cart' }}</h1>
+      <a href="{{ routes.all_products_collection_url }}" class="main-cart__continue-link">
+        {{ 'general.continue_shopping' | t | default: 'Continue shopping' }}
+      </a>
+    </div>
+
+    <form action="{{ routes.cart_url }}" method="post" id="cart-form">
+      <div class="main-cart__layout">
+        <!-- Line Items -->
+        <div class="main-cart__items">
+          {%- for item in cart.items -%}
+            <div class="main-cart__item" data-line="{{ forloop.index }}">
+              <div class="main-cart__item-image-wrapper">
+                {%- if item.image != blank -%}
+                  {%- assign es_tagarg_1 = item.title | escape -%}{{ item.image | image_url: width: 240 | image_tag:
+                    loading: 'lazy',
+                    class: 'main-cart__item-image',
+                    alt: es_tagarg_1}}
+                {%- endif -%}
+              </div>
+
+              <div class="main-cart__item-details">
+                <a href="{{ item.url }}" class="main-cart__item-title">{{ item.product.title | escape }}</a>
+                {%- unless item.product.has_only_default_variant -%}
+                  <p class="main-cart__item-options">{{ item.variant.title | escape }}</p>
+                {%- endunless -%}
+                <span class="main-cart__item-price">{{ item.original_price | money }}</span>
+              </div>
+
+              <div class="main-cart__item-actions">
+                <span class="main-cart__item-total">{{ item.final_line_price | money }}</span>
+
+                <div class="es-qty-stepper">
+                  <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item.quantity | minus: 1 }}" class="es-qty-stepper__btn" aria-label="Decrease quantity">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </a>
+                  <input
+                    type="number"
+                    name="updates[]"
+                    value="{{ item.quantity }}"
+                    min="0"
+                    class="es-qty-stepper__input"
+                    aria-label="Quantity for {{ item.title | escape }}"
+                  >
+                  <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item.quantity | plus: 1 }}" class="es-qty-stepper__btn" aria-label="Increase quantity">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </a>
+                </div>
+
+                <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" class="main-cart__item-remove" aria-label="Remove {{ item.title | escape }}">
+                  {{ 'sections.cart.remove_title' | t: title: item.title | default: 'Remove' }}
+                </a>
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <!-- Order Summary & Estimated Total -->
+        <div class="main-cart__summary">
+          <h2 class="main-cart__summary-title">Order Summary</h2>
+
+          <div class="main-cart__summary-row">
+            <span>Items ({{ cart.item_count }})</span>
+            <span>{{ cart.items_subtotal_price | default: cart.total_price | money }}</span>
+          </div>
+
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <div class="main-cart__summary-row" style="color: #059669;">
+                <span>Discount ({{ discount.title }})</span>
+                <span>-{{ discount.total_allocated_amount | money }}</span>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+
+          <div class="main-cart__summary-row main-cart__summary-row--total">
+            <span class="main-cart__estimated-total">
+              {{ 'sections.cart.new_estimated_total' | t | default: 'Estimated total' }}:
+            </span>
+            <span class="main-cart__estimated-total">
+              {{ cart.total_price | money_with_currency }}
+            </span>
+          </div>
+
+          <p class="main-cart__disclaimer">
+            Taxes, discounts, and shipping calculated at checkout.
+          </p>
+
+          <button type="submit" name="checkout" class="main-cart__checkout-btn">
+            {{ 'sections.cart.checkout' | t | default: 'Proceed to Checkout' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  {%- else -%}
+    <div class="main-cart__empty">
+      <h1 class="main-cart__empty-title">{{ 'templates.cart.empty' | t | default: 'Your cart is currently empty' }}</h1>
+      <p class="main-cart__empty-text">Looks like you haven't added any items to your cart yet.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="main-cart__empty-btn">
+        {{ 'general.continue_shopping' | t | default: 'Start Shopping' }}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Main cart",
+  "tag": "section",
+  "class": "shopify-section--main-cart",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg_color",
+      "label": "Checkout button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Checkout button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ]
+}
+{% endschema %}

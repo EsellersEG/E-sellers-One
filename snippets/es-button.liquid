@@ -1,0 +1,74 @@
+{%- comment -%}
+  E-sellers Button - E-sellers One (v5.0.0)
+
+  Shared button renderer used by any section/block with a link + label pair.
+  Wraps the design-system .es-btn primitive.
+
+  Accepts:
+  - label: {String} button text (required - nothing renders without it)
+  - url: {String} link href (optional - renders <span> instead of <a> when blank)
+  - style: {String} 'solid' | 'secondary' | 'ghost' | 'link' (default: 'solid')
+  - size: {String} 'sm' | 'md' | 'lg' (default: 'md')
+  - icon: {String} icon name to render via snippets/icon.liquid (optional)
+  - icon_position: {String} 'start' | 'end' (default: 'end')
+  - full_width: {Boolean}
+  - class: {String} extra classes
+  - new_tab: {Boolean}
+
+  Usage:
+  {% render 'es-button', label: block.settings.button_label, url: block.settings.button_url, style: 'solid' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign es_btn_style = style | default: 'solid'
+  assign es_btn_size = size | default: 'md'
+  assign es_btn_icon_pos = icon_position | default: 'end'
+
+  assign es_btn_class = 'es-btn'
+  case es_btn_style
+    when 'secondary'
+      assign es_btn_class = es_btn_class | append: ' es-btn--secondary'
+    when 'ghost'
+      assign es_btn_class = es_btn_class | append: ' es-btn--ghost'
+    when 'link'
+      assign es_btn_class = es_btn_class | append: ' es-btn--link'
+  endcase
+
+  case es_btn_size
+    when 'sm'
+      assign es_btn_class = es_btn_class | append: ' es-btn--sm'
+    when 'lg'
+      assign es_btn_class = es_btn_class | append: ' es-btn--lg'
+  endcase
+
+  if full_width
+    assign es_btn_class = es_btn_class | append: ' es-btn--full'
+  endif
+
+  if class != blank
+    assign es_btn_class = es_btn_class | append: ' ' | append: class
+  endif
+-%}
+{%- if label != blank -%}
+  {%- if url != blank -%}
+    <a href="{{ url }}" class="{{ es_btn_class }}" {% if new_tab %}target="_blank" rel="noopener"{% endif %}>
+      {%- if icon != blank and es_btn_icon_pos == 'start' -%}
+        <span class="es-btn__icon" aria-hidden="true">{% render 'icon', name: icon %}</span>
+      {%- endif -%}
+      <span class="es-btn__text">{{ label }}</span>
+      {%- if icon != blank and es_btn_icon_pos == 'end' -%}
+        <span class="es-btn__icon" aria-hidden="true">{% render 'icon', name: icon %}</span>
+      {%- endif -%}
+    </a>
+  {%- else -%}
+    <span class="{{ es_btn_class }}" aria-disabled="true">
+      {%- if icon != blank and es_btn_icon_pos == 'start' -%}
+        <span class="es-btn__icon" aria-hidden="true">{% render 'icon', name: icon %}</span>
+      {%- endif -%}
+      <span class="es-btn__text">{{ label }}</span>
+      {%- if icon != blank and es_btn_icon_pos == 'end' -%}
+        <span class="es-btn__icon" aria-hidden="true">{% render 'icon', name: icon %}</span>
+      {%- endif -%}
+    </span>
+  {%- endif -%}
+{%- endif -%}

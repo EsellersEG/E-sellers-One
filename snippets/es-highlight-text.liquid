@@ -1,0 +1,28 @@
+{%- comment -%}
+  E-sellers Highlight Text - E-sellers One (v5.0.0)
+
+  Renders text where any <em>...</em> the merchant typed in a rich-text field
+  gets a decorative emphasis treatment (underline, circle, or colour swap)
+  instead of italics. Pure CSS - no inline SVG injection, no custom element.
+
+  Accepts:
+  - text: {String} the raw string/richtext content, may contain <em> tags
+  - style: {String} 'underline' | 'circle' | 'color' (default: 'underline')
+  - color: {String} CSS colour for the emphasis mark (optional)
+
+  Usage:
+  {% render 'es-highlight-text', text: section.settings.heading, style: section.settings.highlight_style %}
+{%- endcomment -%}
+
+{%- liquid
+  assign es_hl_style = style | default: 'underline'
+  assign es_hl_class = 'es-hl es-hl--' | append: es_hl_style
+  assign es_hl_open = '<em class="' | append: es_hl_class | append: '"'
+  if color != blank
+    assign es_hl_open = es_hl_open | append: ' style="--es-hl-color:' | append: color | append: ';"'
+  endif
+  assign es_hl_open = es_hl_open | append: '>'
+
+  assign es_hl_output = text | replace: '<em>', es_hl_open | replace: '</em>', '</em>'
+-%}
+{{- es_hl_output -}}

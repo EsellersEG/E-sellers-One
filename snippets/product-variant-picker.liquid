@@ -1,0 +1,109 @@
+{%- comment -%}
+  Product Variant Picker Snippet - E-sellers Professional (v4.9.0)
+  Accepts:
+  - product: {Object} Product Liquid object
+  - block: {Object} Block object
+  - product_form_id: {String} Product form ID
+{%- endcomment -%}
+
+{%- unless product.has_only_default_variant -%}
+  <script src="{{ 'component-variant-picker.js' | asset_url }}" defer="defer"></script>
+
+  <variant-radios
+    class="variant-picker"
+    data-section="{{ section.id }}"
+    data-url="{{ product.url }}"
+    data-update-url="true"
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- assign opt_name = option.name | downcase -%}
+      {%- assign is_color = false -%}
+      {%- if opt_name contains 'color' or opt_name contains 'colour' or opt_name contains 'shade' -%}
+        {%- assign is_color = true -%}
+      {%- endif -%}
+
+      <fieldset class="variant-picker__fieldset" style="border: none; padding: 0; margin: 0 0 20px 0;">
+        <legend class="variant-picker__legend" style="font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; display: flex; gap: 6px;">
+          <span>{{ option.name }}:</span>
+          <span class="variant-selected-value" style="font-weight: 400; color: #71717a;">{{ option.selected_value }}</span>
+        </legend>
+
+        <div class="variant-picker__options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+          {%- for value in option.values -%}
+            <input
+              type="radio"
+              id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+              name="{{ option.name }}"
+              value="{{ value | escape }}"
+              form="{{ product_form_id }}"
+              class="visually-hidden variant-picker__radio"
+              {% if option.selected_value == value %}checked{% endif %}
+            >
+            {%- if is_color -%}
+              <!-- Color Swatch -->
+              <label
+                for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                class="variant-picker__swatch-label"
+                title="{{ value | escape }}"
+                style="
+                  width: 32px;
+                  height: 32px;
+                  border-radius: 50%;
+                  background-color: {{ value | downcase | remove: ' ' }};
+                  border: 2px solid #e2e8f0;
+                  display: inline-block;
+                  cursor: pointer;
+                  position: relative;
+                  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+                "
+              ></label>
+            {%- else -%}
+              <!-- Pill Button -->
+              <label
+                for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                class="variant-picker__pill-label"
+                style="
+                  padding: 8px 18px;
+                  font-size: 1.4rem;
+                  font-weight: 600;
+                  border: 1.5px solid #e2e8f0;
+                  border-radius: var(--button-radius, 8px);
+                  background-color: #ffffff;
+                  color: #121212;
+                  display: inline-block;
+                  cursor: pointer;
+                  transition: all 0.2s ease;
+                "
+              >
+                {{ value }}
+              </label>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </fieldset>
+    {%- endfor -%}
+
+    <script type="application/json">
+      {{ product.variants | json }}
+    </script>
+  </variant-radios>
+
+  <style>
+    /* Radio checked states */
+    .variant-picker__radio:checked + .variant-picker__pill-label {
+      border-color: #121212;
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .variant-picker__radio:checked + .variant-picker__swatch-label {
+      border-color: #121212;
+      box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #121212;
+      transform: scale(1.1);
+    }
+    .variant-picker__radio:focus-visible + label {
+      outline: 2px solid #005bd3;
+      outline-offset: 3px;
+    }
+  </style>
+{%- endunless -%}

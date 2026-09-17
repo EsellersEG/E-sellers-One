@@ -1,0 +1,536 @@
+{%- comment -%}
+  E-sellers Expandable Brands - E-sellers Professional (v4.9.0)
+  Desktop: horizontal expanding cards. Mobile/tablet: vertical accordion.
+  Interaction handled by es-expandable-brands.js (vanilla, ARIA roving tabindex).
+{%- endcomment -%}
+
+{{ 'es-expandable-brands.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign section_id = section.id
+  assign settings = section.settings
+  assign animation_duration = settings.animation_duration | default: 500
+  assign overlay_opacity = settings.overlay_opacity | default: 45
+  assign border_radius = settings.border_radius | default: 12
+  assign collapsed_width = settings.collapsed_width | default: 110
+  assign logo_width = settings.logo_width | default: 90
+  assign section_width_type = settings.section_width_type | default: 'page-width'
+
+  assign container_class = 'page-width'
+  assign container_style = ''
+  if section_width_type == 'full-width'
+    assign container_class = 'expandable-brands__container--full'
+  elsif section_width_type == 'custom'
+    assign container_class = 'expandable-brands__container--custom'
+    assign container_style = 'max-width: ' | append: settings.section_custom_width | append: 'px;'
+  endif
+-%}
+
+<div
+  class="expandable-brands section-{{ section_id }}-padding"
+  id="ExpandableBrands-{{ section_id }}"
+  data-section-id="{{ section_id }}"
+  data-section-type="expandable-brands"
+  data-animation-duration="{{ animation_duration }}"
+  data-expand-all="{% if settings.expand_all %}true{% else %}false{% endif %}"
+  style="
+    --eb-overlay-opacity: {{ overlay_opacity | divided_by: 100.0 }};
+    --eb-border-radius: {{ border_radius }}px;
+    --eb-animation-duration: {{ animation_duration }}ms;
+    --eb-collapsed-width: {{ collapsed_width }}px;
+    --eb-heading-color: {{ settings.heading_color | default: '#ffffff' }};
+    --eb-eyebrow-color: {{ settings.eyebrow_color | default: '#ffffff' }};
+    --eb-name-color: {{ settings.name_color | default: '#ffffff' }};
+    --eb-text-color: {{ settings.text_color | default: '#ffffff' }};
+    --eb-accent-color: {{ settings.accent_color | default: '#ffffff' }};
+    --eb-button-text-color: {{ settings.button_text_color | default: '#0b0b0c' }};
+    --eb-card-height: {{ settings.card_height | default: 520 }}px;
+    --eb-card-gap: {{ settings.card_gap | default: 16 }}px;
+    --eb-logo-width: {{ logo_width }}px;
+    --eb-text-width: {{ settings.text_width | default: 520 }}px;
+  "
+>
+  <div class="{{ container_class }}"{% if container_style != '' %} style="{{ container_style }}"{% endif %}>
+    {%- if settings.heading != blank -%}
+      <div class="expandable-brands__header">
+        <h2 class="expandable-brands__heading heading-size-{{ settings.heading_size }}">
+          {{ settings.heading }}
+        </h2>
+      </div>
+    {%- endif -%}
+
+    <div
+      class="expandable-brands__list"
+      role="tablist"
+      aria-label="{{ settings.heading | default: 'Brands' | escape }}"
+    >
+      {%- for block in section.blocks -%}
+        {%- assign is_first = forloop.first -%}
+        <div
+          class="expandable-brands__card{% if is_first or settings.expand_all %} is-active{% endif %}"
+          id="Brand-{{ section_id }}-{{ block.id }}"
+          data-brand-card
+          {{ block.shopify_attributes }}
+        >
+          <button
+            type="button"
+            class="expandable-brands__trigger"
+            data-brand-trigger
+            role="tab"
+            tabindex="{% if is_first or settings.expand_all %}0{% else %}-1{% endif %}"
+            aria-selected="{% if is_first or settings.expand_all %}true{% else %}false{% endif %}"
+            aria-controls="BrandPanel-{{ section_id }}-{{ block.id }}"
+            id="BrandTab-{{ section_id }}-{{ block.id }}"
+          >
+            <span class="expandable-brands__media">
+              {%- if block.settings.background_image != blank -%}
+                <img
+                  src="{{ block.settings.background_image | image_url: width: 1500 }}"
+                  alt="{{ block.settings.brand_name | escape }}"
+                  loading="lazy"
+                  decoding="async"
+                  width="{{ block.settings.background_image.width }}"
+                  height="{{ block.settings.background_image.height }}"
+                  class="expandable-brands__bg-image"
+                >
+              {%- else -%}
+                <span class="expandable-brands__bg-placeholder">{{ 'lifestyle-1' | placeholder_svg_tag }}</span>
+              {%- endif -%}
+              <span class="expandable-brands__overlay" aria-hidden="true"></span>
+            </span>
+
+            <span class="expandable-brands__logo-wrap">
+              {%- if block.settings.logo != blank -%}
+                <img
+                  src="{{ block.settings.logo | image_url: width: 300 }}"
+                  alt="{{ block.settings.brand_name | escape }}"
+                  loading="lazy"
+                  decoding="async"
+                  width="{{ block.settings.logo.width }}"
+                  height="{{ block.settings.logo.height }}"
+                  class="expandable-brands__logo"
+                >
+              {%- else -%}
+                <span class="expandable-brands__logo-text">{{ block.settings.brand_name }}</span>
+              {%- endif -%}
+            </span>
+          </button>
+
+          <div
+            class="expandable-brands__panel"
+            id="BrandPanel-{{ section_id }}-{{ block.id }}"
+            role="tabpanel"
+            aria-labelledby="BrandTab-{{ section_id }}-{{ block.id }}"
+          >
+            <div class="expandable-brands__content">
+              {%- if block.settings.eyebrow_text != blank -%}
+                <p class="expandable-brands__eyebrow">{{ block.settings.eyebrow_text }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.brand_name != blank -%}
+                <h3 class="expandable-brands__name">{{ block.settings.brand_name }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.description != blank -%}
+                <div class="expandable-brands__description rte">{{ block.settings.description }}</div>
+              {%- endif -%}
+
+              {%- if block.settings.categories_value != blank or block.settings.features_value != blank or block.settings.industries_value != blank -%}
+                <div class="expandable-brands__meta">
+                  {%- if block.settings.categories_value != blank -%}
+                    <div class="expandable-brands__meta-item">
+                      {%- if block.settings.categories_label != blank -%}
+                        <span class="expandable-brands__meta-label">{{ block.settings.categories_label }}</span>
+                      {%- endif -%}
+                      <div class="expandable-brands__meta-value rte">
+                        {{ block.settings.categories_value }}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.features_value != blank -%}
+                    <div class="expandable-brands__meta-item">
+                      {%- if block.settings.features_label != blank -%}
+                        <span class="expandable-brands__meta-label">{{ block.settings.features_label }}</span>
+                      {%- endif -%}
+                      <div class="expandable-brands__meta-value rte">
+                        {{ block.settings.features_value }}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                  {%- if block.settings.industries_value != blank -%}
+                    <div class="expandable-brands__meta-item">
+                      {%- if block.settings.industries_label != blank -%}
+                        <span class="expandable-brands__meta-label">{{ block.settings.industries_label }}</span>
+                      {%- endif -%}
+                      <div class="expandable-brands__meta-value rte">
+                        {{ block.settings.industries_value }}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.button_label != blank -%}
+                <a
+                  {% if block.settings.button_url != blank %}href="{{ block.settings.button_url }}"{% else %}role="link" aria-disabled="true"{% endif %}
+                  class="expandable-brands__button"
+                >
+                  {{ block.settings.button_label }}
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M11 1L15 5M15 5L11 9M15 5H1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      {%- else -%}
+        <div class="expandable-brands__empty-state">
+          {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          <p>{{ 'sections.expandable-brands.no_blocks' | t }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% style %}
+  .section-{{ section_id }}-padding {
+    padding-top: {{ settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ settings.padding_bottom | default: 60 }}px;
+    background-color: {{ settings.background_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .section-{{ section_id }}-padding {
+      padding-top: {{ settings.padding_top | default: 60 | times: 0.5 | round }}px;
+      padding-bottom: {{ settings.padding_bottom | default: 60 | times: 0.5 | round }}px;
+    }
+  }
+{% endstyle %}
+
+<script src="{{ 'es-expandable-brands.js' | asset_url }}" defer="defer"></script>
+
+{% schema %}
+{
+  "name": "Expandable brands",
+  "tag": "section",
+  "class": "shopify-section--es-expandable-brands",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Our Brands"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#0b0b0c"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Section heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "name_color",
+      "label": "Brand name color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Description & meta text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Button border / hover background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color (hover)",
+      "default": "#0b0b0c"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Background overlay opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "expand_all",
+      "label": "Keep all brands expanded",
+      "info": "When enabled, all brand cards are expanded simultaneously. Clicking a card will no longer collapse others.",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "section_width_type",
+      "label": "Section width",
+      "options": [
+        { "value": "page-width", "label": "Page width (theme default)" },
+        { "value": "full-width", "label": "Full width" },
+        { "value": "custom", "label": "Custom max-width" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "section_custom_width",
+      "label": "Custom max-width",
+      "min": 960,
+      "max": 1920,
+      "step": 20,
+      "unit": "px",
+      "default": 1200,
+      "info": "Only used when Section width is set to \"Custom max-width\"."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "min": 40,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "text_width",
+      "label": "Text width (desktop)",
+      "min": 320,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 520,
+      "info": "Controls the width of the active card text content on desktop."
+    },
+    {
+      "type": "range",
+      "id": "card_height",
+      "label": "Card height (desktop)",
+      "min": 320,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "collapsed_width",
+      "label": "Collapsed card width (desktop)",
+      "min": 60,
+      "max": 240,
+      "step": 5,
+      "unit": "px",
+      "default": 110
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Space between cards",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Expand/collapse animation duration",
+      "min": 150,
+      "max": 1200,
+      "step": 50,
+      "unit": "ms",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "background_image",
+          "label": "Background image"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand logo"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow_text",
+          "label": "Eyebrow text",
+          "default": "Athletic Excellence"
+        },
+        {
+          "type": "text",
+          "id": "brand_name",
+          "label": "Brand name",
+          "default": "Brand Name"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Where the speed of the athlete meets the safety of the technician.</p>"
+        },
+        {
+          "type": "header",
+          "content": "Categories"
+        },
+        {
+          "type": "text",
+          "id": "categories_label",
+          "label": "Label",
+          "default": "Categories"
+        },
+        {
+          "type": "richtext",
+          "id": "categories_value",
+          "label": "Value",
+          "default": "<p>Athletic</p><p>ESD</p><p>Nikl</p>"
+        },
+        {
+          "type": "header",
+          "content": "Features"
+        },
+        {
+          "type": "text",
+          "id": "features_label",
+          "label": "Label",
+          "default": "Features"
+        },
+        {
+          "type": "richtext",
+          "id": "features_value",
+          "label": "Value",
+          "default": "<p>7TT+ Bravo Toe</p><p>Salette</p>"
+        },
+        {
+          "type": "header",
+          "content": "Industries"
+        },
+        {
+          "type": "text",
+          "id": "industries_label",
+          "label": "Label",
+          "default": "Industries"
+        },
+        {
+          "type": "richtext",
+          "id": "industries_value",
+          "label": "Value",
+          "default": "<p>Aerospace</p><p>Logistics</p>"
+        },
+        {
+          "type": "header",
+          "content": "Button"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button text",
+          "default": "Explore Collection"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Expandable brands",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "brand" },
+        { "type": "brand" }
+      ]
+    }
+  ]
+}
+{% endschema %}

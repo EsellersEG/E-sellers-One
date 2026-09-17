@@ -1,0 +1,93 @@
+{%- comment -%}
+  E-sellers Horizontal Products List - E-sellers One (v5.0.0)
+
+  A collection's products in a scroll-snap rail rather than a fixed grid -
+  useful for long lists where a merchant wants a "see more by scrolling" feel
+  without pagination. CSS scroll-snap only, no carousel library.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_hpl_collection = section.settings.collection
+  assign es_hpl_limit = section.settings.limit | default: 12
+-%}
+
+{%- if es_hpl_collection != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-hpl-cols: {{ section.settings.columns | default: 4 }};
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-hpl__rail {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 68%;
+      gap: {{ section.settings.column_gap | default: 16 }}px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--es-space-2);
+    }
+    #shopify-section-{{ section.id }} .es-hpl__rail > * { scroll-snap-align: start; }
+
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-hpl__rail {
+        grid-auto-columns: calc((100% - (var(--es-hpl-cols) - 1) * {{ section.settings.column_gap | default: 16 }}px) / var(--es-hpl-cols));
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        alignment: section.settings.heading_alignment,
+        button_label: section.settings.button_label,
+        button_url: section.settings.button_link -%}
+
+    <div class="es-hpl__rail">
+      {%- for product in es_hpl_collection.products limit: es_hpl_limit -%}
+        {%- render 'card-product', card_product: product -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Choose a collection to populate this list.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Horizontal Products List",
+  "tag": "section",
+  "class": "shopify-section--es-horizontal-products-list",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "limit", "label": "Products to show", "min": 2, "max": 24, "step": 1, "default": 12 },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the list" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [{ "value": "start", "label": "Left" }, { "value": "center", "label": "Center" }],
+      "default": "start"
+    },
+    { "type": "text", "id": "button_label", "label": "Link text", "default": "View all" },
+    { "type": "url", "id": "button_link", "label": "Link URL" },
+    { "type": "range", "id": "columns", "label": "Visible columns (desktop)", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "range", "id": "column_gap", "label": "Gap", "min": 0, "max": 40, "step": 2, "unit": "px", "default": 16 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "presets": [
+    { "name": "E-sellers Horizontal Products List" }
+  ]
+}
+{% endschema %}

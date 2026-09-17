@@ -1,0 +1,387 @@
+{%- comment -%}
+  E-sellers Tabs Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#0f172a' }};
+  }
+
+  .es-tabs-wrapper {
+    max-width: {% if section.settings.content_size == 'small' %}760px{% elsif section.settings.content_size == 'medium' %}1000px{% elsif section.settings.content_size == 'large' %}1260px{% else %}100%{% endif %};
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Desktop Tabs Bar */
+  .es-tabs-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .es-tab-btn {
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #64748b;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .es-tab-btn:hover {
+    color: #0f172a;
+    background-color: #f8fafc;
+  }
+
+  .es-tab-btn.is-active {
+    background-color: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+  }
+
+  /* Desktop Panels */
+  .es-tab-panel {
+    display: none;
+    animation: esTabFade 0.35s ease forwards;
+    line-height: 1.7;
+    font-size: 1rem;
+  }
+
+  .es-tab-panel.is-active {
+    display: block;
+  }
+
+  @keyframes esTabFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Mobile Accordion Mode */
+  .es-tabs-mobile-accordion {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .es-tabs-acc-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .es-tabs-acc-btn {
+    width: 100%;
+    padding: 16px 20px;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .es-tabs-acc-btn svg {
+    transition: transform 0.25s ease;
+  }
+
+  .es-tabs-acc-item.is-open .es-tabs-acc-btn svg {
+    transform: rotate(180deg);
+  }
+
+  .es-tabs-acc-content {
+    display: none;
+    padding: 0 20px 20px 20px;
+    color: #334155;
+    line-height: 1.65;
+  }
+
+  .es-tabs-acc-item.is-open .es-tabs-acc-content {
+    display: block;
+  }
+
+  @media screen and (max-width: 699px) {
+    .es-tabs-desktop {
+      display: none;
+    }
+    .es-tabs-mobile-accordion {
+      display: flex;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-tabs-section" id="Tabs-{{ section.id }}">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    <div class="es-tabs-wrapper">
+      
+      <!-- Section Header -->
+      {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+        {% render 'section-header',
+          subheading: section.settings.subheading,
+          heading: section.settings.title,
+          heading_color: section.settings.heading_color,
+          heading_gradient: section.settings.heading_gradient
+        %}
+      {%- endif -%}
+
+      <!-- Desktop View: Segmented Pill Tab Bar -->
+      <div class="es-tabs-desktop">
+        <div class="es-tabs-nav" role="tablist">
+          {%- for block in section.blocks -%}
+            {%- assign tab_title = block.settings.title | default: block.settings.page.title -%}
+            {%- if tab_title != blank -%}
+              <button
+                type="button"
+                role="tab"
+                class="es-tab-btn {% if forloop.first %}is-active{% endif %}"
+                data-index="{{ forloop.index0 }}"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                onclick="switchEsTab('{{ section.id }}', {{ forloop.index0 }})"
+                {{ block.shopify_attributes }}
+              >
+                {{ tab_title | escape }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        <div class="es-tabs-panels-container">
+          {%- for block in section.blocks -%}
+            {%- assign tab_content = block.settings.page.content | default: block.settings.content -%}
+            <div
+              class="es-tab-panel {% if forloop.first %}is-active{% endif %}"
+              data-index="{{ forloop.index0 }}"
+              role="tabpanel"
+            >
+              {%- if tab_content != blank -%}
+                <div class="prose">
+                  {{ tab_content }}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <!-- Mobile View: Collapsible Accordion Cards -->
+      <div class="es-tabs-mobile-accordion">
+        {%- for block in section.blocks -%}
+          {%- assign tab_title = block.settings.title | default: block.settings.page.title -%}
+          {%- assign tab_content = block.settings.page.content | default: block.settings.content -%}
+          {%- assign is_open = false -%}
+          {%- if forloop.first and section.settings.first_tab_open -%}
+            {%- assign is_open = true -%}
+          {%- endif -%}
+
+          {%- if tab_title != blank and tab_content != blank -%}
+            <div class="es-tabs-acc-item {% if is_open %}is-open{% endif %}" {{ block.shopify_attributes }}>
+              <button
+                type="button"
+                class="es-tabs-acc-btn"
+                onclick="toggleEsMobileTab(this)"
+                aria-expanded="{% if is_open %}true{% else %}false{% endif %}"
+              >
+                <span>{{ tab_title | escape }}</span>
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="es-tabs-acc-content">
+                <div class="prose">
+                  {{ tab_content }}
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    window.switchEsTab = function(sectionId, index) {
+      const container = document.getElementById('Tabs-' + sectionId);
+      if (!container) return;
+
+      const buttons = container.querySelectorAll('.es-tab-btn');
+      const panels = container.querySelectorAll('.es-tab-panel');
+
+      buttons.forEach((btn, i) => {
+        const active = (i === index);
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+
+      panels.forEach((p, i) => p.classList.toggle('is-active', i === index));
+    };
+
+    window.toggleEsMobileTab = function(button) {
+      const item = button.closest('.es-tabs-acc-item');
+      if (!item) return;
+      const isOpen = item.classList.contains('is-open');
+      item.classList.toggle('is-open', !isOpen);
+      button.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
+    };
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Tabs",
+  "tag": "section",
+  "class": "shopify-section--tabs",
+  "max_blocks": 6,
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "content_size",
+      "label": "Content max width",
+      "options": [
+        { "value": "small", "label": "Small (760px)" },
+        { "value": "medium", "label": "Medium (1000px)" },
+        { "value": "large", "label": "Large (1260px)" },
+        { "value": "fill", "label": "Full container width" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Learn More"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Product Specs & FAQ"
+    },
+    {
+      "type": "checkbox",
+      "id": "first_tab_open",
+      "label": "Open first tab on mobile by default",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Tab title",
+          "default": "Materials & Care"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Tab content",
+          "default": "<p>Carefully crafted from sustainably sourced materials designed for maximum durability and effortless maintenance.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Or render entire Shopify page",
+          "info": "Overrides inline content if chosen."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabs",
+      "blocks": [
+        { "type": "tab", "settings": { "title": "Materials & Care", "content": "<p>Premium organic fabrics woven for lasting luxury and breathable comfort.</p>" } },
+        { "type": "tab", "settings": { "title": "Shipping & Delivery", "content": "<p>Complimentary express shipping on orders over $75 with full tracking included.</p>" } },
+        { "type": "tab", "settings": { "title": "Warranty & Returns", "content": "<p>Backed by our 2-year warranty and a 30-day money-back satisfaction guarantee.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

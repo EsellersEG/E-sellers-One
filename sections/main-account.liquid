@@ -1,0 +1,404 @@
+{%- comment -%}
+  Customer Account Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+  }
+
+  .es-account-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .es-account-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .es-account-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: #0f172a;
+  }
+
+  .es-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  /* Empty State */
+  .es-account-empty {
+    text-align: center;
+    padding: 60px 24px;
+    background: #f8fafc;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .es-account-empty__icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 16px;
+    color: #94a3b8;
+  }
+
+  .es-account-empty__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #0f172a;
+  }
+
+  .es-account-empty__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    background-color: #0f172a;
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-top: 16px;
+    transition: background-color 0.2s ease;
+  }
+
+  .es-account-empty__btn:hover {
+    background-color: #1e293b;
+  }
+
+  /* Orders Table (Desktop) */
+  .es-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .es-orders-table th {
+    text-align: left;
+    padding: 14px 20px;
+    background: #f8fafc;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .es-orders-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.95rem;
+    color: #1e293b;
+    vertical-align: middle;
+  }
+
+  .es-orders-table tr:hover td {
+    background-color: #f8fafc;
+  }
+
+  .es-order-link {
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* Status Pill */
+  .es-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  .es-status-pill--paid, .es-status-pill--fulfilled {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .es-status-pill--unfulfilled, .es-status-pill--pending {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  /* Mobile Orders List */
+  .es-orders-mobile {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .es-order-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Account Sidebar */
+  .es-account-sidebar {
+    padding: 28px;
+    border-radius: 16px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .es-account-sidebar__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0;
+    color: #0f172a;
+  }
+
+  .es-account-sidebar__address {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #475569;
+  }
+
+  .es-account-sidebar__link {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-account-layout {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+
+    .es-orders-table {
+      display: none;
+    }
+
+    .es-orders-mobile {
+      display: flex;
+    }
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <div class="es-account-layout">
+    
+    <!-- Main Orders Area -->
+    <div class="es-account-main">
+      <div class="es-account-header">
+        <h1 class="es-account-title">{{ 'customer.account.orders' | t | default: 'Order History' }}</h1>
+        <span class="es-count-badge">{{ customer.orders.size }}</span>
+      </div>
+
+      {%- if customer.orders.size == 0 -%}
+        <div class="es-account-empty">
+          <svg class="es-account-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          <h2 class="es-account-empty__title">{{ 'customer.account.no_orders' | t | default: "You haven't placed any orders yet." }}</h2>
+          <p style="color: #64748b; margin: 0;">Once you make a purchase, tracking and history will appear here.</p>
+          <a href="{{ routes.all_products_collection_url }}" class="es-account-empty__btn">
+            {{ 'customer.account.continue_shopping' | t | default: 'Start Shopping' }}
+          </a>
+        </div>
+      {%- else -%}
+        {%- paginate customer.orders by 16 -%}
+          <!-- Desktop Orders Table -->
+          <table class="es-orders-table">
+            <thead>
+              <tr>
+                <th>{{ 'customer.order.order' | t | default: 'Order' }}</th>
+                <th>{{ 'customer.order.date' | t | default: 'Date' }}</th>
+                <th>{{ 'customer.order.payment_status' | t | default: 'Payment' }}</th>
+                <th>{{ 'customer.order.fulfillment_status' | t | default: 'Fulfillment' }}</th>
+                <th style="text-align: right;">{{ 'customer.order.total' | t | default: 'Total' }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for order in customer.orders -%}
+                <tr>
+                  <td>
+                    <a href="{{ order.customer_url }}" class="es-order-link">{{ order.name }}</a>
+                  </td>
+                  <td>{{ order.created_at | date: format: 'date' }}</td>
+                  <td>
+                    <span class="es-status-pill es-status-pill--{{ order.financial_status }}">
+                      {{ order.financial_status_label }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="es-status-pill es-status-pill--{{ order.fulfillment_status }}">
+                      {{ order.fulfillment_status_label }}
+                    </span>
+                  </td>
+                  <td style="text-align: right; font-weight: 700;">
+                    {{ order.total_net_amount | default: order.total_price | money }}
+                  </td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+
+          <!-- Mobile Orders Cards -->
+          <div class="es-orders-mobile">
+            {%- for order in customer.orders -%}
+              <div class="es-order-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <a href="{{ order.customer_url }}" class="es-order-link" style="font-size: 1.1rem;">{{ order.name }}</a>
+                  <span style="font-weight: 700; color: #0f172a;">{{ order.total_price | money }}</span>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <span class="es-status-pill es-status-pill--{{ order.financial_status }}">{{ order.financial_status_label }}</span>
+                  <span class="es-status-pill es-status-pill--{{ order.fulfillment_status }}">{{ order.fulfillment_status_label }}</span>
+                </div>
+                <div style="font-size: 0.85rem; color: #64748b;">
+                  {{ order.created_at | date: format: 'date' }}
+                </div>
+                <a href="{{ order.customer_url }}" style="display: inline-block; padding: 10px; text-align: center; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 600; text-decoration: none; color: #0f172a;">
+                  {{ 'customer.order.view_details' | t | default: 'View Order Details' }}
+                </a>
+              </div>
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <div style="margin-top: 32px;">
+              {% render 'pagination', paginate: paginate %}
+            </div>
+          {%- endif -%}
+        {%- endpaginate -%}
+      {%- endif -%}
+
+      <!-- Block Renderer for Custom App/Liquid Blocks -->
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when '@app' -%}
+            {% render block %}
+          {%- when 'liquid' -%}
+            {%- if block.settings.liquid != blank -%}
+              <div {{ block.shopify_attributes }}>
+                {{ block.settings.liquid }}
+              </div>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- Customer Details Sidebar -->
+    <div class="es-account-sidebar">
+      <h2 class="es-account-sidebar__title">{{ 'customer.account.details' | t | default: 'Account Details' }}</h2>
+      
+      <div class="es-account-sidebar__address">
+        <p style="font-weight: 700; margin: 0 0 4px 0; color: #0f172a;">{{ customer.name }}</p>
+        <p style="margin: 0 0 8px 0;">{{ customer.email }}</p>
+        {%- if customer.default_address -%}
+          <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+            {{ customer.default_address | format_address }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+        <a href="{{ routes.account_addresses_url }}" class="es-account-sidebar__link">
+          {{ 'customer.account.view_addresses' | t | default: 'View addresses' }} ({{ customer.addresses_count }})
+        </a>
+        <a href="{{ routes.account_logout_url }}" class="es-account-sidebar__link" style="color: #ef4444;">
+          {{ 'customer.log_out' | t | default: 'Log out' }}
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Customer account",
+  "tag": "section",
+  "class": "shopify-section--main-customers-account",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "liquid",
+      "name": "Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid"
+        }
+      ]
+    },
+    {
+      "type": "orders",
+      "name": "Order list",
+      "limit": 1
+    }
+  ]
+}
+{% endschema %}

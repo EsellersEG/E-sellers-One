@@ -1,0 +1,618 @@
+{%- comment -%}
+  E-sellers Featured Product 2 - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- assign product = section.settings.product -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background: {{ section.settings.background | default: 'transparent' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: 48px;
+    padding-bottom: 48px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .es-featured-product {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media screen and (min-width: 990px) {
+    .es-featured-product {
+      grid-template-columns: {{ section.settings.desktop_media_width | default: 50 }}% calc({{ 100 | minus: section.settings.desktop_media_width | default: 50 }}% - 40px);
+      gap: 40px;
+    }
+  }
+
+  /* Media Gallery */
+  .es-product-gallery {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+  }
+
+  .es-product-gallery__main {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+  }
+
+  .es-product-gallery__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+  }
+
+  .es-product-gallery__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+  }
+
+  .es-product-gallery__placeholder svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.5;
+  }
+
+  /* Product Info */
+  .es-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .es-product-vendor {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  .es-product-title {
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .es-product-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .es-product-title a:hover {
+    opacity: 0.85;
+  }
+
+  /* Price */
+  .es-product-price {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .es-product-price--compare {
+    font-size: 1rem;
+    text-decoration: line-through;
+    opacity: 0.5;
+    font-weight: 400;
+  }
+
+  .es-product-price--badge {
+    font-size: 0.75rem;
+    background: #ef4444;
+    color: #ffffff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  /* Separator */
+  .es-product-separator {
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 4px 0;
+  }
+
+  /* Description */
+  .es-product-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  /* Quantity Selector */
+  .es-quantity-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .es-quantity-selector label {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .es-quantity-controls {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    width: fit-content;
+    overflow: hidden;
+  }
+
+  .es-quantity-btn {
+    background: none;
+    border: none;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #121212;
+    transition: background 0.15s ease;
+  }
+
+  .es-quantity-btn:hover {
+    background: #f1f5f9;
+  }
+
+  .es-quantity-input {
+    width: 48px;
+    height: 38px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #121212;
+  }
+
+  /* Variant Picker */
+  .es-variant-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .es-variant-option {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .es-variant-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .es-variant-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .es-variant-btn {
+    padding: 8px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #121212;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .es-variant-btn:hover,
+  .es-variant-btn.is-selected {
+    border-color: #121212;
+    background: #121212;
+    color: #ffffff;
+  }
+
+  /* Buy Buttons */
+  .es-buy-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .es-atc-btn {
+    width: 100%;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    background-color: {{ section.settings.button_background | default: '#121212' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .es-atc-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Offer Banner */
+  .es-product-offer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 0.9rem;
+  }
+{%- endstyle -%}
+
+<!-- ====================================================================== -->
+<!-- HTML / LIQUID LAYOUT                                                   -->
+<!-- ====================================================================== -->
+<div class="{% if section.settings.full_width %}page-width--full{% else %}page-width{% endif %}">
+  <div class="es-featured-product">
+    
+    <!-- Product Media Gallery Column -->
+    <div class="es-product-gallery">
+      <div class="es-product-gallery__main">
+        {%- if product != blank and product.featured_image != blank -%}
+          {{ product.featured_image | image_url: width: 1200 | image_tag:
+            loading: 'lazy',
+            sizes: '(max-width: 989px) 100vw, 50vw',
+            widths: '400, 600, 800, 1000, 1200',
+            class: 'es-product-gallery__img'
+          }}
+        {%- else -%}
+          <div class="es-product-gallery__placeholder">
+            {{ 'product-1' | placeholder_svg_tag }}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <!-- Product Information Column -->
+    <div class="es-product-info">
+      {%- capture product_form_id -%}es2-featured-product-form-{{ section.id }}{%- endcapture -%}
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          
+          <!-- Vendor -->
+          {%- when 'vendor' -%}
+            <p class="es-product-vendor" {{ block.shopify_attributes }}>
+              {{ product.vendor | default: 'Brand Name' }}
+            </p>
+
+          <!-- Title -->
+          {%- when 'title' -%}
+            <h2 class="es-product-title {{ block.settings.heading_tag | default: 'h2' }}" {{ block.shopify_attributes }}>
+              {%- if product != blank -%}
+                <a href="{{ product.url }}">{{ product.title }}</a>
+              {%- else -%}
+                <span>Sample Featured Product</span>
+              {%- endif -%}
+            </h2>
+
+          <!-- Price -->
+          {%- when 'price' -%}
+            <div class="es-product-price" {{ block.shopify_attributes }}>
+              {%- if product != blank -%}
+                <span>{{ product.selected_or_first_available_variant.price | money }}</span>
+                {%- if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price -%}
+                  <span class="es-product-price--compare">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+                  <span class="es-product-price--badge">Sale</span>
+                {%- endif -%}
+              {%- else -%}
+                <span>{{ 4999 | money }}</span>
+                <span class="es-product-price--compare">{{ 6999 | money }}</span>
+                <span class="es-product-price--badge">Sale</span>
+              {%- endif -%}
+            </div>
+
+          <!-- Separator -->
+          {%- when 'separator' -%}
+            <hr class="es-product-separator" {{ block.shopify_attributes }}>
+
+          <!-- Description -->
+          {%- when 'description' -%}
+            <div class="es-product-description" {{ block.shopify_attributes }}>
+              {%- if product != blank and product.description != blank -%}
+                {{ product.description | truncatewords: 35 }}
+              {%- else -%}
+                <p>Highlight your best-selling product here. Showcase key features, premium materials, and what makes it special to encourage fast checkout.</p>
+              {%- endif -%}
+            </div>
+
+          <!-- Variant Picker -->
+          {%- when 'variant_picker' -%}
+            {%- if product != blank and product.variants.size > 1 -%}
+              <div class="es-variant-picker" {{ block.shopify_attributes }}>
+                {%- for option in product.options_with_values -%}
+                  <div class="es-variant-option">
+                    <span class="es-variant-label">{{ option.name }}:</span>
+                    <div class="es-variant-values">
+                      {%- for value in option.values -%}
+                        <button type="button" class="es-variant-btn {% if option.selected_value == value %}is-selected{% endif %}">
+                          {{ value }}
+                        </button>
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+          <!-- Quantity Selector -->
+          {%- when 'quantity_selector' -%}
+            <div class="es-quantity-selector" {{ block.shopify_attributes }}>
+              <label for="{{ product_form_id }}-qty">Quantity:</label>
+              <div class="es-quantity-controls">
+                <button type="button" class="es-quantity-btn" onclick="this.nextElementSibling.stepDown()">-</button>
+                <input id="{{ product_form_id }}-qty" type="number" name="quantity" value="1" min="1" class="es-quantity-input" form="{{ product_form_id }}">
+                <button type="button" class="es-quantity-btn" onclick="this.previousElementSibling.stepUp()">+</button>
+              </div>
+            </div>
+
+          <!-- Buy Buttons -->
+          {%- when 'buy_buttons' -%}
+            <div class="es-buy-buttons" {{ block.shopify_attributes }}>
+              {%- form 'product', product, id: product_form_id, novalidate: 'novalidate' -%}
+                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                <button type="submit" name="add" class="es-atc-btn" style="background-color: {{ block.settings.atc_button_background | default: '#121212' }}; color: {{ block.settings.atc_button_text_color | default: '#ffffff' }};">
+                  {%- if product != blank -%}
+                    {%- if product.available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
+                  {%- else -%}
+                    Add to Cart
+                  {%- endif -%}
+                </button>
+              {%- endform -%}
+            </div>
+
+          <!-- Offer / Trust Badge -->
+          {%- when 'offer' -%}
+            <div class="es-product-offer" style="background-color: {{ block.settings.background | default: '#f8fafc' }}; color: {{ block.settings.text_color | default: '#00a341' }};" {{ block.shopify_attributes }}>
+              <span>✓</span>
+              <div>
+                <strong>{{ block.settings.title | default: 'Free Express Shipping' }}</strong>
+                {%- if block.settings.content != blank -%}
+                  <div>{{ block.settings.content }}</div>
+                {%- endif -%}
+              </div>
+            </div>
+
+          <!-- Custom Liquid -->
+          {%- when 'liquid' -%}
+            <div class="es-product-liquid" {{ block.shopify_attributes }}>
+              {{ block.settings.liquid }}
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers 2",
+  "class": "section--es2-featured-product",
+  "tag": "section",
+  "disabled_on": {
+    "templates": ["password"],
+    "groups": ["header", "custom.overlay"]
+  },
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "vendor",
+      "name": "Vendor",
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "Heading style",
+          "options": [
+            { "value": "h1", "label": "H1" },
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" }
+          ],
+          "default": "h2"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1
+    },
+    {
+      "type": "separator",
+      "name": "Separator"
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant picker",
+      "limit": 1
+    },
+    {
+      "type": "quantity_selector",
+      "name": "Quantity selector",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "color",
+          "id": "atc_button_background",
+          "label": "Add to cart background",
+          "default": "#121212"
+        },
+        {
+          "type": "color",
+          "id": "atc_button_text_color",
+          "label": "Add to cart text color",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "offer",
+      "name": "Offer badge",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Free Shipping & Returns"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Orders ship within 24 hours with full tracking.</p>"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Background",
+          "default": "#eaf2ed"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text color",
+          "default": "#00a341"
+        }
+      ]
+    },
+    {
+      "type": "liquid",
+      "name": "Custom Liquid",
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "liquid",
+          "label": "Liquid"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width container",
+      "default": false
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "range",
+      "id": "desktop_media_width",
+      "label": "Desktop media width",
+      "min": 35,
+      "max": 65,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers 2",
+      "blocks": [
+        { "type": "vendor" },
+        { "type": "title" },
+        { "type": "price" },
+        { "type": "description" },
+        { "type": "variant_picker" },
+        { "type": "quantity_selector" },
+        { "type": "buy_buttons" },
+        { "type": "offer" }
+      ]
+    }
+  ]
+}
+{% endschema %}

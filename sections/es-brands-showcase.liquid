@@ -1,0 +1,1022 @@
+{%- comment -%}
+  E-sellers Brands Showcase - E-sellers Professional (v4.9.0)
+
+  Full-bleed brand logo tab bar driving animated brand panels
+  (name, description, hero product image, up to three category columns, CTA).
+
+  Every selector and keyframe is namespaced to this section's id, so any number
+  of instances can live on one page. Tabs follow the WAI-ARIA tabs pattern with
+  roving tabindex and arrow-key navigation.
+{%- endcomment -%}
+
+{%- liquid
+  assign brand_blocks = section.blocks | where: 'type', 'brand'
+  assign tablet_cols = section.settings.tablet_logos_per_row | default: 3
+  assign total_blocks = brand_blocks.size
+  assign remainder = total_blocks | modulo: tablet_cols
+  if remainder == 0
+    assign last_row_count = tablet_cols
+  else
+    assign last_row_count = remainder
+  endif
+  assign last_row_start = total_blocks | minus: last_row_count | plus: 1
+  assign uid = section.id | replace: '-', '_'
+-%}
+
+{%- if total_blocks > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-bs-logo-height: {{ section.settings.logo_height | default: 52 }}px;
+      --es-bs-grayscale: {{ section.settings.inactive_grayscale | default: 100 }}%;
+      --es-bs-rest-opacity: {{ section.settings.inactive_opacity | default: 45 | divided_by: 100.0 }};
+      --es-bs-active-scale: {{ section.settings.active_logo_scale | default: 110 | divided_by: 100.0 }};
+      --es-bs-hover-scale: {{ section.settings.hover_logo_scale | default: 105 | divided_by: 100.0 }};
+      --es-bs-speed: {{ section.settings.animation_speed | default: 1000 }}ms;
+      --es-bs-slide: {{ section.settings.slide_distance | default: 160 }}px;
+      --es-bs-accent: {{ section.settings.accent_color | default: '#0057a8' }};
+      --es-bs-indicator: {{ section.settings.indicator_color | default: '#1a3a6b' }};
+      --es-bs-nav-border: {{ section.settings.nav_border_color | default: '#d0d0d0' }};
+      --es-bs-nav-divider: {{ section.settings.nav_divider_color | default: '#d0d0d0' }};
+      --es-bs-nav-bg: {{ section.settings.nav_background | default: '#ffffff' }};
+      --es-bs-brand-heading: {{ section.settings.brand_heading_color | default: '#5cb85c' }};
+      --es-bs-cat-title-size: {{ section.settings.cat_title_size | default: 20 }}px;
+      --es-bs-cat-items-size: {{ section.settings.cat_items_size | default: 17 }}px;
+      --es-bs-desc-size: {{ section.settings.description_size | default: 20 }}px;
+      --es-bs-desc-weight: {{ section.settings.description_weight | default: '700' }};
+      --es-bs-img-col: {{ section.settings.image_max_width | default: 520 }}px;
+      --es-bs-pad: {{ section.settings.section_padding | default: 40 }}px;
+      --es-bs-text: {{ section.settings.text_color | default: 'inherit' }};
+
+      width: 100%;
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- elsif section.settings.background != blank -%}
+        background-color: {{ section.settings.background }};
+      {%- endif -%}
+      color: var(--es-bs-text);
+      padding-top: {{ section.settings.padding_top | default: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+    }
+
+    /* ── Keyframes (namespaced) ── */
+    @keyframes es-bs-slide-{{ uid }} {
+      from { transform: translateX(calc(var(--es-bs-slide) * -1)); opacity: 0; }
+      to   { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes es-bs-fade-up-{{ uid }} {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #shopify-section-{{ section.id }} .es-bs__panel.is-animating .es-bs__image-wrap {
+      animation: es-bs-slide-{{ uid }} var(--es-bs-speed) cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    }
+    #shopify-section-{{ section.id }} .es-bs__panel.is-animating .es-bs__brand-heading {
+      animation: es-bs-fade-up-{{ uid }} calc(var(--es-bs-speed) * 0.7) ease 0ms both;
+    }
+    #shopify-section-{{ section.id }} .es-bs__panel.is-animating .es-bs__description {
+      animation: es-bs-fade-up-{{ uid }} calc(var(--es-bs-speed) * 0.7) ease 80ms both;
+    }
+    #shopify-section-{{ section.id }} .es-bs__panel.is-animating .es-bs__category:nth-child(1) {
+      animation: es-bs-fade-up-{{ uid }} calc(var(--es-bs-speed) * 0.7) ease 150ms both;
+    }
+    #shopify-section-{{ section.id }} .es-bs__panel.is-animating .es-bs__category:nth-child(2) {
+      animation: es-bs-fade-up-{{ uid }} calc(var(--es-bs-speed) * 0.7) ease 220ms both;
+    }
+    #shopify-section-{{ section.id }} .es-bs__panel.is-animating .es-bs__category:nth-child(3) {
+      animation: es-bs-fade-up-{{ uid }} calc(var(--es-bs-speed) * 0.7) ease 290ms both;
+    }
+
+    /* ── Shared horizontal padding ── */
+    #shopify-section-{{ section.id }} .es-bs__padded {
+      box-sizing: border-box;
+      padding-left: var(--es-bs-pad);
+      padding-right: var(--es-bs-pad);
+    }
+    @media (max-width: 749px) {
+      #shopify-section-{{ section.id }} .es-bs__padded {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+    }
+
+    /* ── Title ── */
+    #shopify-section-{{ section.id }} .es-bs__header {
+      margin-bottom: 2.25rem;
+      padding-top: 0.5rem;
+    }
+    #shopify-section-{{ section.id }} .es-bs__title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    /* ── Logo nav: desktop ── */
+    #shopify-section-{{ section.id }} .es-bs__nav {
+      display: flex;
+      width: 100%;
+      border-top: 1px solid var(--es-bs-nav-border);
+      border-bottom: 1px solid var(--es-bs-nav-border);
+      background: var(--es-bs-nav-bg);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    #shopify-section-{{ section.id }} .es-bs__nav::-webkit-scrollbar { display: none; }
+
+    #shopify-section-{{ section.id }} .es-bs__nav-btn {
+      flex: 1 1 0;
+      min-width: 100px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem 1.75rem;
+      background: none;
+      border: none;
+      border-right: 1px solid var(--es-bs-nav-divider);
+      border-radius: 0;
+      cursor: pointer;
+      outline-offset: -3px;
+    }
+    #shopify-section-{{ section.id }} .es-bs__nav-btn:last-child { border-right: none; }
+    #shopify-section-{{ section.id }} .es-bs__nav-btn:hover {
+      transform: none;
+      box-shadow: none;
+      opacity: 1;
+    }
+
+    #shopify-section-{{ section.id }} .es-bs__logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--es-bs-speed) ease, filter var(--es-bs-speed) ease;
+      filter: grayscale(var(--es-bs-grayscale)) opacity(var(--es-bs-rest-opacity));
+    }
+    #shopify-section-{{ section.id }} .es-bs__nav-btn:hover .es-bs__logo-wrap {
+      filter: grayscale(40%) opacity(0.75);
+      transform: scale(var(--es-bs-hover-scale));
+    }
+    #shopify-section-{{ section.id }} .es-bs__nav-btn[aria-selected="true"] .es-bs__logo-wrap {
+      filter: grayscale(0%) opacity(1);
+      transform: scale(var(--es-bs-active-scale));
+    }
+
+    #shopify-section-{{ section.id }} .es-bs__logo-img {
+      display: block;
+      height: var(--es-bs-logo-height);
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+    }
+    #shopify-section-{{ section.id }} .es-bs__logo-text {
+      font-size: 1.6rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* Active indicator bar (opt-in; off reproduces the plain nav) */
+    #shopify-section-{{ section.id }} .es-bs__indicator {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 3px;
+      background: var(--es-bs-indicator);
+    }
+    {%- if section.settings.show_active_indicator -%}
+      #shopify-section-{{ section.id }} .es-bs__nav-btn[aria-selected="true"] .es-bs__indicator {
+        display: block;
+      }
+    {%- endif -%}
+
+    /* ── Logo nav: tablet ── */
+    @media (max-width: 999px) and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-bs__nav {
+        display: grid;
+        grid-template-columns: repeat({{ tablet_cols }}, 1fr);
+        overflow-x: hidden;
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn {
+        flex: none;
+        min-width: 0;
+        width: 100%;
+        padding: 1.1rem 0.75rem 1.35rem;
+        border-bottom: 1px solid var(--es-bs-nav-divider);
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn:nth-child({{ tablet_cols }}n) {
+        border-right: none;
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn:nth-child(n + {{ last_row_start }}) {
+        border-bottom: none;
+      }
+      #shopify-section-{{ section.id }} .es-bs__logo-img {
+        height: calc(var(--es-bs-logo-height) * 0.85);
+        max-width: 130px;
+      }
+    }
+
+    /* ── Panels ── */
+    #shopify-section-{{ section.id }} .es-bs__panels { width: 100%; }
+    #shopify-section-{{ section.id }} .es-bs__panel { display: none; }
+    #shopify-section-{{ section.id }} .es-bs__panel.is-active { display: block; }
+    #shopify-section-{{ section.id }} .es-bs__panel-inner {
+      padding-top: 3.5rem;
+      padding-bottom: 4.5rem;
+    }
+
+    /* ── Text area ── */
+    #shopify-section-{{ section.id }} .es-bs__text-area { margin-bottom: 2.75rem; }
+    #shopify-section-{{ section.id }} .es-bs__brand-heading {
+      font-size: 2.16rem;
+      font-weight: 800;
+      margin: 0 0 1rem;
+      color: var(--es-bs-brand-heading);
+    }
+    #shopify-section-{{ section.id }} .es-bs__description {
+      font-size: var(--es-bs-desc-size);
+      font-weight: var(--es-bs-desc-weight);
+      line-height: 1.7;
+      max-width: 960px;
+      margin: 0;
+    }
+    #shopify-section-{{ section.id }} .es-bs__description p {
+      font-size: inherit;
+      font-weight: inherit;
+      line-height: inherit;
+      margin: 0;
+    }
+
+    /* ── Bottom grid ── */
+    #shopify-section-{{ section.id }} .es-bs__bottom-area {
+      display: grid;
+      grid-template-columns: var(--es-bs-img-col) 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    @media (max-width: 999px) and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-bs__bottom-area {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .es-bs__image-wrap {
+      width: 100%;
+      overflow: hidden;
+    }
+    #shopify-section-{{ section.id }} .es-bs__product-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 560px;
+      object-fit: contain;
+    }
+    #shopify-section-{{ section.id }} .es-bs__img-placeholder { opacity: 0.2; }
+
+    /* ── Category columns ── */
+    #shopify-section-{{ section.id }} .es-bs__categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2rem 3.5rem;
+      align-content: start;
+    }
+    #shopify-section-{{ section.id }} .es-bs__cat-title {
+      font-size: var(--es-bs-cat-title-size);
+      font-weight: 700;
+      margin: 0 0 1rem;
+    }
+    #shopify-section-{{ section.id }} .es-bs__cat-items {
+      font-size: var(--es-bs-cat-items-size);
+      line-height: 2.1;
+      margin: 0;
+    }
+    #shopify-section-{{ section.id }} .es-bs__cat-items p {
+      margin: 0;
+      font-size: inherit;
+      line-height: inherit;
+    }
+    #shopify-section-{{ section.id }} .es-bs__cat-cta {
+      display: inline-block;
+      margin-top: 1.25rem;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--es-bs-accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: opacity 0.2s ease;
+    }
+    #shopify-section-{{ section.id }} .es-bs__cat-cta:hover { opacity: 0.7; }
+
+    /* ── Brand button ── */
+    #shopify-section-{{ section.id }} .es-bs__button-wrap { margin-top: 2.75rem; }
+    #shopify-section-{{ section.id }} .es-bs__button {
+      display: inline-block;
+      padding: 0.9rem 2.25rem;
+      background: var(--es-bs-accent);
+      color: #fff;
+      font-size: 1.52rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 0;
+      transition: opacity 0.2s ease;
+    }
+    #shopify-section-{{ section.id }} .es-bs__button:hover {
+      opacity: 0.85;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 749px) {
+      #shopify-section-{{ section.id }} .es-bs__nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow-x: hidden;
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn {
+        flex: none;
+        min-width: 0;
+        width: 100%;
+        padding: 1.1rem 0.5rem 1.35rem;
+        border-right: none;
+        border-bottom: 1px solid var(--es-bs-nav-divider);
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn:nth-child(odd) {
+        border-right: 1px solid var(--es-bs-nav-divider);
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn:nth-last-child(-n + 2) {
+        border-bottom: none;
+      }
+      #shopify-section-{{ section.id }} .es-bs__nav-btn:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        border-right: none;
+        border-bottom: none;
+      }
+      #shopify-section-{{ section.id }} .es-bs__logo-img {
+        height: calc(var(--es-bs-logo-height) * 0.75);
+        max-width: 110px;
+      }
+
+      #shopify-section-{{ section.id }} .es-bs__panel-inner {
+        padding-top: 1.75rem;
+        padding-bottom: 2.5rem;
+      }
+      #shopify-section-{{ section.id }} .es-bs__text-area { margin-bottom: 1.5rem; }
+      #shopify-section-{{ section.id }} .es-bs__brand-heading { font-size: 1.68rem; }
+      #shopify-section-{{ section.id }} .es-bs__description,
+      #shopify-section-{{ section.id }} .es-bs__description p {
+        font-size: 1.6rem;
+        line-height: 1.6;
+      }
+
+      #shopify-section-{{ section.id }} .es-bs__bottom-area {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      #shopify-section-{{ section.id }} .es-bs__image-wrap { width: 100%; order: 1; }
+      #shopify-section-{{ section.id }} .es-bs__product-image {
+        max-height: 300px;
+        width: 100%;
+        object-fit: contain;
+      }
+      #shopify-section-{{ section.id }} .es-bs__categories {
+        order: 2;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem 1.5rem;
+      }
+      #shopify-section-{{ section.id }} .es-bs__cat-title {
+        font-size: 1.6rem;
+        margin-bottom: 0.6rem;
+      }
+      #shopify-section-{{ section.id }} .es-bs__cat-items,
+      #shopify-section-{{ section.id }} .es-bs__cat-items p {
+        font-size: 1.4rem;
+        line-height: 1.9;
+      }
+      #shopify-section-{{ section.id }} .es-bs__cat-cta {
+        font-size: 1.4rem;
+        margin-top: 0.75rem;
+      }
+      #shopify-section-{{ section.id }} .es-bs__button-wrap { margin-top: 1.75rem; }
+      #shopify-section-{{ section.id }} .es-bs__button {
+        width: 100%;
+        text-align: center;
+        padding: 0.8rem 1.5rem;
+        font-size: 1.4rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .es-bs__panel.is-animating * {
+        animation: none !important;
+      }
+      #shopify-section-{{ section.id }} .es-bs__logo-wrap {
+        transition: none;
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="es-bs">
+    {%- if section.settings.title != blank -%}
+      <div class="es-bs__header es-bs__padded">
+        <h2 class="es-bs__title">
+          {%- render 'es-styled-text',
+              content: section.settings.title,
+              color: section.settings.heading_color,
+              gradient: section.settings.heading_gradient -%}
+        </h2>
+      </div>
+    {%- endif -%}
+
+    <div class="es-bs__nav" role="tablist" aria-label="{{ section.settings.title | default: 'Brands' | escape }}">
+      {%- for block in brand_blocks -%}
+        <button
+          type="button"
+          class="es-bs__nav-btn"
+          role="tab"
+          id="EsBsTab-{{ section.id }}-{{ forloop.index }}"
+          aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          aria-controls="EsBsPanel-{{ section.id }}-{{ forloop.index }}"
+          tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+          data-es-bs-tab="{{ forloop.index0 }}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="es-bs__logo-wrap">
+            {%- if block.settings.logo != blank -%}
+              {%- assign es_tagarg_1 = block.settings.brand_name | escape -%}{{- block.settings.logo | image_url: width: 400 | image_tag:
+                  loading: 'lazy',
+                  class: 'es-bs__logo-img',
+                  alt: es_tagarg_1-}}
+            {%- else -%}
+              <span class="es-bs__logo-text">{{ block.settings.brand_name | escape }}</span>
+            {%- endif -%}
+          </span>
+          <span class="es-bs__indicator" aria-hidden="true"></span>
+        </button>
+      {%- endfor -%}
+    </div>
+
+    <div class="es-bs__panels">
+      {%- for block in brand_blocks -%}
+        <div
+          id="EsBsPanel-{{ section.id }}-{{ forloop.index }}"
+          class="es-bs__panel{% if forloop.first %} is-active is-animating{% endif %}"
+          role="tabpanel"
+          aria-labelledby="EsBsTab-{{ section.id }}-{{ forloop.index }}"
+          tabindex="0"
+          {% unless forloop.first %}hidden{% endunless %}
+          data-es-bs-panel="{{ forloop.index0 }}"
+          {{ block.shopify_attributes }}
+        >
+          <div class="es-bs__panel-inner es-bs__padded">
+
+            <div class="es-bs__text-area">
+              {%- if block.settings.brand_name != blank -%}
+                <p class="es-bs__brand-heading">{{ block.settings.brand_name | escape }}</p>
+              {%- endif -%}
+              {%- if block.settings.description != blank -%}
+                <div class="es-bs__description">{{ block.settings.description }}</div>
+              {%- endif -%}
+            </div>
+
+            <div class="es-bs__bottom-area">
+              <div class="es-bs__image-wrap">
+                {%- if block.settings.product_image != blank -%}
+                  {%- assign es_tagarg_2 = block.settings.brand_name | escape -%}{{- block.settings.product_image | image_url: width: 900 | image_tag:
+                      loading: 'lazy',
+                      widths: '400,600,800,900',
+                      class: 'es-bs__product-image',
+                      alt: es_tagarg_2-}}
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'es-bs__product-image es-bs__img-placeholder' }}
+                {%- endif -%}
+              </div>
+
+              <div class="es-bs__categories">
+                {%- for i in (1..3) -%}
+                  {%- liquid
+                    case i
+                      when 1
+                        assign cat_title = block.settings.cat1_title
+                        assign cat_items = block.settings.cat1_items
+                        assign cat_cta_text = block.settings.cat1_cta_text
+                        assign cat_cta_url = block.settings.cat1_cta_url
+                      when 2
+                        assign cat_title = block.settings.cat2_title
+                        assign cat_items = block.settings.cat2_items
+                        assign cat_cta_text = block.settings.cat2_cta_text
+                        assign cat_cta_url = block.settings.cat2_cta_url
+                      when 3
+                        assign cat_title = block.settings.cat3_title
+                        assign cat_items = block.settings.cat3_items
+                        assign cat_cta_text = block.settings.cat3_cta_text
+                        assign cat_cta_url = block.settings.cat3_cta_url
+                    endcase
+                  -%}
+                  {%- if cat_title != blank or cat_items != blank -%}
+                    <div class="es-bs__category">
+                      {%- if cat_title != blank -%}
+                        <p class="es-bs__cat-title">{{ cat_title | escape }}</p>
+                      {%- endif -%}
+                      {%- if cat_items != blank -%}
+                        <div class="es-bs__cat-items">{{ cat_items }}</div>
+                      {%- endif -%}
+                      {%- if cat_cta_text != blank and cat_cta_url != blank -%}
+                        <a href="{{ cat_cta_url }}" class="es-bs__cat-cta">{{ cat_cta_text | escape }}</a>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+
+            {%- if block.settings.button_text != blank and block.settings.button_url != blank -%}
+              <div class="es-bs__button-wrap">
+                <a href="{{ block.settings.button_url }}" class="es-bs__button">
+                  {{ block.settings.button_text | escape }}
+                </a>
+              </div>
+            {%- endif -%}
+
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+
+      var tabs = Array.prototype.slice.call(root.querySelectorAll('[data-es-bs-tab]'));
+      var panels = Array.prototype.slice.call(root.querySelectorAll('[data-es-bs-panel]'));
+      if (!tabs.length) return;
+
+      var animMs = {{ section.settings.animation_speed | default: 1000 }} + 500;
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var animTimer = null;
+
+      function activate(index, moveFocus) {
+        var tab = tabs[index];
+        var panel = panels[index];
+        if (!tab || !panel) return;
+
+        tabs.forEach(function (t) {
+          t.setAttribute('aria-selected', 'false');
+          t.setAttribute('tabindex', '-1');
+        });
+        panels.forEach(function (p) {
+          p.classList.remove('is-active', 'is-animating');
+          p.hidden = true;
+        });
+
+        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('tabindex', '0');
+        panel.hidden = false;
+        panel.classList.add('is-active');
+
+        if (!reduceMotion) {
+          // Two frames so the browser registers the display change before animating.
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              panel.classList.add('is-animating');
+              clearTimeout(animTimer);
+              animTimer = setTimeout(function () {
+                panel.classList.remove('is-animating');
+              }, animMs);
+            });
+          });
+        }
+
+        if (moveFocus) tab.focus();
+
+        // Keep the active tab visible in the scrolling nav without moving the page.
+        var nav = tab.parentElement;
+        if (nav && nav.scrollWidth > nav.clientWidth) {
+          nav.scrollTo({
+            left: tab.offsetLeft - (nav.clientWidth - tab.clientWidth) / 2,
+            behavior: reduceMotion ? 'auto' : 'smooth'
+          });
+        }
+      }
+
+      tabs.forEach(function (tab, i) {
+        tab.addEventListener('click', function () { activate(i, false); });
+
+        tab.addEventListener('keydown', function (event) {
+          var next = null;
+          switch (event.key) {
+            case 'ArrowRight':
+            case 'ArrowDown':
+              next = (i + 1) % tabs.length;
+              break;
+            case 'ArrowLeft':
+            case 'ArrowUp':
+              next = (i - 1 + tabs.length) % tabs.length;
+              break;
+            case 'Home':
+              next = 0;
+              break;
+            case 'End':
+              next = tabs.length - 1;
+              break;
+            default:
+              return;
+          }
+          event.preventDefault();
+          activate(next, true);
+        });
+      });
+
+      // Re-sync when a merchant selects a block in the theme editor.
+      document.addEventListener('shopify:block:select', function (event) {
+        if (!root.contains(event.target)) return;
+        var idx = panels.indexOf(event.target);
+        if (idx === -1) {
+          idx = tabs.indexOf(event.target);
+        }
+        if (idx > -1) activate(idx, false);
+      });
+    })();
+  </script>
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add brand blocks to populate this showcase.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Brands showcase",
+  "class": "shopify-section--es-brands-showcase",
+  "tag": "section",
+  "disabled_on": {
+    "templates": ["password"],
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Our Brands"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal content padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Logo navigation"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 30,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Logo height",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "inactive_grayscale",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Inactive logo grayscale",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "inactive_opacity",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Inactive logo opacity",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "active_logo_scale",
+      "min": 100,
+      "max": 130,
+      "step": 5,
+      "unit": "%",
+      "label": "Active logo scale",
+      "default": 110
+    },
+    {
+      "type": "range",
+      "id": "hover_logo_scale",
+      "min": 100,
+      "max": 120,
+      "step": 5,
+      "unit": "%",
+      "label": "Hover logo scale",
+      "default": 105
+    },
+    {
+      "type": "range",
+      "id": "tablet_logos_per_row",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "label": "Logos per row (tablet)",
+      "default": 3,
+      "info": "How many logos wrap per row between 750px and 999px."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_active_indicator",
+      "label": "Show active tab underline",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 400,
+      "max": 1800,
+      "step": 100,
+      "unit": "ms",
+      "label": "Animation speed",
+      "default": 1000,
+      "info": "Applies to both the image slide and the text fade."
+    },
+    {
+      "type": "range",
+      "id": "slide_distance",
+      "min": 60,
+      "max": 300,
+      "step": 20,
+      "unit": "px",
+      "label": "Image slide-in distance",
+      "default": 160
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 14,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "label": "Description font size",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "description_weight",
+      "label": "Description font weight",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semi-bold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra-bold" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "cat_title_size",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "label": "Category title font size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "cat_items_size",
+      "min": 10,
+      "max": 26,
+      "step": 1,
+      "unit": "px",
+      "label": "Category items font size",
+      "default": 17
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "min": 200,
+      "max": 700,
+      "step": 20,
+      "unit": "px",
+      "label": "Product image column width",
+      "default": 520
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "nav_background",
+      "label": "Nav bar background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Section heading color"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Section heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "brand_heading_color",
+      "label": "Brand heading color",
+      "default": "#5cb85c"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "CTA and button color",
+      "default": "#0057a8"
+    },
+    {
+      "type": "color",
+      "id": "indicator_color",
+      "label": "Active tab underline color",
+      "default": "#1a3a6b"
+    },
+    {
+      "type": "color",
+      "id": "nav_border_color",
+      "label": "Nav top/bottom border color",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "nav_divider_color",
+      "label": "Nav divider color",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Brand logo",
+          "info": "Transparent PNG recommended, around 300 x 90px."
+        },
+        {
+          "type": "text",
+          "id": "brand_name",
+          "label": "Brand name",
+          "default": "Brand name"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Brand description",
+          "default": "<p>Describe this brand. Share what makes it distinct and why customers choose it.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "Featured product image",
+          "info": "Around 700 x 700px recommended."
+        },
+        { "type": "header", "content": "Category column 1" },
+        { "type": "text", "id": "cat1_title", "label": "Title", "default": "Style" },
+        {
+          "type": "richtext",
+          "id": "cat1_items",
+          "label": "Items (one per paragraph)",
+          "default": "<p>Item one</p><p>Item two</p><p>Item three</p>"
+        },
+        { "type": "text", "id": "cat1_cta_text", "label": "CTA text", "default": "View all" },
+        { "type": "url", "id": "cat1_cta_url", "label": "CTA link" },
+        { "type": "header", "content": "Category column 2" },
+        { "type": "text", "id": "cat2_title", "label": "Title" },
+        { "type": "richtext", "id": "cat2_items", "label": "Items (one per paragraph)" },
+        { "type": "text", "id": "cat2_cta_text", "label": "CTA text" },
+        { "type": "url", "id": "cat2_cta_url", "label": "CTA link" },
+        { "type": "header", "content": "Category column 3" },
+        { "type": "text", "id": "cat3_title", "label": "Title" },
+        { "type": "richtext", "id": "cat3_items", "label": "Items (one per paragraph)" },
+        { "type": "text", "id": "cat3_cta_text", "label": "CTA text" },
+        { "type": "url", "id": "cat3_cta_url", "label": "CTA link" },
+        { "type": "header", "content": "Button (optional)" },
+        { "type": "text", "id": "button_text", "label": "Button text" },
+        { "type": "url", "id": "button_url", "label": "Button link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brands showcase",
+      "blocks": [
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Brand one",
+            "cat1_title": "Style",
+            "cat1_items": "<p>Athletic</p><p>Tactical</p><p>Work boots</p><p>Outdoor</p>",
+            "cat1_cta_text": "View all",
+            "cat2_title": "Features",
+            "cat2_items": "<p>Electrical hazard protection</p><p>Waterproof</p><p>Metatarsal guard</p><p>Composite toe</p>",
+            "cat2_cta_text": "View all",
+            "cat3_title": "Activity",
+            "cat3_items": "<p>Construction</p><p>Manufacturing</p><p>Hospitality</p><p>Outdoor</p>",
+            "cat3_cta_text": "View all"
+          }
+        },
+        {
+          "type": "brand",
+          "settings": {
+            "brand_name": "Brand two",
+            "cat1_title": "Men",
+            "cat1_items": "<p>Uniform</p><p>Slip resistant</p>",
+            "cat1_cta_text": "View all",
+            "cat2_title": "Women",
+            "cat2_items": "<p>Uniform</p><p>Slip resistant</p>",
+            "cat2_cta_text": "View all"
+          }
+        },
+        { "type": "brand", "settings": { "brand_name": "Brand three" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

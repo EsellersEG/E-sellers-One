@@ -1,0 +1,51 @@
+{%- comment -%}
+  E-sellers Section Heading - E-sellers One (v5.0.0)
+
+  Shared eyebrow + heading + lede + optional CTA block, built on the
+  design-system's .es-section-head primitive. Used by any section with the
+  standard subheading/heading/description/button settings.
+
+  Accepts:
+  - subheading: {String}
+  - heading: {String}
+  - description: {String} (richtext HTML)
+  - alignment: {String} 'start' | 'center' | 'end' (default: 'start')
+  - highlight_style: {String} passed through to es-highlight-text (optional)
+  - button_label / button_url / button_style: {String} optional CTA
+  - heading_tag: {String} default 'h2'
+  - ruled: {Boolean} adds the hairline-under-header treatment
+
+  Usage:
+  {% render 'es-section-heading', subheading: section.settings.subheading, heading: section.settings.heading %}
+{%- endcomment -%}
+
+{%- liquid
+  assign es_sh_align = alignment | default: 'start'
+  assign es_sh_tag = heading_tag | default: 'h2'
+
+  assign es_sh_class = 'es-section-head'
+  if es_sh_align == 'center'
+    assign es_sh_class = es_sh_class | append: ' es-section-head--center'
+  endif
+  if ruled
+    assign es_sh_class = es_sh_class | append: ' es-section-head--ruled'
+  endif
+-%}
+{%- if subheading != blank or heading != blank or description != blank -%}
+  <div class="{{ es_sh_class }}">
+    {%- if subheading != blank -%}
+      <span class="es-eyebrow">{{ subheading | escape }}</span>
+    {%- endif -%}
+    {%- if heading != blank -%}
+      <{{ es_sh_tag }} class="es-section-head__title">
+        {%- render 'es-highlight-text', text: heading, style: highlight_style -%}
+      </{{ es_sh_tag }}>
+    {%- endif -%}
+    {%- if description != blank -%}
+      <div class="es-section-head__lede">{{ description }}</div>
+    {%- endif -%}
+    {%- if button_label != blank and button_url != blank -%}
+      {%- render 'es-button', label: button_label, url: button_url, style: button_style | default: 'link' -%}
+    {%- endif -%}
+  </div>
+{%- endif -%}

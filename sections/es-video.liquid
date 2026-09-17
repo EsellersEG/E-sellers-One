@@ -1,0 +1,723 @@
+{%- comment -%}
+  E-sellers Video - E-sellers Professional (v4.9.0)
+
+  Hero video with optional text overlay. Accepts either a Shopify-hosted video
+  or a YouTube / Vimeo URL.
+
+  External embeds are click-to-play by default: the poster image is shown until
+  the visitor presses play, at which point the iframe is injected. That keeps
+  third-party players off the critical path and out of the initial page weight.
+{%- endcomment -%}
+
+{%- liquid
+  assign native_video = section.settings.video
+  assign external_url = section.settings.external_video_url
+  assign has_native = false
+  if native_video != blank
+    assign has_native = true
+  endif
+
+  assign poster = section.settings.poster
+  if poster == blank and has_native
+    assign poster = native_video.preview_image
+  endif
+
+  case section.settings.video_size
+    when 'small'
+      assign ratio = '21 / 9'
+    when 'medium'
+      assign ratio = '16 / 9'
+    when 'large'
+      assign ratio = '4 / 3'
+    when 'fill'
+      assign ratio = ''
+    else
+      assign ratio = '16 / 9'
+  endcase
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-vd-text: {{ section.settings.text_color | default: '#ffffff' }};
+    --es-vd-overlay: {{ section.settings.overlay_color | default: '#000000' }};
+    --es-vd-overlay-opacity: {{ section.settings.overlay_opacity | default: 30 | divided_by: 100.0 }};
+    --es-vd-radius: {{ section.settings.corner_radius | default: 0 }}px;
+
+    padding-top: {{ section.settings.padding_top | default: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 0 }}px;
+    {%- if section.settings.background != blank -%}
+      background-color: {{ section.settings.background }};
+    {%- endif -%}
+  }
+
+  #shopify-section-{{ section.id }} .es-vd {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--es-vd-radius);
+    background-color: #000;
+    {%- if ratio != blank -%}
+      aspect-ratio: {{ ratio }};
+    {%- else -%}
+      height: 100svh;
+      min-height: 480px;
+    {%- endif -%}
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .es-vd {
+      {%- if ratio != blank -%}
+        aspect-ratio: {{ section.settings.mobile_ratio | default: '4 / 5' }};
+      {%- endif -%}
+    }
+  }
+
+  #shopify-section-{{ section.id }} .es-vd__media,
+  #shopify-section-{{ section.id }} .es-vd__media iframe,
+  #shopify-section-{{ section.id }} .es-vd__media video,
+  #shopify-section-{{ section.id }} .es-vd__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .es-vd__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: var(--es-vd-overlay);
+    opacity: var(--es-vd-overlay-opacity);
+    pointer-events: none;
+  }
+
+  /* ---- Text overlay ---- */
+  #shopify-section-{{ section.id }} .es-vd__content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6rem;
+    padding: 4rem 2.4rem;
+    color: var(--es-vd-text);
+    pointer-events: none;
+    text-align: {{ section.settings.text_alignment | default: 'center' }};
+    {%- case section.settings.content_position -%}
+      {%- when 'top' -%}
+        justify-content: flex-start;
+      {%- when 'bottom' -%}
+        justify-content: flex-end;
+      {%- else -%}
+        justify-content: center;
+    {%- endcase -%}
+    {%- case section.settings.text_alignment -%}
+      {%- when 'left' -%}
+        align-items: flex-start;
+      {%- when 'right' -%}
+        align-items: flex-end;
+      {%- else -%}
+        align-items: center;
+    {%- endcase -%}
+  }
+
+  #shopify-section-{{ section.id }} .es-vd__content > * { max-width: 720px; }
+  #shopify-section-{{ section.id }} .es-vd__content a,
+  #shopify-section-{{ section.id }} .es-vd__content button { pointer-events: auto; }
+
+  #shopify-section-{{ section.id }} .es-vd__subheading {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+    opacity: 0.9;
+  }
+  #shopify-section-{{ section.id }} .es-vd__heading {
+    margin: 0;
+    color: inherit;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  }
+  #shopify-section-{{ section.id }} .es-vd__text > p:last-child { margin-bottom: 0; }
+
+  #shopify-section-{{ section.id }} .es-vd__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.4rem 2.8rem;
+    border-radius: var(--button-radius, 8px);
+    font-weight: 600;
+    font-size: 1.5rem;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  #shopify-section-{{ section.id }} .es-vd__button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* ---- Play button ---- */
+  #shopify-section-{{ section.id }} .es-vd__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.92);
+    color: #121212;
+    cursor: pointer;
+    z-index: 3;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+  }
+  #shopify-section-{{ section.id }} .es-vd__play:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+    background: #ffffff;
+    box-shadow: none;
+  }
+  #shopify-section-{{ section.id }} .es-vd__play svg { width: 26px; height: 26px; margin-left: 3px; }
+
+  #shopify-section-{{ section.id }} .es-vd.is-playing .es-vd__play,
+  #shopify-section-{{ section.id }} .es-vd.is-playing .es-vd__poster,
+  #shopify-section-{{ section.id }} .es-vd.is-playing .es-vd__content {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .es-vd__play { transition: none; }
+  }
+{%- endstyle -%}
+
+<div class="{% if section.settings.full_width %}es-vd__full{% else %}page-width{% endif %}">
+  <div class="es-vd" data-es-vd
+       data-autoplay="{{ section.settings.autoplay }}"
+       data-loop="{{ section.settings.loop }}">
+
+    {%- if has_native -%}
+      {%- comment -%} Shopify-hosted video: rendered inline, no third party. {%- endcomment -%}
+      <div class="es-vd__media">
+        {{ native_video | video_tag:
+           image_size: '1600x',
+           autoplay: section.settings.autoplay,
+           loop: section.settings.loop,
+           muted: true,
+           controls: section.settings.show_controls,
+           playsinline: true }}
+      </div>
+
+    {%- elsif external_url != blank -%}
+      {%- comment -%}
+        External embed: hold the iframe back until the visitor asks for it.
+      {%- endcomment -%}
+      <div class="es-vd__media" data-es-vd-target
+           data-embed-src="{{ external_url.type }}"
+           data-embed-id="{{ external_url.id }}"></div>
+
+      {%- if poster != blank -%}
+        {%- assign es_tagarg_1 = section.settings.heading | default: 'Video' | escape -%}{{ poster | image_url: width: 1920 | image_tag:
+           class: 'es-vd__poster',
+           loading: 'lazy',
+           widths: '600,900,1200,1600,1920',
+           sizes: '100vw',
+           alt: es_tagarg_1}}
+      {%- endif -%}
+
+    {%- elsif request.design_mode -%}
+      <div class="es-vd__poster" style="display:flex;align-items:center;justify-content:center;background:#1a1a1a;color:#fff;">
+        Choose a video or paste a video URL.
+      </div>
+    {%- endif -%}
+
+    <div class="es-vd__overlay"></div>
+
+    {%- comment -%} Play button only when there is something to reveal. {%- endcomment -%}
+    {%- if external_url != blank and has_native == false -%}
+      <button type="button" class="es-vd__play" data-es-vd-play
+              aria-label="{{ section.settings.play_label | default: 'Play video' | escape }}">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="es-vd__content">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'subheading' -%}
+              {%- if block.settings.text != blank -%}
+                <p class="es-vd__subheading" {{ block.shopify_attributes }}>{{ block.settings.text | escape }}</p>
+              {%- endif -%}
+
+            {%- when 'heading' -%}
+              {%- if block.settings.text != blank -%}
+                <{{ block.settings.heading_tag | default: 'h2' }}
+                  class="es-vd__heading {{ block.settings.heading_size | default: 'h1' }}"
+                  {{ block.shopify_attributes }}>
+                  {{ block.settings.text | escape }}
+                </{{ block.settings.heading_tag | default: 'h2' }}>
+              {%- endif -%}
+
+            {%- when 'text' -%}
+              {%- if block.settings.content != blank -%}
+                <div class="es-vd__text" {{ block.shopify_attributes }}>{{ block.settings.content }}</div>
+              {%- endif -%}
+
+            {%- when 'button' -%}
+              {%- if block.settings.text != blank -%}
+                <a href="{{ block.settings.url | default: '#' }}"
+                   class="es-vd__button"
+                   style="background-color: {{ block.settings.background | default: '#ffffff' }};
+                          color: {{ block.settings.text_color | default: '#121212' }};"
+                   {{ block.shopify_attributes }}>
+                  {{ block.settings.text | escape }}
+                </a>
+              {%- endif -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if external_url != blank and has_native == false -%}
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+
+      var wrapper = root.querySelector('[data-es-vd]');
+      var target = root.querySelector('[data-es-vd-target]');
+      var playBtn = root.querySelector('[data-es-vd-play]');
+      if (!wrapper || !target || !playBtn) return;
+
+      var loaded = false;
+
+      function buildSrc() {
+        var type = target.dataset.embedSrc;
+        var id = target.dataset.embedId;
+        var loop = wrapper.dataset.loop === 'true';
+
+        if (type === 'youtube') {
+          return 'https://www.youtube.com/embed/' + id +
+                 '?autoplay=1&playsinline=1&rel=0' +
+                 (loop ? '&loop=1&playlist=' + id : '');
+        }
+        if (type === 'vimeo') {
+          return 'https://player.vimeo.com/video/' + id +
+                 '?autoplay=1&playsinline=1' + (loop ? '&loop=1' : '');
+        }
+        return '';
+      }
+
+      function play() {
+        if (loaded) return;
+        var src = buildSrc();
+        if (!src) return;
+
+        var iframe = document.createElement('iframe');
+        iframe.setAttribute('src', src);
+        iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('title', {{ section.settings.heading | default: 'Video' | json }});
+        target.appendChild(iframe);
+
+        wrapper.classList.add('is-playing');
+        loaded = true;
+      }
+
+      playBtn.addEventListener('click', play);
+
+      // Autoplay still waits for the section to actually be on screen.
+      if (wrapper.dataset.autoplay === 'true' && 'IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              play();
+              io.disconnect();
+            }
+          });
+        }, { threshold: 0.4 });
+        io.observe(wrapper);
+      }
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Video",
+  "class": "shopify-section--es-video",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Upload a video, or paste a YouTube or Vimeo URL. External videos load only after the visitor presses play."
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+    {
+      "type": "video_url",
+      "id": "external_video_url",
+      "label": "Or video URL",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
+      "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Poster image",
+      "info": "Shown before playback. Defaults to the uploaded video's own preview."
+    },
+    {
+      "type": "text",
+      "id": "play_label",
+      "label": "Play button label",
+      "default": "Play video",
+      "info": "Read out by screen readers."
+    },
+    {
+      "type": "header",
+      "content": "Playback"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": false,
+      "info": "Plays muted once the section scrolls into view."
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show player controls",
+      "default": true,
+      "info": "Uploaded videos only."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "video_size",
+      "label": "Video size",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small (21:9)"
+        },
+        {
+          "value": "auto",
+          "label": "16:9 (recommended)"
+        },
+        {
+          "value": "large",
+          "label": "Large (4:3)"
+        },
+        {
+          "value": "fill",
+          "label": "Fill screen"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "mobile_ratio",
+      "label": "Mobile aspect ratio",
+      "options": [
+        {
+          "value": "16 / 9",
+          "label": "16:9"
+        },
+        {
+          "value": "4 / 3",
+          "label": "4:3"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Square"
+        },
+        {
+          "value": "4 / 5",
+          "label": "Portrait"
+        }
+      ],
+      "default": "4 / 5"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Text position",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "middle",
+          "label": "Middle"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "middle"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Advanced styling"
+    },
+    {
+      "id": "heading",
+      "label": "Heading",
+      "type": "text",
+      "default": "Video"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subheading",
+      "name": "Subheading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Subheading"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Heading"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "HTML tag",
+          "options": [
+            {
+              "value": "h1",
+              "label": "h1"
+            },
+            {
+              "value": "h2",
+              "label": "h2"
+            },
+            {
+              "value": "h3",
+              "label": "h3"
+            },
+            {
+              "value": "p",
+              "label": "p"
+            }
+          ],
+          "default": "h2"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Visual size",
+          "options": [
+            {
+              "value": "h1",
+              "label": "Extra large"
+            },
+            {
+              "value": "h2",
+              "label": "Large"
+            },
+            {
+              "value": "h3",
+              "label": "Medium"
+            }
+          ],
+          "default": "h1"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text",
+          "default": "<p>Add a short line of supporting copy over the video.</p>"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Label",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text",
+          "default": "#121212"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

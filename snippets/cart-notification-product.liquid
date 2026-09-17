@@ -1,0 +1,70 @@
+{%- comment -%}
+  Cart Notification Product Snippet - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- if cart != empty -%}
+  {%- for item in cart.items -%}
+    <div id="cart-notification-product-{{ item.key }}" class="cart-notification-product" style="display: flex; gap: 16px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid #f1f5f9;">
+      {%- if item.image -%}
+        <div class="cart-notification-product__image" style="width: 68px; height: 68px; border-radius: 8px; overflow: hidden; background: #f8fafc; flex-shrink: 0;">
+          <img
+            src="{{ item.image | image_url: width: 200 }}"
+            alt="{{ item.image.alt | default: item.title | escape }}"
+            width="68"
+            height="{{ 68 | divided_by: item.image.aspect_ratio | ceil | default: 68 }}"
+            loading="lazy"
+            style="width: 100%; height: 100%; object-fit: cover;"
+          >
+        </div>
+      {%- endif -%}
+
+      <div class="cart-notification-product__info" style="flex: 1; min-width: 0;">
+        {%- if settings.show_vendor and item.product.vendor != blank -%}
+          <p class="cart-notification-product__vendor" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin: 0 0 4px 0;">
+            {{ item.product.vendor | escape }}
+          </p>
+        {%- endif -%}
+
+        <h4 class="cart-notification-product__name" style="font-size: 0.95rem; font-weight: 600; margin: 0 0 4px 0; line-height: 1.3;">
+          {{ item.product.title | escape }}
+        </h4>
+
+        <div class="cart-notification-product__price" style="font-size: 0.9rem; font-weight: 700; color: #0f172a; margin-bottom: 6px;">
+          {{ item.final_price | money }}
+        </div>
+
+        <div class="cart-notification-product__options" style="font-size: 0.8rem; color: #64748b; display: flex; flex-direction: column; gap: 2px;">
+          {%- unless item.product.has_only_default_variant -%}
+            {%- for option in item.options_with_values -%}
+              <div class="product-option">
+                <span>{{ option.name }}:</span> <strong>{{ option.value }}</strong>
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          {%- for property in item.properties -%}
+            {%- assign property_first_char = property.first | slice: 0 -%}
+            {%- if property.last != blank and property_first_char != '_' -%}
+              <div class="product-option">
+                <span>{{ property.first }}:</span>
+                {%- if property.last contains '/uploads/' -%}
+                  <a href="{{ property.last }}" class="link" target="_blank" style="color: inherit; text-decoration: underline;">
+                    {{ property.last | split: '/' | last }}
+                  </a>
+                {%- else -%}
+                  <strong>{{ property.last }}</strong>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+
+          {%- if item.selling_plan_allocation != null -%}
+            <p class="product-option" style="color: #059669; font-weight: 600; margin-top: 4px;">
+              {{ item.selling_plan_allocation.selling_plan.name }}
+            </p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endfor -%}
+{%- endif -%}

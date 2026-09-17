@@ -1,0 +1,484 @@
+{%- comment -%}
+  E-sellers Media With Text Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+  }
+
+  .es-media-text-list {
+    display: flex;
+    flex-direction: column;
+    gap: {% if section.settings.spacing == 'none' %}0{% elsif section.settings.spacing == 'small' %}24px{% elsif section.settings.spacing == 'large' %}64px{% else %}40px{% endif %};
+  }
+
+  .es-media-text-item {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 32px;
+    align-items: center;
+    border-radius: {% if section.settings.spacing == 'none' %}0{% else %}20px{% endif %};
+    overflow: hidden;
+    background-color: #f8fafc;
+  }
+
+  .es-media-text-item__media-col {
+    grid-column: span 6;
+    height: 100%;
+    min-height: 380px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .es-media-text-item__content-col {
+    grid-column: span 6;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+  }
+
+  /* Media Position (Left vs Right) */
+  .es-media-text-item--media-end .es-media-text-item__media-col {
+    order: 2;
+  }
+
+  .es-media-text-item--media-end .es-media-text-item__content-col {
+    order: 1;
+  }
+
+  .es-media-text__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .es-media-text__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .es-media-text__subheading {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin: 0;
+    color: #64748b;
+  }
+
+  .es-media-text__heading {
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+    color: #0f172a;
+  }
+
+  .es-media-text__body {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #475569;
+    margin: 0;
+  }
+
+  .es-media-text__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    align-self: flex-start;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .es-media-text__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .es-media-text__icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-media-text-item {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .es-media-text-item__media-col {
+      grid-column: 1;
+      order: 1 !important;
+      min-height: 280px;
+      max-height: 400px;
+    }
+
+    .es-media-text-item__content-col {
+      grid-column: 1;
+      order: 2 !important;
+      padding: 28px 20px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-media-with-text-section">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    <div class="es-media-text-list">
+      {%- for block in section.blocks -%}
+        {%- assign media_pos = block.settings.media_position | default: 'start' -%}
+        <div
+          class="es-media-text-item {% if media_pos == 'end' %}es-media-text-item--media-end{% endif %}"
+          style="
+            {% if block.settings.background != blank %}background-color: {{ block.settings.background }};{% endif %}
+            {% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}
+          "
+          {{ block.shopify_attributes }}
+        >
+          <!-- Media Column -->
+          <div class="es-media-text-item__media-col">
+            {%- if block.type == 'image' -%}
+              {%- if block.settings.image != blank -%}
+                {%- assign es_tagarg_1 = block.settings.image.alt | default: block.settings.title | escape -%}{{ block.settings.image | image_url: width: 1600 | image_tag:
+                  loading: 'lazy',
+                  class: 'es-media-text__img',
+                  alt: es_tagarg_1}}
+              {%- else -%}
+                <div style="width: 100%; height: 100%; min-height: 380px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #64748b;">
+                  <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </div>
+              {%- endif -%}
+
+            {%- elsif block.type == 'video' -%}
+              {%- if block.settings.video != blank -%}
+                {{ block.settings.video | video_tag:
+                  playsinline: true,
+                  autoplay: block.settings.autoplay,
+                  loop: block.settings.autoplay,
+                  muted: block.settings.autoplay,
+                  controls: true,
+                  class: 'es-media-text__video'
+                }}
+              {%- elsif block.settings.external_video_url != blank -%}
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; width: 100%; height: 100%;">
+                  <iframe
+                    src="{{ block.settings.external_video_url }}"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+          </div>
+
+          <!-- Content Column -->
+          <div class="es-media-text-item__content-col">
+            {%- if block.settings.custom_icon != blank -%}
+              <img src="{{ block.settings.custom_icon | image_url: width: 120 }}" width="{{ block.settings.custom_icon.width }}" height="{{ block.settings.custom_icon.height }}" alt="Icon" class="es-media-text__icon" loading="lazy">
+            {%- endif -%}
+
+            {%- if block.settings.subheading != blank -%}
+              <p class="es-media-text__subheading" style="{% if block.settings.text_color != blank %}color: inherit; opacity: 0.8;{% endif %}">
+                {{ block.settings.subheading | escape }}
+              </p>
+            {%- endif -%}
+
+            {%- if block.settings.title != blank -%}
+              <h2
+                class="es-media-text__heading"
+                style="
+                  {% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}
+                  {% if block.settings.text_gradient != blank %}
+                    background: {{ block.settings.text_gradient }};
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                  {% endif %}
+                "
+              >
+                {{ block.settings.title | escape }}
+              </h2>
+            {%- endif -%}
+
+            {%- if block.settings.content != blank -%}
+              <div class="es-media-text__body" style="{% if block.settings.text_color != blank %}color: inherit; opacity: 0.9;{% endif %}">
+                {{ block.settings.content }}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.link_text != blank -%}
+              <a
+                href="{{ block.settings.link_url | default: '#' }}"
+                class="es-media-text__btn"
+                style="
+                  background-color: {{ block.settings.button_background | default: '#0f172a' }};
+                  color: {{ block.settings.button_text_color | default: '#ffffff' }};
+                "
+              >
+                {{ block.settings.link_text | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Media with Text",
+  "class": "shopify-section--es-media-with-text",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "spacing",
+      "label": "Block spacing",
+      "options": [
+        { "value": "none", "label": "None (Seamless)" },
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image with text",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1400 x 1400px recommended"
+        },
+        {
+          "type": "select",
+          "id": "media_position",
+          "label": "Image position (Desktop)",
+          "options": [
+            { "value": "start", "label": "Left" },
+            { "value": "end", "label": "Right" }
+          ],
+          "default": "start"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom icon"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Elevated Details"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Design Engineered for Every Occasion"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description",
+          "default": "<p>Share your brand story, craft details, or manufacturing process with engaging visual storytelling.</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Button text",
+          "default": "Learn more"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Button URL"
+        },
+        {
+          "type": "header",
+          "content": "Card Colors"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Card background",
+          "default": "#f8fafc"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Card text color",
+          "default": "#0f172a"
+        },
+        {
+          "type": "color_background",
+          "id": "text_gradient",
+          "label": "Heading gradient"
+        },
+        {
+          "type": "color",
+          "id": "button_background",
+          "label": "Button background",
+          "default": "#0f172a"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Button text color",
+          "default": "#ffffff"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video with text",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Shopify-hosted video (MP4)"
+        },
+        {
+          "type": "video_url",
+          "id": "external_video_url",
+          "accept": ["youtube", "vimeo"],
+          "label": "Or external video URL"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": "Autoplay video (muted)",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "media_position",
+          "label": "Video position (Desktop)",
+          "options": [
+            { "value": "start", "label": "Left" },
+            { "value": "end", "label": "Right" }
+          ],
+          "default": "start"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading",
+          "default": "Behind the Scenes"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Experience the Process"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description",
+          "default": "<p>Watch our master artisans craft each piece with precision tools and sustainable materials.</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Button text",
+          "default": "Discover Collection"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Button URL"
+        },
+        {
+          "type": "header",
+          "content": "Card Colors"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Card background",
+          "default": "#0f172a"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Card text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_background",
+          "label": "Button background",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "button_text_color",
+          "label": "Button text color",
+          "default": "#0f172a"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Media with Text",
+      "blocks": [
+        { "type": "image" }
+      ]
+    }
+  ]
+}
+{% endschema %}

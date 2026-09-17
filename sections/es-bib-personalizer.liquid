@@ -1,0 +1,1610 @@
+{%- comment -%}
+  E-sellers Baby Bib Personalizer - E-sellers Professional (v4.9.0)
+  Developer: E-sellers (info@e-sellers.net)
+{%- endcomment -%}
+
+{%- assign product = section.settings.product -%}
+
+{%- style -%}
+  @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Dancing+Script:wght@600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;1,600&family=Quicksand:wght@600&display=swap');
+
+  #shopify-section-{{ section.id }} {
+    --es-bib-bg: {{ section.settings.section_background | default: '#fafafa' }};
+    --es-bib-card-bg: {{ section.settings.card_background | default: '#ffffff' }};
+    --es-bib-text: {{ section.settings.text_color | default: '#1e293b' }};
+    --es-bib-heading: {{ section.settings.heading_color | default: '#0f172a' }};
+    --es-bib-border: {{ section.settings.border_color | default: '#e2e8f0' }};
+    --es-bib-primary: {{ section.settings.button_background | default: '#0f172a' }};
+    --es-bib-primary-hover: {{ section.settings.button_hover_background | default: '#334155' }};
+    --es-bib-primary-text: {{ section.settings.button_text_color | default: '#ffffff' }};
+    --es-bib-accent: {{ section.settings.accent_color | default: '#f43f5e' }};
+    --es-bib-radius: {{ section.settings.card_radius | default: 20 }}px;
+    
+    background-color: var(--es-bib-bg);
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    color: var(--es-bib-text);
+  }
+
+  .es-bib-section {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .es-bib-container {
+    max-width: {{ section.settings.max_width | default: 1320 }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  /* Header */
+  .es-bib-header {
+    text-align: {{ section.settings.header_alignment | default: 'center' }};
+    margin-bottom: 40px;
+  }
+
+  .es-bib-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: {{ section.settings.badge_background | default: '#fff1f2' }};
+    color: {{ section.settings.badge_text_color | default: '#e11d48' }};
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .es-bib-badge svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .es-bib-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    color: var(--es-bib-heading);
+    line-height: 1.2;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.02em;
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-bib-subtitle {
+    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
+    color: #64748b;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Main Grid */
+  .es-bib-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+
+  @media screen and (min-width: 990px) {
+    .es-bib-grid {
+      grid-template-columns: {% if section.settings.preview_position == 'left' %}1.1fr 1.3fr{% else %}1.3fr 1.1fr{% endif %};
+      gap: 48px;
+    }
+  }
+
+  /* Control Panels */
+  .es-bib-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .es-bib-card {
+    background: var(--es-bib-card-bg);
+    border-radius: var(--es-bib-radius);
+    padding: 24px;
+    border: 1px solid var(--es-bib-border);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .es-bib-step-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--es-bib-heading);
+    margin: 0 0 16px 0;
+  }
+
+  .es-bib-step-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--es-bib-primary);
+    color: var(--es-bib-primary-text);
+    font-size: 0.75rem;
+    font-weight: 800;
+    margin-right: 8px;
+  }
+
+  .es-bib-step-label {
+    display: flex;
+    align-items: center;
+  }
+
+  .es-bib-selected-indicator {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  /* Style Selector (Bibs / Variants) */
+  .es-bib-style-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+  }
+
+  .es-bib-style-item {
+    position: relative;
+    border: 2px solid var(--es-bib-border);
+    border-radius: 14px;
+    padding: 10px;
+    cursor: pointer;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+
+  .es-bib-style-item:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+  }
+
+  .es-bib-style-item.is-selected {
+    border-color: var(--es-bib-primary);
+    background: #f8fafc;
+    box-shadow: 0 0 0 2px var(--es-bib-primary);
+  }
+
+  .es-bib-style-preview-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    margin-bottom: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .es-bib-style-preview-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .es-bib-style-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--es-bib-heading);
+    margin: 0 0 2px 0;
+    line-height: 1.2;
+  }
+
+  .es-bib-style-price {
+    font-size: 0.8125rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+
+  /* Input Section */
+  .es-bib-input-wrapper {
+    position: relative;
+  }
+
+  .es-bib-text-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--es-bib-border);
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--es-bib-heading);
+    background: #ffffff;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+  }
+
+  .es-bib-text-input:focus {
+    outline: none;
+    border-color: var(--es-bib-primary);
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
+  }
+
+  .es-bib-input-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+
+  .es-bib-char-count {
+    font-weight: 600;
+  }
+
+  .es-bib-error-msg {
+    color: #e11d48;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: none;
+  }
+
+  .es-bib-error-msg.is-visible {
+    display: block;
+    animation: es-shake 0.4s ease;
+  }
+
+  @keyframes es-shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+
+  /* Font Picker */
+  .es-bib-font-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .es-bib-font-btn {
+    border: 2px solid var(--es-bib-border);
+    border-radius: 12px;
+    padding: 12px 10px;
+    background: #ffffff;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+
+  .es-bib-font-btn:hover {
+    border-color: #cbd5e1;
+  }
+
+  .es-bib-font-btn.is-selected {
+    border-color: var(--es-bib-primary);
+    background: #f8fafc;
+    box-shadow: 0 0 0 2px var(--es-bib-primary);
+  }
+
+  .es-bib-font-preview {
+    font-size: 1.35rem;
+    display: block;
+    margin-bottom: 4px;
+    line-height: 1.1;
+  }
+
+  .es-bib-font-name {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Thread Color Swatches */
+  .es-bib-thread-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .es-bib-thread-swatch {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 2px var(--es-bib-border);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .es-bib-thread-swatch:hover {
+    transform: scale(1.12);
+  }
+
+  .es-bib-thread-swatch.is-selected {
+    box-shadow: 0 0 0 3px var(--es-bib-primary);
+    transform: scale(1.1);
+  }
+
+  .es-bib-thread-swatch svg {
+    width: 16px;
+    height: 16px;
+    color: #ffffff;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .es-bib-thread-swatch.is-selected svg {
+    opacity: 1;
+  }
+
+  .es-bib-thread-swatch.is-light svg {
+    color: #0f172a;
+  }
+
+  /* Preview Pane */
+  .es-bib-preview-pane {
+    position: sticky;
+    top: 32px;
+  }
+
+  .es-bib-preview-card {
+    background: var(--es-bib-card-bg);
+    border-radius: var(--es-bib-radius);
+    padding: 30px;
+    border: 1px solid var(--es-bib-border);
+    box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+  }
+
+  .es-bib-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .es-bib-preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #059669;
+    background: #ecfdf5;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+
+  .es-bib-preview-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: es-pulse 2s infinite;
+  }
+
+  @keyframes es-pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+
+  /* Stage and Canvas */
+  .es-bib-stage {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto 24px auto;
+    aspect-ratio: 1 / 1;
+    background: #f8fafc;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+  }
+
+  .es-bib-stage__canvas {
+    position: relative;
+    width: 85%;
+    height: 85%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .es-bib-stage__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .es-bib-svg-bib {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.08));
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  /* Real Embroidery Text Layer */
+  .es-bib-embroidery-layer {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    width: 70%;
+    text-align: center;
+    pointer-events: none;
+    line-height: 1.1;
+  }
+
+  .es-bib-embroidery-text {
+    display: inline-block;
+    max-width: 100%;
+    word-break: break-word;
+    font-size: clamp(1.5rem, 4.5vw, 2.5rem);
+    font-weight: 600;
+    transition: color 0.25s ease, font-family 0.25s ease;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.22), -0.5px -0.5px 0.5px rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.02em;
+    user-select: none;
+  }
+
+  /* Preview Details Summary */
+  .es-bib-summary-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    border: 1px solid #e2e8f0;
+  }
+
+  .es-bib-summary-col {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .es-bib-summary-title {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .es-bib-summary-val {
+    font-weight: 700;
+    color: var(--es-bib-heading);
+  }
+
+  .es-bib-price-display {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--es-bib-heading);
+    text-align: right;
+  }
+
+  /* Quantity & CTA Area */
+  .es-bib-actions {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .es-bib-qty {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--es-bib-border);
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  .es-bib-qty-btn {
+    width: 44px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--es-bib-heading);
+    transition: background 0.15s ease;
+  }
+
+  .es-bib-qty-btn:hover {
+    background: #f1f5f9;
+  }
+
+  .es-bib-qty-input {
+    width: 44px;
+    height: 52px;
+    border: none;
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--es-bib-heading);
+    background: transparent;
+    -moz-appearance: textfield;
+  }
+
+  .es-bib-qty-input::-webkit-outer-spin-button,
+  .es-bib-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .es-bib-add-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--es-bib-primary);
+    color: var(--es-bib-primary-text);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 14px 24px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.15);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .es-bib-add-btn:hover {
+    background: var(--es-bib-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.2);
+  }
+
+  .es-bib-add-btn:active {
+    transform: translateY(0);
+  }
+
+  .es-bib-add-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .es-bib-add-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Guarantees / Highlights */
+  .es-bib-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--es-bib-border);
+  }
+
+  .es-bib-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #64748b;
+    text-align: left;
+  }
+
+  .es-bib-feature-item svg {
+    width: 16px;
+    height: 16px;
+    color: #10b981;
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .es-bib-features {
+      grid-template-columns: 1fr;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-bib-section" data-section-id="{{ section.id }}">
+  <div class="es-bib-container">
+    
+    <!-- Section Header -->
+    <div class="es-bib-header">
+      {%- if section.settings.eyebrow != blank -%}
+        <div class="es-bib-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span>{{ section.settings.eyebrow }}</span>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h2 class="es-bib-title">{{ section.settings.title }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.subtitle != blank -%}
+        <p class="es-bib-subtitle">{{ section.settings.subtitle }}</p>
+      {%- endif -%}
+    </div>
+
+    <!-- Main Builder Grid -->
+    <div class="es-bib-grid">
+      
+      <!-- Customizer Controls -->
+      <div class="es-bib-controls">
+        
+        <!-- Step 1: Select Bib Style -->
+        <div class="es-bib-card">
+          <div class="es-bib-step-title">
+            <div class="es-bib-step-label">
+              <span class="es-bib-step-pill">1</span>
+              <span>{{ section.settings.step_1_title | default: 'Choose Bib Style' }}</span>
+            </div>
+            <span class="es-bib-selected-indicator" id="BibSelectedStyleName">Oatmeal Linen</span>
+          </div>
+
+          <div class="es-bib-style-list" role="radiogroup" aria-label="Bib Styles">
+            {%- if product != blank and product.variants.size > 0 -%}
+              {%- for variant in product.variants -%}
+                <button type="button" 
+                  class="es-bib-style-item {% if forloop.first %}is-selected{% endif %}"
+                  data-variant-id="{{ variant.id }}"
+                  data-variant-title="{{ variant.title | escape }}"
+                  data-variant-price="{{ variant.price | money }}"
+                  data-variant-price-raw="{{ variant.price }}"
+                  data-available="{{ variant.available }}"
+                  data-image="{% if variant.image %}{{ variant.image | image_url: width: 600 }}{% elsif product.featured_image %}{{ product.featured_image | image_url: width: 600 }}{% endif %}"
+                  data-color-fallback="#F7F3EE">
+                  <div class="es-bib-style-preview-circle">
+                    {%- if variant.image -%}
+                      <img src="{{ variant.image | image_url: width: 120 }}" alt="{{ variant.title | escape }}" loading="lazy" width="120" height="120">
+                    {%- elsif product.featured_image -%}
+                      <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ variant.title | escape }}" loading="lazy" width="120" height="120">
+                    {%- else -%}
+                      <div style="background: #e2e8f0; width: 100%; height: 100%;"></div>
+                    {%- endif -%}
+                  </div>
+                  <span class="es-bib-style-title">{{ variant.title }}</span>
+                  <span class="es-bib-style-price">{{ variant.price | money }}</span>
+                </button>
+              {%- endfor -%}
+            {%- else -%}
+              <!-- Fallback High Quality Bib Presets -->
+              <button type="button" class="es-bib-style-item is-selected"
+                data-variant-id="demo-1"
+                data-variant-title="Oatmeal Cream"
+                data-variant-price="{{ 2400 | money }}"
+                data-variant-price-raw="2400"
+                data-available="true"
+                data-color-fallback="#F6F1EA"
+                data-accent-fallback="#EADFCF">
+                <div class="es-bib-style-preview-circle" style="background: #F6F1EA;"></div>
+                <span class="es-bib-style-title">Oatmeal Cream</span>
+                <span class="es-bib-style-price">{{ 2400 | money }}</span>
+              </button>
+
+              <button type="button" class="es-bib-style-item"
+                data-variant-id="demo-2"
+                data-variant-title="Dusty Rose"
+                data-variant-price="{{ 2400 | money }}"
+                data-variant-price-raw="2400"
+                data-available="true"
+                data-color-fallback="#F4E3E1"
+                data-accent-fallback="#E8CECC">
+                <div class="es-bib-style-preview-circle" style="background: #F4E3E1;"></div>
+                <span class="es-bib-style-title">Dusty Rose</span>
+                <span class="es-bib-style-price">{{ 2400 | money }}</span>
+              </button>
+
+              <button type="button" class="es-bib-style-item"
+                data-variant-id="demo-3"
+                data-variant-title="Sage Mist"
+                data-variant-price="{{ 2400 | money }}"
+                data-variant-price-raw="2400"
+                data-available="true"
+                data-color-fallback="#E2EBE2"
+                data-accent-fallback="#CEE0CF">
+                <div class="es-bib-style-preview-circle" style="background: #E2EBE2;"></div>
+                <span class="es-bib-style-title">Sage Mist</span>
+                <span class="es-bib-style-price">{{ 2400 | money }}</span>
+              </button>
+
+              <button type="button" class="es-bib-style-item"
+                data-variant-id="demo-4"
+                data-variant-title="Cloud Blue"
+                data-variant-price="{{ 2400 | money }}"
+                data-variant-price-raw="2400"
+                data-available="true"
+                data-color-fallback="#E1ECF4"
+                data-accent-fallback="#C9DEEE">
+                <div class="es-bib-style-preview-circle" style="background: #E1ECF4;"></div>
+                <span class="es-bib-style-title">Cloud Blue</span>
+                <span class="es-bib-style-price">{{ 2400 | money }}</span>
+              </button>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <!-- Step 2: Personalization Name / Text -->
+        <div class="es-bib-card">
+          <div class="es-bib-step-title">
+            <div class="es-bib-step-label">
+              <span class="es-bib-step-pill">2</span>
+              <span>{{ section.settings.step_2_title | default: "Enter Baby's Name or Monogram" }}</span>
+            </div>
+          </div>
+
+          <div class="es-bib-input-wrapper">
+            <input type="text" 
+              id="BibCustomText" 
+              class="es-bib-text-input" 
+              placeholder="{{ section.settings.input_placeholder | default: 'e.g. Oliver, Emma, Baby Liam' }}" 
+              maxlength="{{ section.settings.max_characters | default: 14 }}"
+              value="{{ section.settings.default_name | default: 'Oliver' }}"
+              autocomplete="off">
+            
+            <div class="es-bib-input-meta">
+              <span>{{ section.settings.input_hint | default: 'Double-check spelling before ordering' }}</span>
+              <span class="es-bib-char-count"><span id="BibCharCount">6</span> / {{ section.settings.max_characters | default: 14 }}</span>
+            </div>
+
+            <div class="es-bib-error-msg" id="BibErrorMsg">
+              Please enter a name or initials to personalize your bib.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Choose Embroidery Font -->
+        <div class="es-bib-card">
+          <div class="es-bib-step-title">
+            <div class="es-bib-step-label">
+              <span class="es-bib-step-pill">3</span>
+              <span>{{ section.settings.step_3_title | default: 'Select Embroidery Font' }}</span>
+            </div>
+            <span class="es-bib-selected-indicator" id="BibSelectedFontName">Dancing Script</span>
+          </div>
+
+          <div class="es-bib-font-list">
+            <button type="button" class="es-bib-font-btn is-selected" 
+              data-font-family="'Dancing Script', cursive" 
+              data-font-name="Dancing Script">
+              <span class="es-bib-font-preview" style="font-family: 'Dancing Script', cursive;">Oliver</span>
+              <span class="es-bib-font-name">Dancing Script</span>
+            </button>
+
+            <button type="button" class="es-bib-font-btn" 
+              data-font-family="'Great Vibes', cursive" 
+              data-font-name="Great Vibes">
+              <span class="es-bib-font-preview" style="font-family: 'Great Vibes', cursive;">Oliver</span>
+              <span class="es-bib-font-name">Great Vibes</span>
+            </button>
+
+            <button type="button" class="es-bib-font-btn" 
+              data-font-family="'Playfair Display', serif" 
+              data-font-name="Playfair Serif">
+              <span class="es-bib-font-preview" style="font-family: 'Playfair Display', serif;">Oliver</span>
+              <span class="es-bib-font-name">Playfair Serif</span>
+            </button>
+
+            <button type="button" class="es-bib-font-btn" 
+              data-font-family="'Caveat', cursive" 
+              data-font-name="Playful Caveat">
+              <span class="es-bib-font-preview" style="font-family: 'Caveat', cursive;">Oliver</span>
+              <span class="es-bib-font-name">Playful Caveat</span>
+            </button>
+
+            <button type="button" class="es-bib-font-btn" 
+              data-font-family="'Quicksand', sans-serif" 
+              data-font-name="Modern Rounded">
+              <span class="es-bib-font-preview" style="font-family: 'Quicksand', sans-serif;">Oliver</span>
+              <span class="es-bib-font-name">Modern Rounded</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Choose Thread Color -->
+        <div class="es-bib-card">
+          <div class="es-bib-step-title">
+            <div class="es-bib-step-label">
+              <span class="es-bib-step-pill">4</span>
+              <span>{{ section.settings.step_4_title | default: 'Select Thread Color' }}</span>
+            </div>
+            <span class="es-bib-selected-indicator" id="BibSelectedThreadName">Warm Gold</span>
+          </div>
+
+          <div class="es-bib-thread-list">
+            <button type="button" class="es-bib-thread-swatch is-selected" 
+              style="background-color: #D4AF37;" 
+              data-color-hex="#D4AF37" 
+              data-color-name="Warm Gold" 
+              title="Warm Gold">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #C06C54;" 
+              data-color-hex="#C06C54" 
+              data-color-name="Terracotta" 
+              title="Terracotta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #B76E79;" 
+              data-color-hex="#B76E79" 
+              data-color-name="Dusty Rose" 
+              title="Dusty Rose">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #556B2F;" 
+              data-color-hex="#556B2F" 
+              data-color-name="Sage Olive" 
+              title="Sage Olive">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #2C3E50;" 
+              data-color-hex="#2C3E50" 
+              data-color-name="Midnight Navy" 
+              title="Midnight Navy">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #6F4E37;" 
+              data-color-hex="#6F4E37" 
+              data-color-name="Mocha Brown" 
+              title="Mocha Brown">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #8E44AD;" 
+              data-color-hex="#8E44AD" 
+              data-color-name="Plum Purple" 
+              title="Plum Purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch is-light" 
+              style="background-color: #FFFFFF;" 
+              data-color-hex="#FFFFFF" 
+              data-color-name="Pure White" 
+              title="Pure White">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+
+            <button type="button" class="es-bib-thread-swatch" 
+              style="background-color: #1E293B;" 
+              data-color-hex="#1E293B" 
+              data-color-name="Charcoal" 
+              title="Charcoal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Live Visual Preview Pane -->
+      <div class="es-bib-preview-pane">
+        <div class="es-bib-preview-card">
+          
+          <div class="es-bib-preview-header">
+            <span class="es-bib-preview-badge">
+              <span class="es-bib-preview-dot"></span>
+              <span>Live Embroidery Preview</span>
+            </span>
+            <span style="font-size: 0.8125rem; font-weight: 600; color: #64748b;">Custom Handcrafted</span>
+          </div>
+
+          <!-- Preview Stage -->
+          <div class="es-bib-stage">
+            <div class="es-bib-stage__canvas">
+              
+              <!-- Optional Variant Image -->
+              <img id="BibPreviewImage" class="es-bib-stage__image" style="display: none;" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Selected Bib" width="600" height="600" loading="lazy">
+
+              <!-- Realistic SVG Fallback / Base Bib Illustration -->
+              <svg id="BibSvgGraphic" class="es-bib-svg-bib" viewBox="0 0 400 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Drop shadow def -->
+                <defs>
+                  <filter id="bib-soft-shadow" x="-10%" y="-10%" width="120%" height="125%" filterUnits="userSpaceOnUse">
+                    <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#0f172a" flood-opacity="0.10" />
+                  </filter>
+                  <linearGradient id="bib-collar-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#000000" stop-opacity="0.06"/>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Bib Body Outline with realistic curves -->
+                <path id="BibSvgPath" d="M 120 40 C 90 40 60 70 50 120 C 35 190 30 250 40 310 C 50 370 100 410 200 410 C 300 410 350 370 360 310 C 370 250 365 190 350 120 C 340 70 310 40 280 40 C 255 40 240 70 240 100 C 240 125 220 145 200 145 C 180 145 160 125 160 100 C 160 70 145 40 120 40 Z" 
+                  fill="#F6F1EA" 
+                  stroke="#EADFCF" 
+                  stroke-width="4" 
+                  filter="url(#bib-soft-shadow)" />
+
+                <!-- Inner Stitched Embroidery Seam Line -->
+                <path d="M 124 52 C 98 52 72 78 64 122 C 50 188 45 245 54 302 C 63 358 108 396 200 396 C 292 396 337 358 346 302 C 355 245 350 188 336 122 C 328 78 302 52 276 52 C 258 52 248 76 248 100 C 248 130 225 155 200 155 C 175 155 152 130 152 100 C 152 76 142 52 124 52 Z" 
+                  fill="none" 
+                  stroke="#DFD3C2" 
+                  stroke-width="1.8" 
+                  stroke-dasharray="4 3" />
+
+                <!-- Top Neck Opening Depth -->
+                <path d="M 160 100 C 160 125 180 145 200 145 C 220 145 240 125 240 100 Z" fill="url(#bib-collar-grad)" />
+
+                <!-- Neck Snap Buttons -->
+                <circle cx="120" cy="50" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+                <circle cx="120" cy="50" r="3" fill="#cbd5e1" />
+                <circle cx="280" cy="50" r="7" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+                <circle cx="280" cy="50" r="3" fill="#cbd5e1" />
+              </svg>
+
+              <!-- Live Dynamic Name Embroidery Overlay -->
+              <div class="es-bib-embroidery-layer">
+                <span id="BibEmbroideryDisplay" class="es-bib-embroidery-text" style="font-family: 'Dancing Script', cursive; color: #D4AF37;">
+                  Oliver
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Summary & Live Price -->
+          <div class="es-bib-summary-box">
+            <div class="es-bib-summary-col">
+              <span class="es-bib-summary-title">Configured Bib</span>
+              <span class="es-bib-summary-val" id="BibSummaryName">Oatmeal Cream</span>
+            </div>
+            <div class="es-bib-summary-col" style="text-align: right;">
+              <span class="es-bib-summary-title">Total</span>
+              <span class="es-bib-price-display" id="BibSummaryPrice">
+                {%- if product != blank -%}
+                  {{ product.price | money }}
+                {%- else -%}
+                  {{ 2400 | money }}
+                {%- endif -%}
+              </span>
+            </div>
+          </div>
+
+          <!-- Quantity & Add to Cart -->
+          <div class="es-bib-actions">
+            <div class="es-bib-qty">
+              <button type="button" class="es-bib-qty-btn" id="BibQtyMinus" aria-label="Decrease quantity">−</button>
+              <input type="number" id="BibQtyInput" class="es-bib-qty-input" value="1" min="1" max="99" readonly>
+              <button type="button" class="es-bib-qty-btn" id="BibQtyPlus" aria-label="Increase quantity">+</button>
+            </div>
+
+            <button type="button" class="es-bib-add-btn" id="BibAddToCartBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <span id="BibAddToCartBtnText">{{ section.settings.add_to_cart_text | default: 'Add Custom Bib to Cart' }}</span>
+            </button>
+          </div>
+
+          <!-- Product Highlights / Confidence Badges -->
+          <div class="es-bib-features">
+            <div class="es-bib-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>100% Organic Cotton</span>
+            </div>
+            <div class="es-bib-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Durable Machine Wash</span>
+            </div>
+            <div class="es-bib-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Silky Gentle Stitching</span>
+            </div>
+            <div class="es-bib-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Handmade with Love</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (function() {
+    function initBibPersonalizer(sectionContainer) {
+      if (!sectionContainer) return;
+
+      const textInput = sectionContainer.querySelector('#BibCustomText');
+      const embroideryDisplay = sectionContainer.querySelector('#BibEmbroideryDisplay');
+      const charCountSpan = sectionContainer.querySelector('#BibCharCount');
+      const errorMsg = sectionContainer.querySelector('#BibErrorMsg');
+
+      const styleItems = sectionContainer.querySelectorAll('.es-bib-style-item');
+      const styleNameDisplay = sectionContainer.querySelector('#BibSelectedStyleName');
+      const summaryNameDisplay = sectionContainer.querySelector('#BibSummaryName');
+      const summaryPriceDisplay = sectionContainer.querySelector('#BibSummaryPrice');
+
+      const fontBtns = sectionContainer.querySelectorAll('.es-bib-font-btn');
+      const fontNameDisplay = sectionContainer.querySelector('#BibSelectedFontName');
+
+      const threadSwatches = sectionContainer.querySelectorAll('.es-bib-thread-swatch');
+      const threadNameDisplay = sectionContainer.querySelector('#BibSelectedThreadName');
+
+      const svgGraphic = sectionContainer.querySelector('#BibSvgGraphic');
+      const svgPath = sectionContainer.querySelector('#BibSvgPath');
+      const previewImg = sectionContainer.querySelector('#BibPreviewImage');
+
+      const qtyInput = sectionContainer.querySelector('#BibQtyInput');
+      const qtyMinus = sectionContainer.querySelector('#BibQtyMinus');
+      const qtyPlus = sectionContainer.querySelector('#BibQtyPlus');
+      const addToCartBtn = sectionContainer.querySelector('#BibAddToCartBtn');
+      const addToCartBtnText = sectionContainer.querySelector('#BibAddToCartBtnText');
+
+      let currentVariantId = null;
+      let currentVariantTitle = 'Oatmeal Cream';
+      let currentFontName = 'Dancing Script';
+      let currentFontFamily = "'Dancing Script', cursive";
+      let currentThreadName = 'Warm Gold';
+      let currentThreadColor = '#D4AF37';
+
+      // 1. Text Typing Live Update
+      if (textInput && embroideryDisplay) {
+        textInput.addEventListener('input', function() {
+          const val = this.value.trim();
+          if (val.length > 0) {
+            embroideryDisplay.textContent = this.value;
+            errorMsg?.classList.remove('is-visible');
+          } else {
+            embroideryDisplay.textContent = 'Oliver';
+          }
+          if (charCountSpan) {
+            charCountSpan.textContent = this.value.length;
+          }
+
+          // Responsive Font-size adjustment for longer names
+          if (this.value.length > 10) {
+            embroideryDisplay.style.fontSize = 'clamp(1.2rem, 3vw, 1.8rem)';
+          } else if (this.value.length > 7) {
+            embroideryDisplay.style.fontSize = 'clamp(1.4rem, 3.8vw, 2.1rem)';
+          } else {
+            embroideryDisplay.style.fontSize = 'clamp(1.5rem, 4.5vw, 2.5rem)';
+          }
+        });
+      }
+
+      // 2. Style / Variant Selection
+      styleItems.forEach(item => {
+        if (item.classList.contains('is-selected')) {
+          currentVariantId = item.getAttribute('data-variant-id');
+          currentVariantTitle = item.getAttribute('data-variant-title');
+        }
+
+        item.addEventListener('click', function() {
+          styleItems.forEach(i => i.classList.remove('is-selected'));
+          this.classList.add('is-selected');
+
+          currentVariantId = this.getAttribute('data-variant-id');
+          currentVariantTitle = this.getAttribute('data-variant-title');
+          const price = this.getAttribute('data-variant-price');
+          const imgSrc = this.getAttribute('data-image');
+          const colorFallback = this.getAttribute('data-color-fallback');
+          const accentFallback = this.getAttribute('data-accent-fallback');
+
+          if (styleNameDisplay) styleNameDisplay.textContent = currentVariantTitle;
+          if (summaryNameDisplay) summaryNameDisplay.textContent = currentVariantTitle;
+          if (summaryPriceDisplay && price) summaryPriceDisplay.textContent = price;
+
+          // Update SVG Bib color or Variant Image
+          if (imgSrc && imgSrc !== '') {
+            if (previewImg) {
+              previewImg.src = imgSrc;
+              previewImg.style.display = 'block';
+            }
+            if (svgGraphic) svgGraphic.style.display = 'none';
+          } else {
+            if (previewImg) previewImg.style.display = 'none';
+            if (svgGraphic) svgGraphic.style.display = 'block';
+            if (svgPath && colorFallback) {
+              svgPath.setAttribute('fill', colorFallback);
+              if (accentFallback) svgPath.setAttribute('stroke', accentFallback);
+            }
+          }
+        });
+      });
+
+      // 3. Font Selection
+      fontBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          fontBtns.forEach(b => b.classList.remove('is-selected'));
+          this.classList.add('is-selected');
+
+          currentFontName = this.getAttribute('data-font-name');
+          currentFontFamily = this.getAttribute('data-font-family');
+
+          if (fontNameDisplay) fontNameDisplay.textContent = currentFontName;
+          if (embroideryDisplay) embroideryDisplay.style.fontFamily = currentFontFamily;
+        });
+      });
+
+      // 4. Thread Color Selection
+      threadSwatches.forEach(swatch => {
+        swatch.addEventListener('click', function() {
+          threadSwatches.forEach(s => s.classList.remove('is-selected'));
+          this.classList.add('is-selected');
+
+          currentThreadName = this.getAttribute('data-color-name');
+          currentThreadColor = this.getAttribute('data-color-hex');
+
+          if (threadNameDisplay) threadNameDisplay.textContent = currentThreadName;
+          if (embroideryDisplay) embroideryDisplay.style.color = currentThreadColor;
+        });
+      });
+
+      // 5. Quantity Stepper
+      if (qtyMinus && qtyInput) {
+        qtyMinus.addEventListener('click', () => {
+          let v = parseInt(qtyInput.value, 10) || 1;
+          if (v > 1) qtyInput.value = v - 1;
+        });
+      }
+
+      if (qtyPlus && qtyInput) {
+        qtyPlus.addEventListener('click', () => {
+          let v = parseInt(qtyInput.value, 10) || 1;
+          if (v < 99) qtyInput.value = v + 1;
+        });
+      }
+
+      // 6. Add to Cart with Properties & Cart Drawer Integration
+      if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', async function() {
+          const personalizedText = textInput ? textInput.value.trim() : '';
+
+          if (!personalizedText || personalizedText === '') {
+            if (errorMsg) errorMsg.classList.add('is-visible');
+            textInput?.focus();
+            return;
+          }
+
+          const qty = parseInt(qtyInput?.value, 10) || 1;
+          const origText = addToCartBtnText ? addToCartBtnText.textContent : 'Add to Cart';
+
+          addToCartBtn.disabled = true;
+          if (addToCartBtnText) addToCartBtnText.textContent = 'Personalizing & Adding...';
+
+          try {
+            // Check if variant ID is valid numeric Shopify variant
+            const isNumericId = /^\d+$/.test(currentVariantId);
+            
+            const payload = {
+              id: isNumericId ? parseInt(currentVariantId, 10) : null,
+              quantity: qty,
+              properties: {
+                'Personalized Name': personalizedText,
+                'Embroidery Font': currentFontName,
+                'Thread Color': currentThreadName,
+                'Bib Style': currentVariantTitle
+              }
+            };
+
+            // If in Demo Mode without Shopify product selected, simulate adding to cart
+            if (!isNumericId) {
+              await new Promise(r => setTimeout(r, 600));
+              if (addToCartBtnText) addToCartBtnText.textContent = 'Added to Cart! ✓';
+              setTimeout(() => {
+                addToCartBtn.disabled = false;
+                if (addToCartBtnText) addToCartBtnText.textContent = origText;
+              }, 2000);
+              return;
+            }
+
+            const res = await fetch((window.Shopify?.routes?.root || '/') + 'cart/add.js', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+              if (addToCartBtnText) addToCartBtnText.textContent = 'Added to Cart! ✓';
+              
+              // Publish Theme PubSub event
+              if (window.publish && window.PUB_SUB_EVENTS) {
+                window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'add' });
+              }
+
+              // Open Cart Drawer if present, otherwise fallback to cart page
+              const drawer = document.querySelector('cart-drawer');
+              if (drawer && typeof drawer.open === 'function') {
+                drawer.open();
+              } else {
+                window.location.href = (window.Shopify?.routes?.root || '/') + 'cart';
+              }
+
+              setTimeout(() => {
+                addToCartBtn.disabled = false;
+                if (addToCartBtnText) addToCartBtnText.textContent = origText;
+              }, 2500);
+
+            } else {
+              const errData = await res.json();
+              throw new Error(errData.description || 'Could not add item');
+            }
+          } catch (err) {
+            console.error('Add to cart error:', err);
+            if (addToCartBtnText) addToCartBtnText.textContent = 'Failed to Add - Try Again';
+            addToCartBtn.disabled = false;
+            setTimeout(() => {
+              if (addToCartBtnText) addToCartBtnText.textContent = origText;
+            }, 3000);
+          }
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.es-bib-section').forEach(initBibPersonalizer);
+    });
+
+    document.addEventListener('shopify:section:load', (e) => {
+      const section = e.target.querySelector('.es-bib-section');
+      if (section) initBibPersonalizer(section);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Baby bib personalizer",
+  "tag": "section",
+  "class": "shopify-section--es-bib-personalizer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product Selection"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Select bib product",
+      "info": "Select your customizable bib product with color or fabric variants. If empty, elegant built-in demo styles are shown."
+    },
+    {
+      "type": "header",
+      "content": "Headings & Texts"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow badge",
+      "default": "Custom Embroidery Studio"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Design Your Personalized Baby Bib"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Choose a gentle organic fabric, customize with baby's name or initials, and watch your embroidered heirloom come to life in real-time."
+    },
+    {
+      "type": "select",
+      "id": "header_alignment",
+      "label": "Header alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Step Titles"
+    },
+    {
+      "type": "text",
+      "id": "step_1_title",
+      "label": "Step 1 title",
+      "default": "Choose Bib Color"
+    },
+    {
+      "type": "text",
+      "id": "step_2_title",
+      "label": "Step 2 title",
+      "default": "Enter Name or Initials"
+    },
+    {
+      "type": "text",
+      "id": "step_3_title",
+      "label": "Step 3 title",
+      "default": "Select Embroidery Font"
+    },
+    {
+      "type": "text",
+      "id": "step_4_title",
+      "label": "Step 4 title",
+      "default": "Select Thread Color"
+    },
+    {
+      "type": "header",
+      "content": "Personalization Settings"
+    },
+    {
+      "type": "text",
+      "id": "default_name",
+      "label": "Default preview name",
+      "default": "Oliver"
+    },
+    {
+      "type": "range",
+      "id": "max_characters",
+      "label": "Maximum characters allowed",
+      "min": 4,
+      "max": 20,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "text",
+      "id": "input_placeholder",
+      "label": "Input placeholder",
+      "default": "e.g. Oliver, Emma, Baby Noah"
+    },
+    {
+      "type": "text",
+      "id": "input_hint",
+      "label": "Input help text",
+      "default": "Double-check spelling before ordering"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_text",
+      "label": "Add to cart button text",
+      "default": "Add Custom Bib to Cart"
+    },
+    {
+      "type": "header",
+      "content": "Layout & Positioning"
+    },
+    {
+      "type": "select",
+      "id": "preview_position",
+      "label": "Live preview position (desktop)",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right side (Standard)"
+        },
+        {
+          "value": "left",
+          "label": "Left side"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Container max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1320
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Colors & Styling"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#fafafa"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e2e8f0"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1e293b"
+    },
+    {
+      "type": "color",
+      "id": "badge_background",
+      "label": "Badge background",
+      "default": "#fff1f2"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color",
+      "default": "#e11d48"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Button hover background",
+      "default": "#334155"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Advanced styling"
+    },
+    {
+      "id": "accent_color",
+      "label": "Accent colour",
+      "type": "color",
+      "default": "#f43f5e"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Baby bib personalizer"
+    }
+  ]
+}
+{% endschema %}

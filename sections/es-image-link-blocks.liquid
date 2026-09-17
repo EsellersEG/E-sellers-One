@@ -1,0 +1,461 @@
+{%- comment -%}
+  E-sellers Image Link Blocks - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+    position: relative;
+  }
+
+  .es-image-blocks__carousel-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .es-image-blocks {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+    scrollbar-width: none;
+  }
+
+  .es-image-blocks::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Block Sizes */
+  .es-image-block {
+    flex: 0 0 {% if section.settings.block_size == 'small' %}160px{% elsif section.settings.block_size == 'large' %}280px{% else %}220px{% endif %};
+    scroll-snap-align: start;
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  }
+
+  @media screen and (min-width: 750px) {
+    .es-image-block {
+      flex: 0 0 {% if section.settings.block_size == 'small' %}200px{% elsif section.settings.block_size == 'large' %}320px{% else %}260px{% endif %};
+    }
+  }
+
+  .es-image-block:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Full Overlaid Card */
+  .es-image-block--overlay {
+    aspect-ratio: 3 / 4;
+    justify-content: flex-end;
+    padding: 20px;
+    color: #ffffff;
+    background-color: #0f172a;
+  }
+
+  .es-image-block__bg-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-image-block__bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .es-image-block:hover .es-image-block__bg-image {
+    transform: scale(1.06);
+  }
+
+  .es-image-block__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .es-image-block__content-overlay {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .es-image-block__title-overlay {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+    color: inherit;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .es-image-block__icon-bubble {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .es-image-block:hover .es-image-block__icon-bubble {
+    transform: translateX(3px);
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Regular / Boxed Card */
+  .es-image-block--boxed {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+
+  .es-image-block__media-boxed {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: #f1f5f9;
+  }
+
+  .es-image-block__content-boxed {
+    padding: 14px 16px;
+    text-align: center;
+    background: #ffffff;
+  }
+
+  .es-image-block__title-boxed {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    color: #0f172a;
+  }
+
+  /* Nav Arrows */
+  .es-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .es-carousel-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+
+  .es-carousel-btn--prev { left: -22px; }
+  .es-carousel-btn--next { right: -22px; }
+
+  @media screen and (max-width: 989px) {
+    .es-carousel-btn { display: none; }
+  }
+{%- endstyle -%}
+
+<div class="es-image-link-blocks-section">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    {% render 'section-header',
+      subheading: section.settings.subheading,
+      heading: section.settings.title,
+      heading_color: section.settings.heading_color,
+      heading_gradient: section.settings.heading_gradient,
+      content: section.settings.content,
+      link_text: section.settings.link_text,
+      link_url: section.settings.link_url
+    %}
+
+    <div class="es-image-blocks__carousel-wrapper">
+      <button type="button" class="es-carousel-btn es-carousel-btn--prev" aria-label="Previous" onclick="this.parentElement.querySelector('.es-image-blocks').scrollBy({ left: -320, behavior: 'smooth' })">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div class="es-image-blocks">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.stretch_image -%}
+            <!-- Stretch / Overlay Mode -->
+            <a
+              href="{{ block.settings.link_url | default: '#' }}"
+              class="es-image-block es-image-block--overlay"
+              style="
+                {% if block.settings.background != blank %}background-color: {{ block.settings.background }};{% endif %}
+                {% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %}
+              "
+              {{ block.shopify_attributes }}
+            >
+              <div class="es-image-block__bg-media">
+                {%- if block.settings.image != blank -%}
+                  {%- assign es_tagarg_1 = block.settings.image.alt | default: block.settings.link_text | escape -%}{{ block.settings.image | image_url: width: 800 | image_tag:
+                    loading: 'lazy',
+                    class: 'es-image-block__bg-image',
+                    alt: es_tagarg_1}}
+                {%- else -%}
+                  <div style="width: 100%; height: 100%; background: #1e293b; display: flex; align-items: center; justify-content: center; color: #64748b;">
+                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <div
+                class="es-image-block__overlay"
+                style="background-color: {{ block.settings.overlay_color | default: '#000000' }}; opacity: {{ block.settings.overlay_opacity | default: 20 | divided_by: 100.0 }};"
+              ></div>
+
+              <div class="es-image-block__content-overlay">
+                <h3 class="es-image-block__title-overlay">{{ block.settings.link_text | default: 'Explore' | escape }}</h3>
+                <span class="es-image-block__icon-bubble">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </span>
+              </div>
+            </a>
+          {%- else -%}
+            <!-- Boxed / Minimal Mode -->
+            <a
+              href="{{ block.settings.link_url | default: '#' }}"
+              class="es-image-block es-image-block--boxed"
+              {{ block.shopify_attributes }}
+            >
+              <div class="es-image-block__media-boxed">
+                {%- if block.settings.image != blank -%}
+                  {%- assign es_tagarg_2 = block.settings.image.alt | default: block.settings.link_text | escape -%}{{ block.settings.image | image_url: width: 600 | image_tag:
+                    loading: 'lazy',
+                    class: 'es-image-block__bg-image',
+                    alt: es_tagarg_2}}
+                {%- else -%}
+                  <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <div class="es-image-block__content-boxed">
+                <h3 class="es-image-block__title-boxed">{{ block.settings.link_text | default: 'Category' | escape }}</h3>
+              </div>
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <button type="button" class="es-carousel-btn es-carousel-btn--next" aria-label="Next" onclick="this.parentElement.querySelector('.es-image-blocks').scrollBy({ left: 320, behavior: 'smooth' })">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Image Blocks",
+  "class": "shopify-section--es-image-blocks",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width container",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "block_size",
+      "label": "Card size",
+      "options": [
+        { "value": "small", "label": "Small" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Curated Collections"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by Category"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Description"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Header link URL"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Header link label",
+      "default": "View all"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Link block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "800 x 1000px recommended"
+        },
+        {
+          "type": "checkbox",
+          "id": "stretch_image",
+          "label": "Stretch to fill / Overlay mode",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Card title",
+          "default": "Collection Title"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Card link"
+        },
+        {
+          "type": "header",
+          "content": "Card Colors & Overlay"
+        },
+        {
+          "type": "color",
+          "id": "background",
+          "label": "Card background"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Card text color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "color",
+          "id": "overlay_color",
+          "label": "Overlay color",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay opacity",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 25
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Image Link Blocks",
+      "blocks": [
+        { "type": "item", "settings": { "link_text": "New Arrivals" } },
+        { "type": "item", "settings": { "link_text": "Best Sellers" } },
+        { "type": "item", "settings": { "link_text": "Special Offers" } },
+        { "type": "item", "settings": { "link_text": "Staff Picks" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

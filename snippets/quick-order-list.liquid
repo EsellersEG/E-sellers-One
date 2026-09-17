@@ -1,0 +1,162 @@
+{%- comment -%}
+  Quick Order List Snippet - E-sellers Professional (v4.9.0)
+  Accepts:
+  - product: {Object} Shopify Product Liquid object
+  - show_image: {Boolean} default: true
+  - show_sku: {Boolean} default: true
+  - show_inventory: {Boolean} default: true
+  - is_modal: {Boolean} default: false
+{%- endcomment -%}
+
+{%- liquid
+  assign show_image = show_image | default: true, allow_false: true
+  assign show_sku = show_sku | default: true, allow_false: true
+  assign show_inventory = show_inventory | default: true, allow_false: true
+-%}
+
+<div class="es-quick-order" data-section-product-id="{{ product.id }}">
+  <div class="es-quick-order__header">
+    <div class="es-quick-order__header-info">
+      <h3 class="es-quick-order__product-title">{{ product.title | escape }}</h3>
+      <p class="es-quick-order__variant-count">
+        {{ product.variants.size }} {{ product.variants.size | pluralize: 'variant', 'variants' }} available
+      </p>
+    </div>
+  </div>
+
+  <div class="es-quick-order__table-wrapper">
+    <table class="es-quick-order__table" role="table">
+      <thead>
+        <tr>
+          {%- if show_image -%}
+            <th scope="col" class="es-quick-order__th es-quick-order__th--media">Product</th>
+          {%- endif -%}
+          <th scope="col" class="es-quick-order__th es-quick-order__th--info">Variant</th>
+          {%- if show_sku -%}
+            <th scope="col" class="es-quick-order__th es-quick-order__th--sku">SKU</th>
+          {%- endif -%}
+          {%- if show_inventory -%}
+            <th scope="col" class="es-quick-order__th es-quick-order__th--stock">Availability</th>
+          {%- endif -%}
+          <th scope="col" class="es-quick-order__th es-quick-order__th--price">Price</th>
+          <th scope="col" class="es-quick-order__th es-quick-order__th--qty">Quantity</th>
+          <th scope="col" class="es-quick-order__th es-quick-order__th--total">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for variant in product.variants -%}
+          {%- assign variant_image = variant.featured_image | default: product.featured_image -%}
+          <tr class="es-quick-order__row{% unless variant.available %} es-quick-order__row--disabled{% endunless %}" data-variant-id="{{ variant.id }}" data-variant-price="{{ variant.price }}">
+            {%- if show_image -%}
+              <td class="es-quick-order__td es-quick-order__td--media">
+                <div class="es-quick-order__image-wrapper">
+                  {%- if variant_image != blank -%}
+                    {{ variant_image | image_url: width: 140 | image_tag:
+                      loading: 'lazy',
+                      width: 60,
+                      height: 60,
+                      class: 'es-quick-order__img'
+                    }}
+                  {%- else -%}
+                    <div class="es-quick-order__img-placeholder">
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </td>
+            {%- endif -%}
+
+            <td class="es-quick-order__td es-quick-order__td--info">
+              <span class="es-quick-order__variant-title">{{ variant.title | escape }}</span>
+              {%- if variant.available == false -%}
+                <span class="es-quick-order__soldout-tag">Sold out</span>
+              {%- endif -%}
+            </td>
+
+            {%- if show_sku -%}
+              <td class="es-quick-order__td es-quick-order__td--sku">
+                <span class="es-quick-order__sku-text">{{ variant.sku | default: '—' }}</span>
+              </td>
+            {%- endif -%}
+
+            {%- if show_inventory -%}
+              <td class="es-quick-order__td es-quick-order__td--stock">
+                {%- if variant.available -%}
+                  <span class="es-stock-badge es-stock-badge--in-stock">
+                    <span class="es-stock-badge__dot"></span>
+                    In Stock
+                  </span>
+                {%- else -%}
+                  <span class="es-stock-badge es-stock-badge--out-of-stock">
+                    <span class="es-stock-badge__dot"></span>
+                    Out of Stock
+                  </span>
+                {%- endif -%}
+              </td>
+            {%- endif -%}
+
+            <td class="es-quick-order__td es-quick-order__td--price">
+              <span class="es-quick-order__price">{{ variant.price | money }}</span>
+              {%- if variant.compare_at_price > variant.price -%}
+                <s class="es-quick-order__compare-price">{{ variant.compare_at_price | money }}</s>
+              {%- endif -%}
+            </td>
+
+            <td class="es-quick-order__td es-quick-order__td--qty">
+              {%- if variant.available -%}
+                <div class="es-qty-stepper">
+                  <button type="button" class="es-qty-stepper__btn es-qty-stepper__btn--minus" aria-label="Decrease quantity">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                  <input
+                    type="number"
+                    min="0"
+                    max="{{ variant.inventory_quantity | at_least: 9999 }}"
+                    step="1"
+                    value="0"
+                    class="es-qty-stepper__input"
+                    aria-label="Quantity for {{ variant.title | escape }}"
+                    data-variant-id="{{ variant.id }}"
+                  >
+                  <button type="button" class="es-qty-stepper__btn es-qty-stepper__btn--plus" aria-label="Increase quantity">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                </div>
+              {%- else -%}
+                <span class="es-quick-order__unavailable">—</span>
+              {%- endif -%}
+            </td>
+
+            <td class="es-quick-order__td es-quick-order__td--total">
+              <span class="es-quick-order__line-total" data-line-total>0.00</span>
+            </td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Live Summary & Batch Actions Bar -->
+  <div class="es-quick-order__footer">
+    <div class="es-quick-order__summary">
+      <div class="es-quick-order__summary-item">
+        <span class="es-quick-order__summary-label">Total items:</span>
+        <strong class="es-quick-order__summary-value" data-total-items>0</strong>
+      </div>
+      <div class="es-quick-order__summary-item">
+        <span class="es-quick-order__summary-label">Subtotal:</span>
+        <strong class="es-quick-order__summary-value es-quick-order__summary-value--price" data-total-price>0.00</strong>
+      </div>
+    </div>
+
+    <div class="es-quick-order__actions">
+      <button type="button" class="es-btn es-btn--secondary" data-clear-btn disabled>
+        Clear all
+      </button>
+      <button type="button" class="es-btn es-btn--primary" data-add-all-btn disabled>
+        <span class="es-btn__spinner" aria-hidden="true"></span>
+        <span class="es-btn__text">Add selected to cart</span>
+      </button>
+    </div>
+  </div>
+</div>

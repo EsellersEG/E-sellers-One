@@ -1,0 +1,64 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "Overlay group",
+  "type": "custom.overlay",
+  "sections": {
+    "cart_drawer": {
+      "type": "es-cart-drawer",
+      "settings": {
+        "free_shipping_threshold": 100,
+        "show_cart_note": true
+      }
+    },
+    "search_drawer": {
+      "type": "es-search-drawer",
+      "disabled": true,
+      "settings": {
+        "full_width": false,
+        "search_menu": "",
+        "search_menu_show_title": true
+      }
+    },
+    "variant_added": {
+      "type": "es-variant-added",
+      "disabled": true,
+      "settings": {}
+    },
+    "newsletter_popup": {
+      "type": "es-newsletter-popup",
+      "disabled": true,
+      "settings": {
+        "apparition_delay": 5,
+        "show_only_on_index": true,
+        "show_only_for_visitors": true,
+        "show_only_once": true,
+        "title": "Get 15% Off Your First Order",
+        "subtext": "Join our VIP club for exclusive early drops, special private sales, and member discounts.",
+        "button_text": "Unlock My 15% Off"
+      }
+    },
+    "privacy_banner": {
+      "type": "es-privacy-banner",
+      "disabled": true,
+      "settings": {
+        "privacy_bar_title": "Cookie & Privacy Policy",
+        "privacy_bar_content": "<p>We use cookies to ensure you get the best browsing and shopping experience on our website. Read our <a href=\"/policies/privacy-policy\">Privacy Policy</a>.</p>"
+      }
+    }
+  },
+  "order": [
+    "cart_drawer",
+    "search_drawer",
+    "variant_added",
+    "newsletter_popup",
+    "privacy_banner"
+  ]
+}

@@ -1,0 +1,83 @@
+{%- comment -%}
+  Product Media Gallery Snippet - E-sellers Professional (v4.9.0)
+  Accepts:
+  - product: {Object} Product Liquid object
+  - is_sticky: {Boolean}
+{%- endcomment -%}
+
+{{ 'component-product-gallery.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'component-product-gallery.js' | asset_url }}" defer="defer"></script>
+
+<product-gallery class="product-gallery{% if is_sticky %} product-gallery--sticky{% endif %}">
+  <!-- Main Display Image -->
+  <div class="product-gallery__main">
+    {%- if product.featured_media -%}
+      <div class="product-gallery__image-wrapper">
+        <img
+          src="{{ product.featured_media | image_url: width: 1200 }}"
+          srcset="
+            {{ product.featured_media | image_url: width: 600 }} 600w,
+            {{ product.featured_media | image_url: width: 900 }} 900w,
+            {{ product.featured_media | image_url: width: 1200 }} 1200w
+          "
+          sizes="(min-width: 990px) 50vw, 100vw"
+          alt="{{ product.featured_media.alt | default: product.title | escape }}"
+          class="product-gallery__main-img"
+          data-media-id="{{ product.featured_media.id }}"
+          loading="eager"
+          fetchpriority="high"
+          width="{{ product.featured_media.width }}"
+          height="{{ product.featured_media.height }}"
+        >
+      </div>
+    {%- else -%}
+      <div class="product-gallery__image-wrapper">
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+
+    <!-- Badges -->
+    <div class="product-gallery__badge">
+      {%- if product.available == false -%}
+        <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif product.compare_at_price > product.price -%}
+        {%- assign discount = product.compare_at_price | minus: product.price -%}
+        {%- assign percent_off = discount | times: 100 | divided_by: product.compare_at_price -%}
+        <span class="badge badge--sale">
+          {%- if settings.sale_badge_type == 'percentage' -%}
+            -{{ percent_off }}%
+          {%- elsif settings.sale_badge_type == 'amount' -%}
+            {{ 'products.product.save_html' | t: amount: discount | money }}
+          {%- else -%}
+            {{ 'products.product.on_sale' | t }}
+          {%- endif -%}
+        </span>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <!-- Thumbnails Strip -->
+  {%- if product.media.size > 1 -%}
+    <div class="product-gallery__thumbnails" role="tablist" aria-label="Product Media Thumbnails">
+      {%- for media in product.media -%}
+        <button
+          type="button"
+          class="product-gallery__thumbnail-btn{% if forloop.first %} is-active{% endif %}"
+          data-media-id="{{ media.id }}"
+          data-media-src="{{ media | image_url: width: 1200 }}"
+          data-media-alt="{{ media.alt | default: product.title | escape }}"
+          role="tab"
+          aria-label="{{ 'products.product.media.open_media' | t: index: forloop.index }}"
+        >
+          <img
+            src="{{ media | image_url: width: 180 }}"
+            alt="{{ media.alt | default: product.title | escape }}"
+            loading="lazy"
+            width="72"
+            height="90"
+          >
+        </button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</product-gallery>

@@ -1,0 +1,118 @@
+{%- comment -%}
+  Product Buy Buttons Snippet - E-sellers Professional (v4.9.0)
+  Accepts:
+  - product: {Object} Product Liquid object
+  - block: {Object} Block object
+  - product_form_id: {String} Product form ID
+  - show_dynamic_checkout: {Boolean}
+  - show_quantity: {Boolean}
+{%- endcomment -%}
+
+<script src="{{ 'es-product-form.js' | asset_url }}" defer="defer"></script>
+
+<div class="product-buy-buttons" {{ block.shopify_attributes }}>
+  <product-form class="product-form">
+    {%- form 'product', product, id: product_form_id, class: 'form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+      {%- comment -%}
+        Never mark this input disabled. A disabled control is omitted from the
+        submission, so the request would carry no variant at all and fail for a
+        reason unrelated to stock. Availability is communicated by the submit
+        button instead, and the variant picker keeps this value in sync.
+      {%- endcomment -%}
+      <input
+        type="hidden"
+        name="id"
+        value="{{ product.selected_or_first_available_variant.id }}"
+      >
+
+      {%- comment -%} Stock and inventory errors are reported here, in place. {%- endcomment -%}
+      <div
+        class="product-form__error"
+        data-product-form-error
+        role="alert"
+        hidden
+        style="
+          margin-bottom: 12px;
+          padding: 10px 14px;
+          background-color: #fef2f2;
+          color: #991b1b;
+          border: 1px solid #fecaca;
+          border-radius: var(--es-radius-md, 8px);
+          font-size: 1.4rem;
+          font-weight: 600;
+        "
+      ></div>
+
+      <!-- Inventory Urgency Alert -->
+      <div
+        id="Inventory-{{ section.id }}"
+        class="product-inventory-alert"
+        style="
+          display: {% if product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity <= 10 %}block{% else %}none{% endif %};
+          margin-bottom: 16px;
+          padding: 10px 14px;
+          background-color: #fef2f2;
+          color: #dc2626;
+          border-radius: var(--badge-radius, 6px);
+          font-size: 1.3rem;
+          font-weight: 600;
+        "
+      >
+        {%- if product.selected_or_first_available_variant.inventory_quantity > 0 and product.selected_or_first_available_variant.inventory_quantity <= 10 -%}
+          ⚡ {{ 'products.product.inventory.low_stock' | t: count: product.selected_or_first_available_variant.inventory_quantity }}
+        {%- endif -%}
+      </div>
+
+      <div class="product-form__buttons" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Quantity & Add to Cart Row -->
+        <div style="display: flex; gap: 12px; align-items: stretch;">
+          {%- if show_quantity -%}
+            <quantity-input class="quantity-input" style="display: inline-flex; border: 1.5px solid #e2e8f0; border-radius: var(--button-radius, 8px); height: 48px; background: #ffffff;">
+              <button class="cart-quantity-btn" name="minus" type="button" style="width: 38px; height: 100%;" aria-label="{{ 'products.product.quantity.decrease' | t: product: product.title | escape }}">
+                {% render 'icon', name: 'minus' %}
+              </button>
+              <input
+                class="cart-quantity-input"
+                type="number"
+                name="quantity"
+                id="Quantity-{{ section.id }}"
+                min="1"
+                value="1"
+                form="{{ product_form_id }}"
+                style="width: 44px; height: 100%; font-size: 1.5rem;"
+                aria-label="{{ 'products.product.quantity.input_label' | t: product: product.title | escape }}"
+              >
+              <button class="cart-quantity-btn" name="plus" type="button" style="width: 38px; height: 100%;" aria-label="{{ 'products.product.quantity.increase' | t: product: product.title | escape }}">
+                {% render 'icon', name: 'plus' %}
+              </button>
+            </quantity-input>
+          {%- endif -%}
+
+          <button
+            type="submit"
+            name="add"
+            id="ProductSubmitButton-{{ section.id }}"
+            class="button button--primary"
+            style="flex: 1; height: 48px; font-size: 1.5rem; letter-spacing: 0.02em;"
+            {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}
+          >
+            <span>
+              {%- if product.selected_or_first_available_variant.available == false -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- else -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- endif -%}
+            </span>
+          </button>
+        </div>
+
+        <!-- Dynamic Checkout Button (Shop Pay, PayPal, Apple Pay) -->
+        {%- if show_dynamic_checkout -%}
+          <div class="product-form__dynamic-checkout" style="margin-top: 4px;">
+            {{ form | payment_button }}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endform -%}
+  </product-form>
+</div>

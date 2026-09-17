@@ -1,0 +1,593 @@
+{%- comment -%}
+  E-sellers Product Specs & Performance - E-sellers Professional (v4.9.0)
+
+  Two-column technical breakdown for a product page:
+    - Specifications table (label / value rows, metafield-friendly)
+    - Features summary (section setting, falling back to a product metafield)
+    - Performance rating bars (word grades or a raw percentage)
+
+  Self-contained: every selector is scoped to this section's id, so multiple
+  instances on one page never bleed into each other.
+{%- endcomment -%}
+
+{%- liquid
+  assign spec_blocks = section.blocks | where: 'type', 'specification'
+  assign rating_blocks = section.blocks | where: 'type', 'rating'
+
+  assign has_specs = false
+  for block in spec_blocks
+    assign spec_val = block.settings.value | strip
+    if spec_val != blank
+      assign has_specs = true
+      break
+    endif
+  endfor
+
+  assign has_ratings = false
+  for block in rating_blocks
+    assign rating_val = block.settings.value | strip
+    if rating_val != blank
+      assign has_ratings = true
+      break
+    endif
+  endfor
+
+  assign features_content = section.settings.features_value
+  if features_content == blank
+    assign features_content = product.metafields.custom.features.value
+  endif
+
+  assign has_features = false
+  if features_content != blank
+    assign has_features = true
+  endif
+-%}
+
+{%- if has_specs or has_ratings or has_features -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-sp-bg: {{ section.settings.background | default: 'transparent' }};
+      --es-sp-text: {{ section.settings.text_color | default: 'inherit' }};
+      --es-sp-font-size: {{ section.settings.text_size | default: 14 }}px;
+      --es-sp-rule: {{ section.settings.divider_color | default: '#e5e7eb' }};
+      --es-sp-rating-bg: {{ section.settings.rating_background_color | default: '#e5e7eb' }};
+      --es-sp-rating-fill: {{ section.settings.rating_fill_color | default: '#555555' }};
+      --es-sp-rating-text: {{ section.settings.rating_text_color | default: '#ffffff' }};
+      --es-sp-bar-height: {{ section.settings.rating_bar_height | default: 32 }}px;
+      --es-sp-cols: 1fr;
+      --es-sp-gap: 3.2rem;
+      --es-sp-pt: {{ section.settings.padding_top | default: 40 }}px;
+      --es-sp-pb: {{ section.settings.padding_bottom | default: 40 }}px;
+
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- endif -%}
+      background-color: var(--es-sp-bg);
+      color: var(--es-sp-text);
+      padding-top: var(--es-sp-pt);
+      padding-bottom: var(--es-sp-pb);
+    }
+
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} {
+        --es-sp-cols: 1fr 1fr;
+        --es-sp-gap: 6.4rem;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__wrapper {
+      display: grid;
+      grid-template-columns: var(--es-sp-cols);
+      gap: var(--es-sp-gap);
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__col {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__title {
+      font-family: var(--font-heading-family, inherit);
+      font-weight: var(--font-heading-weight, 700);
+      font-style: var(--font-heading-style, normal);
+      font-size: calc(var(--es-sp-font-size) * 1.15);
+      text-transform: var(--font-heading-transform, none);
+      margin: 0 0 1.6rem;
+      color: inherit;
+      line-height: 1.2;
+    }
+
+    /* ---- Specifications table ---- */
+    #shopify-section-{{ section.id }} .es-sp__table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0 0 2.4rem;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__table tr {
+      border-bottom: 1px solid var(--es-sp-rule);
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__table tr:last-child {
+      border-bottom: none;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__table td {
+      padding: 1.2rem 0;
+      vertical-align: top;
+      font-size: var(--es-sp-font-size);
+      line-height: 1.4;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__label {
+      font-weight: 700;
+      width: 30%;
+      min-width: 100px;
+      padding-right: 1.6rem;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__value {
+      opacity: 0.95;
+    }
+
+    /* ---- Features ---- */
+    #shopify-section-{{ section.id }} .es-sp__features {
+      margin-bottom: 3.2rem;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__features-text {
+      font-size: var(--es-sp-font-size);
+      line-height: 1.5;
+    }
+
+    /* ---- Ratings ---- */
+    #shopify-section-{{ section.id }} .es-sp__ratings-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: stretch;
+      row-gap: 0.4rem;
+    }
+
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .es-sp__ratings-grid {
+        grid-template-columns: 100px 1fr;
+      }
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__rating-row {
+      display: contents;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__rating-label {
+      grid-column: 1;
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: var(--es-sp-font-size);
+      padding-right: 1.2rem;
+      line-height: 1.2;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__bar {
+      grid-column: 2;
+      position: relative;
+      background-color: var(--es-sp-rating-bg);
+      height: var(--es-sp-bar-height);
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      border-radius: {{ section.settings.rating_bar_radius | default: 0 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__bar-fill {
+      background-color: var(--es-sp-rating-fill);
+      display: flex;
+      align-items: center;
+      padding-left: 1.2rem;
+      width: 0;
+      transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__bar.es-sp--filled .es-sp__bar-fill {
+      width: var(--es-sp-percent, 0%);
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__bar-text {
+      font-weight: 700;
+      font-size: var(--es-sp-font-size);
+      letter-spacing: 0.05em;
+      line-height: 1;
+      white-space: nowrap;
+      color: var(--es-sp-rating-text);
+    }
+
+    {%- comment -%}
+      Short bars cannot hold their own label, so the text sits just past the
+      fill in the track colour instead of being clipped by overflow:hidden.
+    {%- endcomment -%}
+    #shopify-section-{{ section.id }} .es-sp__bar--short .es-sp__bar-fill {
+      padding-left: 0;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__bar--short .es-sp__bar-text {
+      position: absolute;
+      left: calc(var(--es-sp-percent, 0%) + 1.2rem);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--es-sp-rating-fill);
+      opacity: 0;
+      transition: opacity 0.4s ease 0.6s;
+    }
+
+    #shopify-section-{{ section.id }} .es-sp__bar--short.es-sp--filled .es-sp__bar-text {
+      opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .es-sp__bar-fill,
+      #shopify-section-{{ section.id }} .es-sp__bar-text {
+        transition: none;
+      }
+    }
+  {%- endstyle -%}
+
+  <div class="{% if section.settings.full_width %}es-sp__full{% else %}page-width{% endif %}"
+       {% if section.settings.full_width %}style="padding-inline:1.5rem;"{% endif %}>
+    <div class="es-sp__wrapper">
+
+      {%- if has_specs -%}
+        <div class="es-sp__col">
+          {%- if section.settings.specs_heading != blank -%}
+            <h3 class="es-sp__title">{{ section.settings.specs_heading | escape }}</h3>
+          {%- endif -%}
+
+          <table class="es-sp__table">
+            <tbody>
+              {%- for block in spec_blocks -%}
+                {%- assign spec_val = block.settings.value | strip -%}
+                {%- if spec_val != blank -%}
+                  <tr {{ block.shopify_attributes }}>
+                    <th scope="row" class="es-sp__label">{{ block.settings.label | escape }}</th>
+                    <td class="es-sp__value">{{ spec_val }}</td>
+                  </tr>
+                {%- endif -%}
+              {%- endfor -%}
+            </tbody>
+          </table>
+        </div>
+      {%- endif -%}
+
+      {%- if has_features or has_ratings -%}
+        <div class="es-sp__col">
+          {%- if has_features -%}
+            <div class="es-sp__features">
+              {%- if section.settings.features_heading != blank -%}
+                <h3 class="es-sp__title">{{ section.settings.features_heading | escape }}</h3>
+              {%- endif -%}
+              <div class="es-sp__features-text">
+                {%- comment -%}
+                  A list-type metafield arrives as an array; a text setting arrives
+                  as a plain string. Only join when it is genuinely a list.
+                {%- endcomment -%}
+                {%- if features_content.size > 0 and features_content.first != blank -%}
+                  {{ features_content | join: ', ' }}
+                {%- else -%}
+                  {{ features_content }}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if has_ratings -%}
+            <div class="es-sp__ratings">
+              {%- if section.settings.ratings_heading != blank -%}
+                <h3 class="es-sp__title">{{ section.settings.ratings_heading | escape }}</h3>
+              {%- endif -%}
+
+              <div class="es-sp__ratings-grid">
+                {%- for block in rating_blocks -%}
+                  {%- liquid
+                    assign raw_value = block.settings.value | strip
+                    assign rating_val = raw_value | downcase
+                    assign percent = 0
+                    assign rating_text = ''
+
+                    case rating_val
+                      when 'best'
+                        assign percent = 100
+                        assign rating_text = 'BEST'
+                      when 'better'
+                        assign percent = 75
+                        assign rating_text = 'BETTER'
+                      when 'good'
+                        assign percent = 50
+                        assign rating_text = 'GOOD'
+                      when 'fair'
+                        assign percent = 25
+                        assign rating_text = 'FAIR'
+                      when 'poor'
+                        assign percent = 10
+                        assign rating_text = 'POOR'
+                      else
+                        assign numeric_val = rating_val | remove: '%' | times: 1
+                        if numeric_val > 0
+                          assign percent = numeric_val | at_most: 100
+                          assign rating_text = raw_value | upcase
+                        endif
+                    endcase
+                  -%}
+
+                  {%- if percent > 0 -%}
+                    {%- assign is_short = false -%}
+                    {%- if percent < 35 -%}{%- assign is_short = true -%}{%- endif -%}
+
+                    <div class="es-sp__rating-row" {{ block.shopify_attributes }}>
+                      <span class="es-sp__rating-label" id="EsSpLabel-{{ section.id }}-{{ forloop.index }}">
+                        {{ block.settings.label | escape }}
+                      </span>
+                      <div class="es-sp__bar{% if is_short %} es-sp__bar--short{% endif %}"
+                           style="--es-sp-percent: {{ percent }}%;"
+                           role="img"
+                           aria-labelledby="EsSpLabel-{{ section.id }}-{{ forloop.index }}"
+                           aria-label="{{ block.settings.label | escape }}: {{ rating_text }}, {{ percent }} out of 100">
+                        <div class="es-sp__bar-fill">
+                          {%- unless is_short -%}
+                            <span class="es-sp__bar-text" aria-hidden="true">{{ rating_text }}</span>
+                          {%- endunless -%}
+                        </div>
+                        {%- if is_short -%}
+                          <span class="es-sp__bar-text" aria-hidden="true">{{ rating_text }}</span>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+  {%- if has_ratings -%}
+    <script>
+      (function () {
+        var root = document.getElementById('shopify-section-{{ section.id }}');
+        if (!root) return;
+
+        var bars = root.querySelectorAll('.es-sp__bar');
+        if (!bars.length) return;
+
+        function fill(bar) { bar.classList.add('es-sp--filled'); }
+
+        if (!('IntersectionObserver' in window)) {
+          Array.prototype.forEach.call(bars, fill);
+          return;
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              fill(entry.target);
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.25 });
+
+        Array.prototype.forEach.call(bars, function (bar) { io.observe(bar); });
+      })();
+    </script>
+  {%- endif -%}
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add specification or rating blocks to populate this section.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Specs & performance",
+  "class": "shopify-section--es-product-specs",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Specifications"
+    },
+    {
+      "type": "text",
+      "id": "specs_heading",
+      "label": "Specifications heading",
+      "default": "Specifications"
+    },
+    {
+      "type": "header",
+      "content": "Features"
+    },
+    {
+      "type": "text",
+      "id": "features_heading",
+      "label": "Features heading",
+      "default": "Features"
+    },
+    {
+      "type": "text",
+      "id": "features_value",
+      "label": "Features value",
+      "info": "Leave blank to read the product's custom.features metafield automatically."
+    },
+    {
+      "type": "header",
+      "content": "Performance ratings"
+    },
+    {
+      "type": "text",
+      "id": "ratings_heading",
+      "label": "Ratings heading",
+      "default": "Outsole rating"
+    },
+    {
+      "type": "color",
+      "id": "rating_fill_color",
+      "label": "Bar fill color",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "rating_background_color",
+      "label": "Bar track color",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "rating_text_color",
+      "label": "Bar text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "rating_bar_height",
+      "min": 16,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "label": "Bar height",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "rating_bar_radius",
+      "min": 0,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Bar corner radius",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors & spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Table divider color",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "specification",
+      "name": "Specification row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Label"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "info": "Usually connected to a metafield via a dynamic source."
+        }
+      ]
+    },
+    {
+      "type": "rating",
+      "name": "Rating row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Label"
+        },
+        {
+          "type": "text",
+          "id": "value",
+          "label": "Value",
+          "info": "Accepts Best (100%), Better (75%), Good (50%), Fair (25%), Poor (10%) — or a raw number such as 60."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Specs & performance",
+      "blocks": [
+        { "type": "specification", "settings": { "label": "Type" } },
+        { "type": "specification", "settings": { "label": "Toe" } },
+        { "type": "specification", "settings": { "label": "Upper" } },
+        { "type": "specification", "settings": { "label": "Lining" } },
+        { "type": "specification", "settings": { "label": "Insole" } },
+        { "type": "specification", "settings": { "label": "Outsole" } },
+        { "type": "rating", "settings": { "label": "Slip", "value": "Best" } },
+        { "type": "rating", "settings": { "label": "Oil", "value": "Better" } },
+        { "type": "rating", "settings": { "label": "Heat", "value": "Good" } },
+        { "type": "rating", "settings": { "label": "Abrasion", "value": "Better" } },
+        { "type": "rating", "settings": { "label": "Chemicals", "value": "Fair" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

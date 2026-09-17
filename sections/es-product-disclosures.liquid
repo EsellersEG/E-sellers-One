@@ -1,0 +1,150 @@
+{%- comment -%}
+  E-sellers Product Disclosures / Accordion Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background | default: 'transparent' }};
+    padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .es-disclosure-item details[open] .es-disclosure-item__chevron {
+    transform: rotate(180deg);
+  }
+
+  .es-disclosure-item[open] {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+{%- endstyle -%}
+
+<div class="es-product-disclosures-section">
+  <div class="page-width">
+    {% render 'product-disclosures',
+      product: product,
+      heading: section.settings.heading,
+      heading_size: section.settings.heading_size,
+      open_by_default: section.settings.open_by_default,
+      blocks: section.blocks
+    %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Disclosures",
+  "class": "shopify-section--es-disclosures",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section heading",
+      "default": "Product Details & Specifications"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h2", "label": "Medium (H2)" },
+        { "value": "h1", "label": "Large (H1)" },
+        { "value": "h0", "label": "Extra Large" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "Open first tab by default",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Colors & Padding"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Tab title",
+          "default": "Materials & Care"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Tab content",
+          "default": "<p>Add detailed specifications, size dimensions, or care guidelines for your product.</p>"
+        },
+        {
+          "type": "page",
+          "id": "page",
+          "label": "Content from page",
+          "info": "Optionally load content from a store page."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Disclosures",
+      "blocks": [
+        {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Features & Specifications",
+            "content": "<p>Engineered for high performance and daily durability with quality materials.</p>"
+          }
+        },
+        {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Shipping & Easy Returns",
+            "content": "<p>Fast worldwide shipping. 30-day return policy on all eligible purchases.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

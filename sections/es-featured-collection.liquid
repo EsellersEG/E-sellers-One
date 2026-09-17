@@ -1,0 +1,185 @@
+{%- comment -%}
+  Featured Collection Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color | default: '#ffffff' }};
+    padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .featured-collection__header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .featured-collection__subheading {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: #64748b;
+    margin: 0 0 8px;
+  }
+
+  .featured-collection__heading {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+    margin: 0;
+  }
+
+  .featured-collection__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .featured-collection__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="featured-collection page-width">
+  <div class="featured-collection__header">
+    {%- if section.settings.subheading != blank -%}
+      <p class="featured-collection__subheading">{{ section.settings.subheading | escape }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="featured-collection__heading">{{ section.settings.heading | escape }}</h2>
+    {%- endif -%}
+  </div>
+
+  <div class="featured-collection__grid">
+    {%- assign target_collection = section.settings.collection | default: collections.all -%}
+    {%- for product in target_collection.products limit: section.settings.products_to_show -%}
+      {% render 'card-product', card_product: product %}
+    {%- else -%}
+      {%- for i in (1..section.settings.products_to_show) -%}
+        <div>
+          <div style="background: #f1f5f9; aspect-ratio: 1; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+            Product {{ i }}
+          </div>
+          <p style="font-weight: 600; margin: 0;">Sample Product {{ i }}</p>
+          <p style="color: #64748b; margin: 4px 0 0;">$49.00</p>
+        </div>
+      {%- endfor -%}
+    {%- endfor -%}
+  </div>
+
+  {%- if section.settings.show_view_all and target_collection != blank -%}
+    <div style="text-align: center; margin-top: 36px;">
+      <a href="{{ target_collection.url }}" class="button" style="display: inline-block; background: #121212; color: #ffffff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+        View all products
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "tag": "section",
+  "class": "section--featured-collection",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Featured collection",
+      "label": "Heading"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 24,
+      "step": 1,
+      "default": 4,
+      "label": "Maximum products to show"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Number of columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2",
+      "label": "Number of columns on mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": false,
+      "label": "Enable \"View all\" button"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured collection"
+    }
+  ]
+}
+{% endschema %}

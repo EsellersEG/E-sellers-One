@@ -1,0 +1,529 @@
+{%- comment -%}
+  E-sellers Premium Logo List - E-sellers Professional (v4.9.0)
+  Card-framed logo grid with four hover treatments and an optional
+  reveal-on-scroll. Fully self-contained: no external stylesheet,
+  no shared custom elements, safe with multiple instances per page.
+{%- endcomment -%}
+
+{%- liquid
+  assign logo_blocks = section.blocks | where: 'type', 'logo'
+  assign align = section.settings.text_alignment | default: 'center'
+  assign per_row = section.settings.items_per_row | default: 5
+  assign per_row_xs = 2 | at_most: logo_blocks.size
+  assign per_row_sm = 3 | at_most: logo_blocks.size
+  assign per_row_md = 4 | at_most: per_row | at_most: logo_blocks.size
+  assign per_row_lg = per_row | at_most: logo_blocks.size
+  assign hover = section.settings.hover_animation | default: 'lift'
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-pll-bg: {{ section.settings.background | default: 'transparent' }};
+    --es-pll-heading: {{ section.settings.heading_color | default: '#1a1a1a' }};
+    --es-pll-text: {{ section.settings.text_color | default: '#666666' }};
+    --es-pll-card-bg: {{ section.settings.logo_item_background | default: '#ffffff' }};
+    --es-pll-card-border: {{ section.settings.logo_item_border | default: '#e5e5e5' }};
+    --es-pll-radius: {{ section.settings.card_radius | default: 12 }}px;
+    --es-pll-gap: {{ section.settings.grid_gap | default: 20 }}px;
+    --es-pll-per-row: {{ per_row_xs }};
+    --es-pll-rest-opacity: {{ section.settings.logo_rest_opacity | default: 75 | divided_by: 100.0 }};
+    --es-pll-grayscale: {{ section.settings.logo_grayscale | default: 100 }}%;
+    --es-pll-pt: {{ section.settings.padding_top | default: 48 }}px;
+    --es-pll-pb: {{ section.settings.padding_bottom | default: 48 }}px;
+
+    {%- if section.settings.background_gradient != blank -%}
+      background-image: {{ section.settings.background_gradient }};
+    {%- endif -%}
+    background-color: var(--es-pll-bg);
+    padding-top: var(--es-pll-pt);
+    padding-bottom: var(--es-pll-pb);
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} { --es-pll-per-row: {{ per_row_sm }}; }
+  }
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} { --es-pll-per-row: {{ per_row_md }}; }
+  }
+  @media screen and (min-width: 1150px) {
+    #shopify-section-{{ section.id }} { --es-pll-per-row: {{ per_row_lg }}; }
+  }
+
+  /* ---- Intro ---- */
+  #shopify-section-{{ section.id }} .es-pll__intro {
+    max-width: 600px;
+    margin-bottom: 3.2rem;
+    {% if align == 'center' %}margin-left: auto; margin-right: auto; text-align: center;{% endif %}
+  }
+
+  #shopify-section-{{ section.id }} .es-pll__heading {
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--es-pll-heading);
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .es-pll__divider {
+    width: 48px;
+    height: 3px;
+    background: var(--es-pll-heading);
+    border-radius: 2px;
+    margin: 1.2rem 0;
+    {% if align == 'center' %}margin-left: auto; margin-right: auto;{% endif %}
+  }
+
+  #shopify-section-{{ section.id }} .es-pll__subheading {
+    color: var(--es-pll-text);
+    font-size: 1.6rem;
+    margin: 0;
+  }
+  #shopify-section-{{ section.id }} .es-pll__subheading > p:last-child { margin-bottom: 0; }
+
+  /* ---- Grid ---- */
+  #shopify-section-{{ section.id }} .es-pll__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--es-pll-per-row), minmax(0, 1fr));
+    gap: var(--es-pll-gap);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  {%- unless section.settings.stack_mobile -%}
+    /* Mobile: horizontal scroll-snap rail instead of a wrapped grid */
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .es-pll__grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 52vw;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-inline: 1.5rem;
+        margin-inline: -1.5rem;
+      }
+      #shopify-section-{{ section.id }} .es-pll__grid::-webkit-scrollbar { display: none; }
+      #shopify-section-{{ section.id }} .es-pll__item { scroll-snap-align: center; }
+    }
+  {%- endunless -%}
+
+  /* ---- Card ---- */
+  #shopify-section-{{ section.id }} .es-pll__item {
+    background: var(--es-pll-card-bg);
+    border: 1px solid var(--es-pll-card-border);
+    border-radius: var(--es-pll-radius);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 3 / 2;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+  }
+
+  {%- case hover -%}
+    {%- when 'lift' -%}
+      #shopify-section-{{ section.id }} .es-pll__item:hover,
+      #shopify-section-{{ section.id }} .es-pll__item:focus-visible {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 6px 16px rgba(0, 0, 0, 0.06);
+      }
+    {%- when 'scale' -%}
+      #shopify-section-{{ section.id }} .es-pll__item:hover,
+      #shopify-section-{{ section.id }} .es-pll__item:focus-visible {
+        transform: scale(1.06);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 6px 16px rgba(0, 0, 0, 0.06);
+      }
+    {%- when 'glow' -%}
+      #shopify-section-{{ section.id }} .es-pll__item:hover,
+      #shopify-section-{{ section.id }} .es-pll__item:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: 0 0 20px color-mix(in srgb, var(--es-pll-heading) 25%, transparent),
+                    0 8px 24px rgba(0, 0, 0, 0.1);
+        border-color: var(--es-pll-heading);
+      }
+    {%- when 'tilt' -%}
+      #shopify-section-{{ section.id }} .es-pll__item:hover,
+      #shopify-section-{{ section.id }} .es-pll__item:focus-visible {
+        transform: perspective(600px) rotateY(-5deg) translateY(-4px);
+        box-shadow: 8px 16px 32px rgba(0, 0, 0, 0.1);
+      }
+  {%- endcase -%}
+
+  #shopify-section-{{ section.id }} .es-pll__image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1.6rem;
+    opacity: var(--es-pll-rest-opacity);
+    filter: grayscale(var(--es-pll-grayscale));
+    transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+  }
+
+  #shopify-section-{{ section.id }} .es-pll__item:hover .es-pll__image,
+  #shopify-section-{{ section.id }} .es-pll__item:focus-visible .es-pll__image {
+    opacity: 1;
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  /* ---- Reveal on scroll ---- */
+  {%- if section.settings.reveal_on_scroll -%}
+    #shopify-section-{{ section.id }} .es-pll__item {
+      opacity: 0;
+      translate: 0 16px;
+      transition: opacity 0.5s ease, translate 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  box-shadow 0.35s ease, border-color 0.35s ease;
+      transition-delay: calc(var(--es-pll-index, 0) * 60ms);
+    }
+    #shopify-section-{{ section.id }} .es-pll__grid.es-pll--revealed .es-pll__item {
+      opacity: 1;
+      translate: 0 0;
+    }
+  {%- endif -%}
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .es-pll__item,
+    #shopify-section-{{ section.id }} .es-pll__image {
+      transition: none !important;
+      opacity: 1 !important;
+      translate: none !important;
+      transform: none !important;
+    }
+  }
+{%- endstyle -%}
+
+{%- if logo_blocks.size > 0 -%}
+  <div class="{% if section.settings.full_width %}es-pll__container-full{% else %}page-width{% endif %}"
+       {% if section.settings.full_width %}style="padding-inline:1.5rem;"{% endif %}>
+
+    {%- if section.settings.title != blank or section.settings.content != blank -%}
+      <div class="es-pll__intro">
+        {%- if section.settings.title != blank -%}
+          <h2 class="h2 es-pll__heading">
+            {%- render 'es-styled-text',
+                content: section.settings.title,
+                color: section.settings.heading_color,
+                gradient: section.settings.heading_gradient -%}
+          </h2>
+          <div class="es-pll__divider"></div>
+        {%- endif -%}
+
+        {%- if section.settings.content != blank -%}
+          <div class="es-pll__subheading">{{ section.settings.content }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="es-pll__grid" id="EsPll-{{ section.id }}">
+      {%- for block in logo_blocks -%}
+        {%- liquid
+          assign logo = block.settings.logo
+          assign logo_w = block.settings.logo_width | default: 140
+        -%}
+        <li class="es-pll__item" style="--es-pll-index: {{ forloop.index0 }};" {{ block.shopify_attributes }}>
+          {%- capture es_pll_media -%}
+            {%- if logo != blank -%}
+              {%- assign es_tagarg_1 = 'max-width:' | append: logo_w | append: 'px;' -%}{%- assign es_tagarg_2 = logo_w | append: 'px' -%}{%- assign es_tagarg_3 = block.settings.alt | default: logo.alt | escape -%}{{- logo | image_url: width: 600 | image_tag:
+                  loading: 'lazy',
+                  class: 'es-pll__image',
+                  style: es_tagarg_1,
+                  sizes: es_tagarg_2,
+                  alt: es_tagarg_3-}}
+            {%- else -%}
+              {{- 'image' | placeholder_svg_tag: 'es-pll__image' -}}
+            {%- endif -%}
+          {%- endcapture -%}
+
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}"
+               style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;"
+               {% if block.settings.alt != blank %}aria-label="{{ block.settings.alt | escape }}"{% endif %}>
+              {{- es_pll_media -}}
+            </a>
+          {%- else -%}
+            {{- es_pll_media -}}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+
+  {%- if section.settings.reveal_on_scroll -%}
+    <script>
+      (function () {
+        var grid = document.getElementById('EsPll-{{ section.id }}');
+        if (!grid) return;
+
+        if (!('IntersectionObserver' in window) ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          grid.classList.add('es-pll--revealed');
+          return;
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('es-pll--revealed');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        io.observe(grid);
+      })();
+    </script>
+  {%- endif -%}
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add logo blocks to populate this section.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Premium logo list",
+  "class": "shopify-section--es-premium-logo-list",
+  "tag": "section",
+  "disabled_on": {
+    "templates": ["password"],
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack on mobile",
+      "default": true,
+      "info": "Off turns the grid into a swipeable rail on small screens."
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Trusted by Industry Leaders"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Subheading",
+      "default": "<p>Partnering with world-class brands to deliver excellence.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "items_per_row",
+      "min": 3,
+      "max": 7,
+      "step": 1,
+      "label": "Items per row (desktop)",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 4,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "type": "select",
+      "id": "hover_animation",
+      "label": "Hover animation",
+      "options": [
+        { "value": "lift", "label": "Lift up" },
+        { "value": "scale", "label": "Scale" },
+        { "value": "glow", "label": "Glow" },
+        { "value": "tilt", "label": "3D tilt" }
+      ],
+      "default": "lift"
+    },
+    {
+      "type": "checkbox",
+      "id": "reveal_on_scroll",
+      "label": "Reveal cards on scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Logo appearance"
+    },
+    {
+      "type": "range",
+      "id": "logo_grayscale",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Grayscale at rest",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "logo_rest_opacity",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacity at rest",
+      "default": 75
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "logo_item_background",
+      "label": "Logo card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "logo_item_border",
+      "label": "Logo card border",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo",
+          "info": "300 x 90px .png recommended."
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text",
+          "info": "Falls back to the image's own alt text."
+        },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "min": 50,
+          "max": 300,
+          "step": 10,
+          "unit": "px",
+          "label": "Logo width",
+          "default": 140
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Premium logo list",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

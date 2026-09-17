@@ -1,0 +1,58 @@
+{%- comment -%}
+  Accessible Pagination Snippet - E-sellers Professional (v4.9.0)
+  Accepts:
+  - paginate: {Object} Paginate Liquid object
+  - anchor: {String} Anchor hash (optional)
+{%- endcomment -%}
+
+{%- if paginate.parts.size > 0 -%}
+  <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}" style="margin-top: 48px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+    {%- if paginate.previous -%}
+      <a
+        href="{{ paginate.previous.url }}{{ anchor }}"
+        class="pagination__item pagination__item--prev"
+        aria-label="{{ 'general.pagination.previous' | t }}"
+        style="width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: inherit; text-decoration: none; font-weight: 600;"
+      >
+        {% render 'icon', name: 'chevron-left' %}
+      </a>
+    {%- endif -%}
+
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a
+          href="{{ part.url }}{{ anchor }}"
+          class="pagination__item"
+          aria-label="{{ 'general.pagination.page' | t: number: part.title }}"
+          style="width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: inherit; text-decoration: none; font-size: 1.4rem; font-weight: 600;"
+        >
+          {{ part.title }}
+        </a>
+      {%- else -%}
+        {%- if part.title == paginate.current_page -%}
+          <span
+            class="pagination__item pagination__item--current"
+            aria-current="page"
+            aria-label="{{ 'general.pagination.page' | t: number: part.title }}"
+            style="width: 40px; height: 40px; border-radius: 8px; background-color: #121212; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700;"
+          >
+            {{ part.title }}
+          </span>
+        {%- else -%}
+          <span style="padding: 0 4px; color: #a1a1aa;">{{ part.title }}</span>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if paginate.next -%}
+      <a
+        href="{{ paginate.next.url }}{{ anchor }}"
+        class="pagination__item pagination__item--next"
+        aria-label="{{ 'general.pagination.next' | t }}"
+        style="width: 40px; height: 40px; border-radius: 8px; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: inherit; text-decoration: none; font-weight: 600;"
+      >
+        {% render 'icon', name: 'chevron-right' %}
+      </a>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

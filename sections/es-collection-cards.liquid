@@ -1,0 +1,193 @@
+{%- comment -%}
+  E-sellers Collection Cards - E-sellers One (v5.0.0)
+
+  Grid (or swipeable rail on mobile / opt-in slider) of collection cards, each
+  block picking its own collection, image override and count visibility.
+  Uses CSS scroll-snap for the slider mode - no JS carousel library.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_cc_blocks = section.blocks
+  assign es_cc_cols_d = section.settings.columns_desktop | default: 4
+  assign es_cc_cols_m = section.settings.columns_mobile | default: 2
+-%}
+
+{%- if es_cc_blocks.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-cc-cols-d: {{ es_cc_cols_d }};
+      --es-cc-cols-m: {{ es_cc_cols_m }};
+      --es-cc-gap: {{ section.settings.column_gap | default: 16 }}px;
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-cc__grid {
+      display: grid;
+      grid-template-columns: repeat(var(--es-cc-cols-m), minmax(0, 1fr));
+      gap: var(--es-cc-gap);
+    }
+    {%- if section.settings.enable_slider -%}
+      #shopify-section-{{ section.id }} .es-cc__grid {
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(65%, 1fr);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: var(--es-space-2);
+      }
+      #shopify-section-{{ section.id }} .es-cc__grid > * { scroll-snap-align: start; }
+    {%- endif -%}
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-cc__grid {
+        grid-template-columns: repeat(var(--es-cc-cols-d), minmax(0, 1fr));
+        {%- if section.settings.enable_slider -%}
+          grid-auto-columns: calc((100% - (var(--es-cc-cols-d) - 1) * var(--es-cc-gap)) / var(--es-cc-cols-d) * 1.15);
+        {%- endif -%}
+      }
+    }
+
+    #shopify-section-{{ section.id }} .es-cc__card {
+      position: relative;
+      display: block;
+      border-radius: var(--es-radius-lg);
+      overflow: hidden;
+      color: #fff;
+    }
+    #shopify-section-{{ section.id }} .es-cc__media { aspect-ratio: {{ section.settings.image_ratio | default: '1/1' }}; }
+    #shopify-section-{{ section.id }} .es-cc__media img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      transition: transform var(--es-dur-slow) var(--es-ease-out);
+    }
+    #shopify-section-{{ section.id }} .es-cc__card:hover .es-cc__media img { transform: scale(1.04); }
+    #shopify-section-{{ section.id }} .es-cc__overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0) 55%);
+    }
+    #shopify-section-{{ section.id }} .es-cc__body {
+      position: absolute; left: 0; right: 0; bottom: 0; padding: var(--es-space-4);
+    }
+    #shopify-section-{{ section.id }} .es-cc__title { margin: 0; font-size: var(--es-text-lg); color: inherit; }
+    #shopify-section-{{ section.id }} .es-cc__count { font-size: var(--es-text-xs); opacity: .85; }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        alignment: section.settings.heading_alignment -%}
+
+    <div class="es-cc__grid">
+      {%- for block in es_cc_blocks -%}
+        {%- liquid
+          assign es_cc_collection = block.settings.collection
+          assign es_cc_img = block.settings.image | default: es_cc_collection.featured_image
+        -%}
+        <a href="{{ es_cc_collection.url | default: '#' }}" class="es-cc__card" {{ block.shopify_attributes }}>
+          <div class="es-cc__media">
+            {%- if es_cc_img != blank -%}
+              {%- assign es_cc_alt = es_cc_collection.title | escape -%}
+              {{ es_cc_img | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', alt: es_cc_alt }}
+            {%- else -%}
+              {{ 'collection-1' | placeholder_svg_tag: '' }}
+            {%- endif -%}
+          </div>
+          <div class="es-cc__overlay"></div>
+          <div class="es-cc__body">
+            <h3 class="es-cc__title">{{ es_cc_collection.title | default: 'Collection' | escape }}</h3>
+            {%- if section.settings.show_product_count and es_cc_collection != blank -%}
+              <span class="es-cc__count">{{ es_cc_collection.all_products_count }} products</span>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add collection blocks to populate this grid.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Collection Cards",
+  "tag": "section",
+  "class": "shopify-section--es-collection-cards",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by collection" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [{ "value": "start", "label": "Left" }, { "value": "center", "label": "Center" }],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "1/1", "label": "Square" },
+        { "value": "4/5", "label": "Portrait" },
+        { "value": "16/9", "label": "Landscape" }
+      ],
+      "default": "1/1"
+    },
+    { "type": "checkbox", "id": "show_product_count", "label": "Show product count", "default": true },
+    { "type": "checkbox", "id": "enable_slider", "label": "Enable slider", "default": false },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns (desktop)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columns (mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Gap",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Image override" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "E-sellers Collection Cards",
+      "blocks": [{ "type": "collection" }, { "type": "collection" }, { "type": "collection" }, { "type": "collection" }]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,268 @@
+{%- comment -%}
+  E-sellers Account Banner - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-banner-height-mobile: {% if section.settings.image_size == 'sm' %}180px{% elsif section.settings.image_size == 'md' %}250px{% elsif section.settings.image_size == 'lg' %}350px{% else %}auto{% endif %};
+    --es-banner-height-desktop: {% if section.settings.image_size == 'sm' %}260px{% elsif section.settings.image_size == 'md' %}360px{% elsif section.settings.image_size == 'lg' %}480px{% else %}auto{% endif %};
+    position: relative;
+  }
+
+  /* Banner Image Area */
+  .es-account-banner {
+    position: relative;
+    width: 100%;
+    min-height: var(--es-banner-height-mobile);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #121212;
+  }
+
+  @media screen and (min-width: 750px) {
+    .es-account-banner {
+      min-height: var(--es-banner-height-desktop);
+    }
+  }
+
+  .es-account-banner__image-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-account-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .es-account-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: {{ section.settings.overlay_color | default: '#000000' }};
+    opacity: {{ section.settings.overlay_opacity | default: 30 | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  .es-account-banner__content {
+    position: relative;
+    z-index: 2;
+    padding: 32px 20px;
+    text-align: center;
+    color: {{ section.settings.text_color | default: '#ffffff' }};
+    max-width: 800px;
+  }
+
+  .es-account-banner__title {
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+    color: inherit;
+  }
+
+  .es-account-banner__tagline {
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  /* Account Navigation Bar */
+  .es-account-nav {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 20px;
+  }
+
+  .es-account-nav__list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .es-account-nav__item {
+    position: relative;
+  }
+
+  .es-account-nav__link {
+    display: inline-flex;
+    align-items: center;
+    padding: 16px 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+
+  .es-account-nav__link:hover {
+    color: #121212;
+  }
+
+  .es-account-nav__item.is-active .es-account-nav__link {
+    color: #121212;
+    border-bottom-color: #121212;
+  }
+
+  .es-account-nav__link--logout {
+    color: #ef4444;
+  }
+
+  .es-account-nav__link--logout:hover {
+    color: #dc2626;
+  }
+{%- endstyle -%}
+
+<!-- ====================================================================== -->
+<!-- HTML / LIQUID LAYOUT                                                   -->
+<!-- ====================================================================== -->
+
+<!-- Banner Header (If image is present or customer is logged in) -->
+<div class="es-account-banner">
+  {%- if section.settings.image != blank -%}
+    <div class="es-account-banner__image-wrapper">
+      {{ section.settings.image | image_url: width: 2600 | image_tag:
+        loading: 'eager',
+        sizes: '100vw',
+        widths: '400, 600, 800, 1200, 1600, 2000, 2600',
+        class: 'es-account-banner__image'
+      }}
+    </div>
+    <div class="es-account-banner__overlay"></div>
+  {%- endif -%}
+
+  <div class="es-account-banner__content">
+    <h1 class="es-account-banner__title">
+      {%- if customer -%}
+        Welcome back, {{ customer.first_name | default: customer.name }}
+      {%- else -%}
+        My Account
+      {%- endif -%}
+    </h1>
+    <p class="es-account-banner__tagline">
+      Manage your orders, saved addresses, and account details
+    </p>
+  </div>
+</div>
+
+<!-- Account Navigation Tabs -->
+<nav class="es-account-nav" aria-label="Account navigation">
+  <div class="page-width">
+    <ul class="es-account-nav__list" role="list">
+      {%- assign is_orders = false -%}
+      {%- assign is_addresses = false -%}
+
+      {%- if request.page_type == 'customers/account' or request.page_type == 'customers/order' -%}
+        {%- assign is_orders = true -%}
+      {%- elsif request.page_type == 'customers/addresses' -%}
+        {%- assign is_addresses = true -%}
+      {%- endif -%}
+
+      <!-- Orders Tab -->
+      <li class="es-account-nav__item {% if is_orders %}is-active{% endif %}" {% if is_orders %}aria-current="page"{% endif %}>
+        <a href="{{ routes.account_url }}" class="es-account-nav__link">
+          Orders & History
+        </a>
+      </li>
+
+      <!-- Addresses Tab -->
+      <li class="es-account-nav__item {% if is_addresses %}is-active{% endif %}" {% if is_addresses %}aria-current="page"{% endif %}>
+        <a href="{{ routes.account_addresses_url }}" class="es-account-nav__link">
+          Addresses ({{ customer.addresses_count | default: 0 }})
+        </a>
+      </li>
+
+      <!-- Logout Button -->
+      <li class="es-account-nav__item">
+        <a href="{{ routes.account_logout_url }}" class="es-account-nav__link es-account-nav__link--logout" data-no-instant>
+          Log out
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+{% schema %}
+{
+  "name": "E-sellers Account Banner",
+  "class": "section--es-account-banner",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info": "2500 x 700px recommended"
+    },
+    {
+      "type": "select",
+      "id": "image_size",
+      "label": "Banner height",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Auto / Content height"
+        },
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Large"
+        }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Overlay"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Account Banner"
+    }
+  ]
+}
+{% endschema %}

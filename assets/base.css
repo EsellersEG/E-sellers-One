@@ -1,0 +1,347 @@
+/* ==========================================================================
+   E-SELLERS THEME - BASE
+   Version: 5.0.0 | E-sellers (info@e-sellers.net)
+
+   Reset, elements and the shared classes sections rely on. Every value here is
+   expressed in design-system tokens (assets/es-design-system.css), so retuning
+   the system retunes the whole storefront. Nothing in this file hard-codes a
+   spacing, radius, duration or colour.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. RESET
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%; /* 1rem = 10px, so rem values read as px/10 */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  font-family: var(--font-body-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-style: var(--font-body-style, normal);
+  font-weight: var(--font-body-weight, 400);
+  font-size: var(--es-text-base);
+  line-height: var(--es-leading-normal);
+  color: var(--es-fg);
+  background-color: var(--es-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main { flex: 1 0 auto; display: block; }
+
+/* --------------------------------------------------------------------------
+   2. ACCESSIBILITY
+   -------------------------------------------------------------------------- */
+.visually-hidden {
+  position: absolute !important;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  word-wrap: normal !important;
+}
+
+.skip-to-content-link {
+  position: absolute;
+  top: -100px;
+  left: var(--es-space-4);
+  z-index: 9999;
+  padding: var(--es-space-3) var(--es-space-5);
+  background-color: var(--es-fg);
+  color: var(--es-bg);
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: var(--es-radius-md);
+  transition: top var(--es-dur-base) var(--es-ease-out);
+}
+
+.skip-to-content-link:focus { top: var(--es-space-4); }
+
+:focus-visible {
+  outline: 2px solid var(--es-focus);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   3. TYPOGRAPHY
+   -------------------------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-heading-family, inherit);
+  font-style: var(--font-heading-style, normal);
+  font-weight: var(--font-heading-weight, 700);
+  line-height: var(--es-leading-tight);
+  color: var(--section-heading-color, inherit);
+  text-transform: var(--font-heading-transform, none);
+  letter-spacing: var(--es-track-tight);
+  text-wrap: balance;
+  margin-bottom: var(--es-space-3);
+}
+
+/* Larger type tracks tighter; smaller type opens back up. */
+h1, .h1 { font-size: calc(var(--es-text-4xl) * var(--font-heading-scale, 1)); }
+h2, .h2 { font-size: calc(var(--es-text-3xl) * var(--font-heading-scale, 1)); }
+h3, .h3 { font-size: calc(var(--es-text-2xl) * var(--font-heading-scale, 1)); letter-spacing: var(--es-track-snug); }
+h4, .h4 { font-size: calc(var(--es-text-xl) * var(--font-heading-scale, 1)); letter-spacing: var(--es-track-snug); }
+h5, .h5 { font-size: calc(var(--es-text-lg) * var(--font-heading-scale, 1)); letter-spacing: var(--es-track-normal); }
+h6, .h6 { font-size: calc(var(--es-text-md) * var(--font-heading-scale, 1)); letter-spacing: var(--es-track-normal); }
+
+p {
+  margin-bottom: var(--es-space-4);
+  color: var(--section-text-color, inherit);
+  text-wrap: pretty;
+}
+
+p:last-child { margin-bottom: 0; }
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--es-dur-fast) var(--es-ease), opacity var(--es-dur-fast) var(--es-ease);
+}
+
+a:hover { opacity: 0.85; }
+
+.link {
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  text-decoration-thickness: 1px;
+}
+
+.link:hover { text-decoration-thickness: 2px; opacity: 1; }
+
+strong, b { font-weight: 650; }
+
+/* --------------------------------------------------------------------------
+   4. LAYOUT
+   -------------------------------------------------------------------------- */
+.page-width {
+  width: 100%;
+  max-width: var(--es-container);
+  margin-inline: auto;
+  padding-inline: var(--es-gutter);
+}
+
+.page-width--narrow { max-width: var(--es-container-narrow); }
+
+.section-spacing {
+  padding-top: var(--section-padding-top, var(--es-section-y));
+  padding-bottom: var(--section-padding-bottom, var(--es-section-y));
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns-mobile, 1), minmax(0, 1fr));
+  gap: var(--es-grid-gap);
+}
+
+@media screen and (min-width: 750px) {
+  .grid { grid-template-columns: repeat(var(--grid-columns-desktop, 4), minmax(0, 1fr)); }
+}
+
+.flex { display: flex; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS
+   Legacy `.button` maps onto the same tokens as `.es-btn`, so older sections
+   and design-system sections stay visually identical.
+   -------------------------------------------------------------------------- */
+.button,
+button,
+input[type="submit"],
+input[type="button"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--es-space-2);
+  font-family: inherit;
+  font-size: var(--es-text-sm);
+  font-weight: 650;
+  letter-spacing: var(--es-track-snug);
+  line-height: 1;
+  padding: var(--es-space-3) var(--es-space-5);
+  border-radius: var(--button-radius, var(--es-radius-md));
+  border: var(--es-rule-width) solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: var(--section-btn-bg, var(--es-accent));
+  color: var(--section-btn-text, var(--es-on-accent));
+  transition:
+    background-color var(--es-dur-base) var(--es-ease),
+    color var(--es-dur-base) var(--es-ease),
+    border-color var(--es-dur-base) var(--es-ease),
+    box-shadow var(--es-dur-base) var(--es-ease);
+  user-select: none;
+  text-align: center;
+}
+
+.button:hover { box-shadow: var(--es-elev-1); opacity: 1; }
+.button:active { box-shadow: none; }
+
+.button--secondary {
+  background-color: transparent;
+  color: var(--section-text-color, var(--es-fg));
+  border-color: var(--es-rule-strong);
+}
+
+.button--secondary:hover { background-color: var(--es-surface); border-color: currentColor; }
+
+.button--full-width { width: 100%; }
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. FORMS
+   -------------------------------------------------------------------------- */
+.field {
+  position: relative;
+  width: 100%;
+  margin-bottom: var(--es-space-4);
+}
+
+.field__input,
+.select__select,
+textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--es-text-base);
+  color: var(--es-fg);
+  background-color: var(--es-bg);
+  border: var(--es-rule-width) solid var(--es-rule-strong);
+  border-radius: var(--input-radius, var(--es-radius-md));
+  padding: var(--es-space-3) var(--es-space-4);
+  transition: border-color var(--es-dur-fast) var(--es-ease), box-shadow var(--es-dur-fast) var(--es-ease);
+  outline: none;
+}
+
+.field__input:focus,
+.select__select:focus,
+textarea:focus {
+  border-color: var(--es-fg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--es-fg) 12%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   7. BADGES
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--es-text-2xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--es-track-wide);
+  padding: var(--es-space-1) var(--es-space-2);
+  border-radius: var(--badge-radius, var(--es-radius-sm));
+  line-height: 1;
+  background: var(--es-fg);
+  color: var(--es-bg);
+}
+
+.badge--sale { background-color: var(--es-critical); color: #fff; }
+.badge--sold-out { background-color: var(--es-fg-subtle); color: var(--es-bg); }
+
+/* --------------------------------------------------------------------------
+   8. MEDIA
+   -------------------------------------------------------------------------- */
+img, svg, video { max-width: 100%; height: auto; display: block; }
+
+.media {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--es-surface);
+  border-radius: var(--card-radius, var(--es-radius-lg));
+}
+
+.media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--es-dur-slow) var(--es-ease-out);
+}
+
+.media--hover-zoom:hover img { transform: scale(1.04); }
+
+/* --------------------------------------------------------------------------
+   9. MOTION UTILITIES
+   -------------------------------------------------------------------------- */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-speed, 25s) linear infinite;
+}
+
+.marquee-track:hover { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .spinner { animation: none; }
+  .media img { transition: none; }
+}
+
+/* --------------------------------------------------------------------------
+   10. PRODUCT CARD TITLE
+   Two-line clamp with a reserved two-line box so cards align on a row.
+   -------------------------------------------------------------------------- */
+.card-product__title,
+.card-product__title a {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  line-height: var(--es-leading-snug);
+  min-height: calc(var(--es-leading-snug) * 2em);
+}

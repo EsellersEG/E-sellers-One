@@ -1,0 +1,58 @@
+{%- comment -%}
+  E-sellers Styled Text - E-sellers Professional (v4.9.0)
+
+  Renders a run of text with an optional gradient fill or stroked outline.
+  Self-contained: emits its own scoped styles, no global stylesheet needed.
+
+  Parameters
+    content : string  - the text to render (required)
+    color   : color   - solid colour override
+    gradient: color_background - gradient fill; wins over `color` when present
+    style   : string  - 'fill' (default) or 'outline'
+    stroke_width : number - outline thickness in px (default 2)
+
+  Usage
+    {%- render 'es-styled-text',
+        content: section.settings.title,
+        color: section.settings.heading_color,
+        gradient: section.settings.heading_gradient -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign es_st_style = style | default: 'fill'
+  assign es_st_stroke = stroke_width | default: 2
+  assign es_st_uid = content | append: gradient | append: color | md5 | slice: 0, 10
+-%}
+
+{%- if content != blank -%}
+  {%- if gradient != blank -%}
+    <span class="es-styled-text es-styled-text--gradient-{{ es_st_uid }}">{{ content }}</span>
+    {%- style -%}
+      .es-styled-text--gradient-{{ es_st_uid }} {
+        background-image: {{ gradient }};
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+        display: inline-block;
+      }
+    {%- endstyle -%}
+  {%- elsif es_st_style == 'outline' -%}
+    <span class="es-styled-text es-styled-text--outline-{{ es_st_uid }}">{{ content }}</span>
+    {%- style -%}
+      .es-styled-text--outline-{{ es_st_uid }} {
+        -webkit-text-stroke: {{ es_st_stroke }}px {{ color | default: 'currentColor' }};
+        color: transparent;
+        display: inline-block;
+        /* Fallback for engines without text-stroke support */
+        @supports not (-webkit-text-stroke: 1px currentColor) {
+          color: {{ color | default: 'currentColor' }};
+        }
+      }
+    {%- endstyle -%}
+  {%- elsif color != blank and color != 'rgba(0,0,0,0)' -%}
+    <span class="es-styled-text" style="color: {{ color }};">{{ content }}</span>
+  {%- else -%}
+    <span class="es-styled-text">{{ content }}</span>
+  {%- endif -%}
+{%- endif -%}

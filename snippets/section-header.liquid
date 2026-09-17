@@ -1,0 +1,44 @@
+{%- comment -%}
+  Section Header Snippet - E-sellers Professional (v4.9.0)
+  Parameters:
+  - subheading: String
+  - heading: String
+  - heading_color: Color (optional)
+  - heading_gradient: Gradient (optional)
+  - content: RichText (optional)
+  - link_text: String (optional)
+  - link_url: URL (optional)
+  - alignment: 'left' | 'center' | 'right' (default: 'left')
+{%- endcomment -%}
+
+{%- if subheading != blank or heading != blank or content != blank or link_text != blank -%}
+  <div class="es-section-header es-section-header--{{ alignment | default: 'left' }}">
+    <div class="es-section-header__text-wrapper">
+      {%- if subheading != blank -%}
+        <p class="es-section-header__subheading">{{ subheading | escape }}</p>
+      {%- endif -%}
+
+      {%- if heading != blank -%}
+        <h2 class="es-section-header__heading" style="{% if heading_gradient != blank %}background: {{ heading_gradient }}; -webkit-background-clip: text; -webkit-text-fill-color: transparent;{% elsif heading_color != blank %}color: {{ heading_color }};{% endif %}">
+          {{ heading | escape }}
+        </h2>
+      {%- endif -%}
+
+      {%- if content != blank -%}
+        <div class="es-section-header__content">{{ content }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if link_text != blank and link_url != blank -%}
+      <div class="es-section-header__action">
+        <a href="{{ link_url }}" class="es-section-header__link">
+          <span>{{ link_text | escape }}</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+{%- endif -%}

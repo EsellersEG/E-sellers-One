@@ -1,0 +1,360 @@
+{%- comment -%}
+  E-sellers Announcement Bar - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- if section.blocks.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      background: {{ section.settings.background | default: '#121212' }};
+      {% if section.settings.background_gradient != blank %}
+        background: {{ section.settings.background_gradient }};
+      {% endif %}
+      color: {{ section.settings.text_color | default: '#ffffff' }};
+      font-size: {% if section.settings.text_size == 'text-xxs' %}0.75rem{% elsif section.settings.text_size == 'text-xs' %}0.85rem{% elsif section.settings.text_size == 'text-base' %}0.95rem{% elsif section.settings.text_size == 'text-lg' %}1.05rem{% else %}0.85rem{% endif %};
+      {% if section.settings.enable_sticky %}
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      {% endif %}
+      overflow: hidden;
+    }
+
+    .es-announcement-bar {
+      position: relative;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+    }
+
+    .es-announcement-bar a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: opacity 0.2s ease;
+    }
+
+    .es-announcement-bar a:hover {
+      opacity: 0.8;
+    }
+
+    /* Arrow / Static Slider Mode */
+    .es-announcement-bar__slider-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 800px;
+      gap: 16px;
+    }
+
+    .es-announcement-bar__nav-btn {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      opacity: 0.75;
+      transition: opacity 0.2s ease;
+    }
+
+    .es-announcement-bar__nav-btn:hover {
+      opacity: 1;
+    }
+
+    .es-announcement-bar__nav-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .es-announcement-bar__messages {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .es-announcement-bar__msg {
+      margin: 0;
+      font-weight: 600;
+      display: none;
+      animation: esFadeIn 0.3s ease-in-out;
+    }
+
+    .es-announcement-bar__msg.is-active {
+      display: block;
+    }
+
+    @keyframes esFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Infinite Marquee Scrolling Mode */
+    .es-announcement-bar__marquee-container {
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .es-announcement-bar__marquee-track {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 40px;
+      padding-right: 40px;
+      animation: esMarquee {{ section.settings.scrolling_speed | default: 20 }}s linear infinite;
+    }
+
+    .es-announcement-bar__marquee-container:hover .es-announcement-bar__marquee-track {
+      animation-play-state: paused;
+    }
+
+    .es-announcement-bar__marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 40px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .es-announcement-bar__bullet {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: currentColor;
+      opacity: 0.6;
+    }
+
+    @keyframes esMarquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-100%); }
+    }
+  {%- endstyle -%}
+
+  <!-- ====================================================================== -->
+  <!-- HTML / LIQUID LAYOUT                                                   -->
+  <!-- ====================================================================== -->
+  <aside class="es-announcement-bar" role="region" aria-label="Announcement">
+    
+    {%- if section.settings.navigation_mode == 'scrolling' -%}
+      <!-- Infinite Marquee Mode -->
+      <div class="es-announcement-bar__marquee-container">
+        {%- for track_index in (1..4) -%}
+          <div class="es-announcement-bar__marquee-track" {% unless forloop.first %}aria-hidden="true"{% endunless %}>
+            {%- for block in section.blocks -%}
+              <div class="es-announcement-bar__marquee-item" {{ block.shopify_attributes }}>
+                {%- if block.settings.url != blank -%}
+                  <a href="{{ block.settings.url }}">{{ block.settings.text | escape }}</a>
+                {%- else -%}
+                  <span>{{ block.settings.text | escape }}</span>
+                {%- endif -%}
+                <span class="es-announcement-bar__bullet" aria-hidden="true"></span>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+
+    {%- else -%}
+      <!-- Static / Arrow Slider Mode -->
+      <div class="es-announcement-bar__slider-wrapper">
+        {%- if section.blocks.size > 1 -%}
+          <button type="button" class="es-announcement-bar__nav-btn" id="es-announcement-prev-{{ section.id }}" aria-label="Previous announcement">
+            <svg viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+        {%- endif -%}
+
+        <div class="es-announcement-bar__messages" id="es-announcement-messages-{{ section.id }}">
+          {%- for block in section.blocks -%}
+            <p class="es-announcement-bar__msg {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
+              {%- if block.settings.url != blank -%}
+                <a href="{{ block.settings.url }}">{{ block.settings.text | escape }}</a>
+              {%- else -%}
+                <span>{{ block.settings.text | escape }}</span>
+              {%- endif -%}
+            </p>
+          {%- endfor -%}
+        </div>
+
+        {%- if section.blocks.size > 1 -%}
+          <button type="button" class="es-announcement-bar__nav-btn" id="es-announcement-next-{{ section.id }}" aria-label="Next announcement">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        {%- endif -%}
+      </div>
+
+      {%- if section.blocks.size > 1 -%}
+        <script>
+          (function() {
+            const sectionId = "{{ section.id }}";
+            const container = document.getElementById('es-announcement-messages-' + sectionId);
+            if (!container) return;
+            const messages = container.querySelectorAll('.es-announcement-bar__msg');
+            const prevBtn = document.getElementById('es-announcement-prev-' + sectionId);
+            const nextBtn = document.getElementById('es-announcement-next-' + sectionId);
+            let currentIndex = 0;
+
+            function showMessage(index) {
+              messages.forEach(msg => msg.classList.remove('is-active'));
+              messages[index].classList.add('is-active');
+            }
+
+            if (prevBtn) {
+              prevBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex - 1 + messages.length) % messages.length;
+                showMessage(currentIndex);
+              });
+            }
+
+            if (nextBtn) {
+              nextBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex + 1) % messages.length;
+                showMessage(currentIndex);
+              });
+            }
+
+            // Auto-rotate every 5 seconds if not hovered
+            let interval = setInterval(function() {
+              currentIndex = (currentIndex + 1) % messages.length;
+              showMessage(currentIndex);
+            }, 5000);
+
+            container.addEventListener('mouseenter', () => clearInterval(interval));
+            container.addEventListener('mouseleave', () => {
+              clearInterval(interval);
+              interval = setInterval(function() {
+                currentIndex = (currentIndex + 1) % messages.length;
+                showMessage(currentIndex);
+              }, 5000);
+            });
+          })();
+        </script>
+      {%- endif -%}
+
+    {%- endif -%}
+
+  </aside>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Announcement Bar",
+  "class": "section--es-announcement-bar",
+  "tag": "aside",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Announcement text",
+          "default": "Free shipping on orders over $50"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Announcement link"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Enable sticky bar",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "text_size",
+      "label": "Text size",
+      "options": [
+        { "value": "text-xxs", "label": "X-Small" },
+        { "value": "text-xs", "label": "Small" },
+        { "value": "text-base", "label": "Medium" },
+        { "value": "text-lg", "label": "Large" }
+      ],
+      "default": "text-xs"
+    },
+    {
+      "type": "select",
+      "id": "navigation_mode",
+      "label": "Multiple message navigation",
+      "options": [
+        { "value": "arrows", "label": "Arrows / Auto-rotate" },
+        { "value": "scrolling", "label": "Infinite Marquee (Scrolling)" }
+      ],
+      "default": "arrows"
+    },
+    {
+      "type": "range",
+      "id": "scrolling_speed",
+      "label": "Scrolling speed (for marquee)",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "s",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#121212"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Announcement Bar",
+      "blocks": [
+        {
+          "type": "message",
+          "settings": {
+            "text": "Free express shipping on all orders over $75"
+          }
+        },
+        {
+          "type": "message",
+          "settings": {
+            "text": "30-day effortless returns & money-back guarantee"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,834 @@
+{%- comment -%}
+  E-sellers Buy Together Bundles Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{% assign ai_gen_id = section.id | replace: '_', '' | downcase %}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+  }
+
+  .ai-buy-together-{{ ai_gen_id }} {
+    display: block;
+    width: {{ section.settings.desktop_width_percent | default: 100 }}%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: {{ section.settings.background_color | default: '#ffffff' }};
+    border-radius: {{ section.settings.border_radius | default: 24 }}px;
+    padding: {{ section.settings.padding | default: 40 }}px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-buy-together-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4f46e5, #ec4899, #f59e0b);
+    z-index: 1;
+  }
+
+  .ai-buy-together__header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-buy-together__title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.title_size | default: 32 }}px;
+    color: {{ section.settings.text_color | default: '#111827' }};
+    margin: 0 0 12px 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, {{ section.settings.text_color | default: '#111827' }} 0%, #6b7280 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ai-buy-together__subtitle-{{ ai_gen_id }} {
+    font-size: {{ section.settings.subtitle_size | default: 16 }}px;
+    color: {{ section.settings.text_color | default: '#111827' }};
+    margin: 0;
+    opacity: 0.7;
+    font-weight: 500;
+  }
+
+  .ai-buy-together__bundles-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.bundles_per_row | default: 1 }}, 1fr);
+    gap: {{ section.settings.bundles_gap | default: 32 }}px;
+  }
+
+  .ai-buy-together__bundle-{{ ai_gen_id }} {
+    background: {{ section.settings.product_card_bg | default: '#f8fafc' }};
+    border-radius: {{ section.settings.product_card_radius | default: 20 }}px;
+    padding: 32px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .ai-buy-together__bundle-header-{{ ai_gen_id }} {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .ai-buy-together__bundle-title-{{ ai_gen_id }} {
+    font-size: 22px;
+    font-weight: 700;
+    color: {{ section.settings.text_color | default: '#111827' }};
+    margin: 0 0 8px 0;
+  }
+
+  .ai-buy-together__products-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ section.settings.products_gap | default: 16 }}px;
+    margin-bottom: 32px;
+  }
+
+  .ai-buy-together__product-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .ai-buy-together__product-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 320px;
+    background-color: #ffffff;
+    border-radius: {{ section.settings.product_card_radius | default: 20 }}px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  }
+
+  .ai-buy-together__product-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  }
+
+  .ai-buy-together__product-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: {{ section.settings.image_radius | default: 16 }}px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+  }
+
+  .ai-buy-together__product-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .ai-buy-together__product-{{ ai_gen_id }}:hover .ai-buy-together__product-image-{{ ai_gen_id }} {
+    transform: scale(1.06);
+  }
+
+  .ai-buy-together__product-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .ai-buy-together__product-title-{{ ai_gen_id }} {
+    font-size: {{ section.settings.product_title_size | default: 16 }}px;
+    font-weight: 600;
+    color: {{ section.settings.product_title_color | default: '#111827' }};
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+  }
+
+  .ai-buy-together__product-price-{{ ai_gen_id }} {
+    font-size: {{ section.settings.product_price_size | default: 20 }}px;
+    font-weight: 800;
+    color: {{ section.settings.product_price_color | default: '#111827' }};
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-buy-together__product-compare-{{ ai_gen_id }} {
+    font-size: {{ section.settings.compare_price_size | default: 14 }}px;
+    color: {{ section.settings.compare_price_color | default: '#94a3b8' }};
+    text-decoration: line-through;
+    font-weight: 500;
+  }
+
+  .ai-buy-together__product-price-free-{{ ai_gen_id }} {
+    font-size: {{ section.settings.free_tag_size | default: 14 }}px;
+    font-weight: 800;
+    color: {{ section.settings.savings_color | default: '#059669' }};
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-buy-together__free-tag-{{ ai_gen_id }} {
+    display: inline-block;
+    background: {{ section.settings.free_tag_bg | default: '#059669' }};
+    color: {{ section.settings.free_tag_text_color | default: '#ffffff' }};
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: {{ section.settings.free_tag_size | default: 13 }}px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ai-buy-together__product-original-price-{{ ai_gen_id }} {
+    font-size: {{ section.settings.free_original_price_size | default: 14 }}px;
+    color: {{ section.settings.compare_price_color | default: '#94a3b8' }};
+    text-decoration: line-through;
+    font-weight: 500;
+  }
+
+  .ai-buy-together__plus-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: {{ section.settings.text_color | default: '#111827' }};
+    font-size: 22px;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    line-height: 1;
+  }
+
+  .ai-buy-together__footer-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px 24px;
+    background: #ffffff;
+    border-radius: {{ section.settings.product_card_radius | default: 20 }}px;
+    border: 1px solid rgba(0,0,0,0.05);
+    margin-top: 20px;
+  }
+
+  .ai-buy-together__total-{{ ai_gen_id }} {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .ai-buy-together__total-label-{{ ai_gen_id }} {
+    font-size: {{ section.settings.total_label_size | default: 16 }}px;
+    font-weight: 600;
+    color: {{ section.settings.text_color | default: '#111827' }};
+    opacity: 0.8;
+  }
+
+  .ai-buy-together__total-price-{{ ai_gen_id }} {
+    font-size: {{ section.settings.total_price_size | default: 26 }}px;
+    font-weight: 800;
+    color: {{ section.settings.total_price_color | default: '#111827' }};
+  }
+
+  .ai-buy-together__button-{{ ai_gen_id }} {
+    padding: 16px 36px;
+    background: {{ section.settings.button_bg | default: '#0f172a' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    border: none;
+    border-radius: {{ section.settings.button_radius | default: 60 }}px;
+    font-size: {{ section.settings.button_text_size | default: 16 }}px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+  .ai-buy-together__button-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    background: {{ section.settings.button_hover_bg | default: '#1e293b' }};
+    box-shadow: 0 14px 28px rgba(0,0,0,0.15);
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-buy-together__products-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ai-buy-together__footer-{{ ai_gen_id }} {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+    }
+    .ai-buy-together__total-{{ ai_gen_id }} {
+      justify-content: center;
+    }
+    .ai-buy-together__button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-buy-together-{{ ai_gen_id }}" {{ section.shopify_attributes }}>
+  <div class="ai-buy-together__header-{{ ai_gen_id }}">
+    {% if section.settings.title != blank %}
+      <h2 class="ai-buy-together__title-{{ ai_gen_id }}">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+      <p class="ai-buy-together__subtitle-{{ ai_gen_id }}">{{ section.settings.subtitle }}</p>
+    {% endif %}
+  </div>
+
+  {% if section.blocks.size > 0 %}
+    <div class="ai-buy-together__bundles-grid-{{ ai_gen_id }}">
+    {% for block in section.blocks %}
+      {% liquid
+        assign product_1 = block.settings.product_1
+        assign product_2 = block.settings.product_2
+
+        assign variant_ids = ''
+        assign product_count = 0
+        assign total_price = 0
+
+        if product_1 != blank and product_1.available
+          assign variant_ids = variant_ids | append: product_1.selected_or_first_available_variant.id | append: ','
+          assign product_count = product_count | plus: 1
+          assign total_price = total_price | plus: product_1.price
+        endif
+
+        if product_2 != blank and product_2.available
+          assign variant_ids = variant_ids | append: product_2.selected_or_first_available_variant.id | append: ','
+          assign product_count = product_count | plus: 1
+        endif
+      %}
+
+      {% if product_count > 0 %}
+        <div class="ai-buy-together__bundle-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+          {% if block.settings.show_bundle_title and block.settings.bundle_title != blank %}
+            <div class="ai-buy-together__bundle-header-{{ ai_gen_id }}">
+              <h3 class="ai-buy-together__bundle-title-{{ ai_gen_id }}">{{ block.settings.bundle_title }}</h3>
+            </div>
+          {% endif %}
+
+          <div class="ai-buy-together__products-{{ ai_gen_id }}">
+            {% if product_1 != blank and product_1.available %}
+              <div class="ai-buy-together__product-wrapper-{{ ai_gen_id }}">
+                <div class="ai-buy-together__product-{{ ai_gen_id }}">
+                  <div class="ai-buy-together__product-image-wrapper-{{ ai_gen_id }}">
+                    {% if product_1.featured_image %}
+                      <img src="{{ product_1.featured_image | image_url: width: 400 }}" alt="{{ product_1.featured_image.alt | escape }}" class="ai-buy-together__product-image-{{ ai_gen_id }}" loading="lazy" width="400" height="400">
+                    {% else %}
+                      <div style="background:#e2e8f0; width:100%; height:100%;"></div>
+                    {% endif %}
+                  </div>
+                  <div class="ai-buy-together__product-info-{{ ai_gen_id }}">
+                    <h4 class="ai-buy-together__product-title-{{ ai_gen_id }}">{{ product_1.title }}</h4>
+                    <div class="ai-buy-together__product-price-{{ ai_gen_id }}">
+                      {{ product_1.price | money }}
+                      {% if product_1.compare_at_price > product_1.price %}
+                        <span class="ai-buy-together__product-compare-{{ ai_gen_id }}">{{ product_1.compare_at_price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            {% if product_2 != blank and product_2.available %}
+              <div class="ai-buy-together__plus-{{ ai_gen_id }}">+</div>
+              <div class="ai-buy-together__product-wrapper-{{ ai_gen_id }}">
+                <div class="ai-buy-together__product-{{ ai_gen_id }}">
+                  <div class="ai-buy-together__product-image-wrapper-{{ ai_gen_id }}">
+                    {% if product_2.featured_image %}
+                      <img src="{{ product_2.featured_image | image_url: width: 400 }}" alt="{{ product_2.featured_image.alt | escape }}" class="ai-buy-together__product-image-{{ ai_gen_id }}" loading="lazy" width="400" height="400">
+                    {% else %}
+                      <div style="background:#e2e8f0; width:100%; height:100%;"></div>
+                    {% endif %}
+                  </div>
+                  <div class="ai-buy-together__product-info-{{ ai_gen_id }}">
+                    <h4 class="ai-buy-together__product-title-{{ ai_gen_id }}">{{ product_2.title }}</h4>
+                    <div class="ai-buy-together__product-price-free-{{ ai_gen_id }}">
+                      <span class="ai-buy-together__free-tag-{{ ai_gen_id }}">FREE</span>
+                      <span class="ai-buy-together__product-original-price-{{ ai_gen_id }}">{{ product_2.price | money }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="ai-buy-together__footer-{{ ai_gen_id }}">
+            <div class="ai-buy-together__summary-{{ ai_gen_id }}">
+              <div class="ai-buy-together__total-{{ ai_gen_id }}">
+                <span class="ai-buy-together__total-label-{{ ai_gen_id }}">{{ block.settings.total_label | default: section.settings.default_total_label | default: 'Bundle Total:' }}</span>
+                <span class="ai-buy-together__total-price-{{ ai_gen_id }}">{{ total_price | money }}</span>
+              </div>
+            </div>
+
+            <button type="button" class="ai-buy-together__button-{{ ai_gen_id }} js-buy-together-add" data-variants="{{ variant_ids }}">
+              <span>{{ block.settings.button_label | default: section.settings.default_button_label | default: 'Add Bundle to Cart' }}</span>
+            </button>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  (function () {
+    const initBuyTogether = () => {
+      const buttons = document.querySelectorAll('.js-buy-together-add:not(.initialized)');
+      
+      buttons.forEach(button => {
+        button.classList.add('initialized');
+        
+        button.addEventListener('click', async function() {
+          const variantsData = this.getAttribute('data-variants');
+          if (!variantsData) return;
+
+          const variantIds = variantsData.split(',').filter(id => id.trim() !== '');
+          if (variantIds.length === 0) return;
+
+          const originalText = this.innerHTML;
+          this.disabled = true;
+          this.innerHTML = '<span>Adding to Cart...</span>';
+
+          try {
+            const items = variantIds.map(id => ({
+              id: parseInt(id),
+              quantity: 1
+            }));
+
+            const addResponse = await fetch((window.Shopify?.routes?.root || '/') + 'cart/add.js', {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({ items: items })
+            });
+
+            if (addResponse.ok) {
+              this.innerHTML = '<span>Added to Cart! ✓</span>';
+              if (window.publish && window.PUB_SUB_EVENTS) {
+                window.publish(window.PUB_SUB_EVENTS.cartUpdate, { source: 'buy-together' });
+              }
+              setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+              }, 2000);
+            } else {
+              throw new Error('Failed to add bundle');
+            }
+          } catch (error) {
+            console.error('Error adding bundle:', error);
+            this.innerHTML = '<span>Error - Try Again</span>';
+            this.disabled = false;
+            setTimeout(() => {
+              this.innerHTML = originalText;
+            }, 3000);
+          }
+        });
+      });
+    };
+
+    document.addEventListener('DOMContentLoaded', initBuyTogether);
+    document.addEventListener('shopify:section:load', initBuyTogether);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Buy together bundles",
+  "tag": "section",
+  "class": "shopify-section--buy-together",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "The Perfect Pair ✨"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Get the travel companion gift free when you buy the full size."
+    },
+    {
+      "type": "text",
+      "id": "default_total_label",
+      "label": "Total label",
+      "default": "Bundle Price:"
+    },
+    {
+      "type": "text",
+      "id": "default_button_label",
+      "label": "Button text",
+      "default": "Claim My Free Gift"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Section container width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "product_card_bg",
+      "label": "Bundle card background",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "savings_color",
+      "label": "FREE tag color",
+      "default": "#059669"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button background",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Button hover background",
+      "default": "#1e293b"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Advanced styling"
+    },
+    {
+      "id": "border_radius",
+      "label": "Card corner radius",
+      "type": "range",
+      "min": 0,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "id": "bundles_gap",
+      "label": "Gap between bundles",
+      "type": "range",
+      "min": 0,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "id": "bundles_per_row",
+      "label": "Bundles per row (desktop)",
+      "type": "range",
+      "min": 1,
+      "max": 7,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "id": "button_radius",
+      "label": "Button corner radius",
+      "type": "range",
+      "min": 0,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "id": "button_text_size",
+      "label": "Button text size",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "id": "compare_price_color",
+      "label": "Compare-at price colour",
+      "type": "color",
+      "default": "#94a3b8"
+    },
+    {
+      "id": "compare_price_size",
+      "label": "Compare-at price size",
+      "type": "range",
+      "min": 0,
+      "max": 42,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "id": "free_original_price_size",
+      "label": "Free item original price size",
+      "type": "range",
+      "min": 0,
+      "max": 42,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "id": "free_tag_bg",
+      "label": "Free tag background",
+      "type": "color",
+      "default": "#059669"
+    },
+    {
+      "id": "free_tag_size",
+      "label": "Free tag text size",
+      "type": "range",
+      "min": 0,
+      "max": 42,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "id": "free_tag_text_color",
+      "label": "Free tag text",
+      "type": "color",
+      "default": "#ffffff"
+    },
+    {
+      "id": "image_radius",
+      "label": "Image corner radius",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "id": "padding",
+      "label": "Inner padding",
+      "type": "text"
+    },
+    {
+      "id": "product_card_radius",
+      "label": "Product card corner radius",
+      "type": "range",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "id": "product_price_color",
+      "label": "Product price colour",
+      "type": "color",
+      "default": "#111827"
+    },
+    {
+      "id": "product_price_size",
+      "label": "Product price size",
+      "type": "range",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "id": "product_title_color",
+      "label": "Product title colour",
+      "type": "color",
+      "default": "#111827"
+    },
+    {
+      "id": "product_title_size",
+      "label": "Product title size",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "id": "products_gap",
+      "label": "Gap between products",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "id": "subtitle_size",
+      "label": "Subheading size",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "id": "title_size",
+      "label": "Heading size",
+      "type": "range",
+      "min": 0,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "id": "total_label_size",
+      "label": "Total label size",
+      "type": "range",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "id": "total_price_color",
+      "label": "Total price colour",
+      "type": "color",
+      "default": "#111827"
+    },
+    {
+      "id": "total_price_size",
+      "label": "Total price size",
+      "type": "range",
+      "min": 0,
+      "max": 78,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bundle",
+      "name": "Bundle pair",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_bundle_title",
+          "label": "Show bundle title",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "bundle_title",
+          "label": "Bundle Title",
+          "default": "Full Size + Free Mini"
+        },
+        {
+          "type": "product",
+          "id": "product_1",
+          "label": "Original Size Product"
+        },
+        {
+          "type": "product",
+          "id": "product_2",
+          "label": "Free Gift Product"
+        },
+        {
+          "type": "header",
+          "content": "Overrides"
+        },
+        {
+          "id": "button_label",
+          "label": "Button label (overrides the section default)",
+          "type": "text",
+          "default": "section.settings.default_button_label"
+        },
+        {
+          "id": "total_label",
+          "label": "Total label (overrides the section default)",
+          "type": "text",
+          "default": "section.settings.default_total_label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Buy together",
+      "blocks": [
+        {
+          "type": "bundle"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

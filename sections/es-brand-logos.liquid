@@ -1,0 +1,132 @@
+{%- comment -%}
+  E-sellers Brand Logos - E-sellers One (v5.0.0)
+
+  Bordered grid of brand/partner logos, each optionally linked. Distinct from
+  es-partners-carousel (which scrolls) and es-premium-logo-list (card-framed) -
+  this is a plain grid with optional cell borders, for "as seen in" strips.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_bl_logos = section.blocks | where: 'type', 'logo'
+-%}
+
+{%- if es_bl_logos.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-bl-cols-d: {{ section.settings.columns_desktop | default: 5 }};
+      --es-bl-cols-m: {{ section.settings.columns_mobile | default: 3 }};
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-bl__grid {
+      display: grid;
+      grid-template-columns: repeat(var(--es-bl-cols-m), minmax(0, 1fr));
+      gap: {{ section.settings.column_gap | default: 0 }}px;
+      {%- if section.settings.grid_bordered -%}
+        border-top: var(--es-rule-width) solid var(--es-rule);
+        border-left: var(--es-rule-width) solid var(--es-rule);
+      {%- endif -%}
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-bl__grid { grid-template-columns: repeat(var(--es-bl-cols-d), minmax(0, 1fr)); }
+    }
+
+    #shopify-section-{{ section.id }} .es-bl__item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: {{ section.settings.image_padding | default: 24 }}px;
+      {%- if section.settings.grid_bordered -%}
+        border-right: var(--es-rule-width) solid var(--es-rule);
+        border-bottom: var(--es-rule-width) solid var(--es-rule);
+      {%- endif -%}
+    }
+    #shopify-section-{{ section.id }} .es-bl__item img {
+      max-width: {{ section.settings.image_width | default: 120 }}px;
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      filter: grayscale(100%);
+      opacity: 0.7;
+      transition: filter var(--es-dur-base) var(--es-ease), opacity var(--es-dur-base) var(--es-ease);
+    }
+    #shopify-section-{{ section.id }} .es-bl__item:hover img { filter: grayscale(0%); opacity: 1; }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        alignment: section.settings.heading_alignment,
+        button_label: section.settings.button_label,
+        button_url: section.settings.button_link -%}
+
+    <div class="es-bl__grid">
+      {%- for block in es_bl_logos -%}
+        {%- if block.settings.image_link != blank -%}<a href="{{ block.settings.image_link }}" class="es-bl__item" {{ block.shopify_attributes }}>{%- else -%}<div class="es-bl__item" {{ block.shopify_attributes }}>{%- endif -%}
+          {%- if block.settings.image != blank -%}
+            {%- assign es_bl_alt = block.settings.image.alt | default: 'Brand logo' | escape -%}
+            {{ block.settings.image | image_url: width: 400 | image_tag: loading: 'lazy', widths: '120,240,400', alt: es_bl_alt }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: '' }}
+          {%- endif -%}
+        {%- if block.settings.image_link != blank -%}</a>{%- else -%}</div>{%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add logo blocks to populate this grid.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Brand Logos",
+  "tag": "section",
+  "class": "shopify-section--es-brand-logos",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "As seen in" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [{ "value": "start", "label": "Left" }, { "value": "center", "label": "Center" }],
+      "default": "center"
+    },
+    { "type": "text", "id": "button_label", "label": "Link text" },
+    { "type": "url", "id": "button_link", "label": "Link URL" },
+    { "type": "checkbox", "id": "grid_bordered", "label": "Show cell borders", "default": true },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 8, "step": 1, "default": 5 },
+    { "type": "range", "id": "columns_mobile", "label": "Columns (mobile)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "column_gap", "label": "Gap (when not bordered)", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 0 },
+    { "type": "range", "id": "image_width", "label": "Logo max width", "min": 40, "max": 220, "step": 4, "unit": "px", "default": 120 },
+    { "type": "range", "id": "image_padding", "label": "Cell padding", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 24 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Logo",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Logo" },
+        { "type": "url", "id": "image_link", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "E-sellers Brand Logos",
+      "blocks": [{ "type": "logo" }, { "type": "logo" }, { "type": "logo" }, { "type": "logo" }, { "type": "logo" }]
+    }
+  ]
+}
+{% endschema %}

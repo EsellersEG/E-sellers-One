@@ -1,0 +1,726 @@
+{%- comment -%}
+  E-sellers Feature Chart - E-sellers Professional (v4.9.0)
+
+  Side-by-side comparison table. One "Headings column" block supplies up to 20
+  row labels; up to three "Values column" blocks supply the matching values and
+  may each be tied to a product, which adds an image, colour swatches and a
+  link above the table.
+
+  Values of "true"/"yes" and "false"/"no" render as tick and cross icons.
+  Long charts collapse to a row limit with a show-all toggle.
+{%- endcomment -%}
+
+{%- liquid
+  assign headings_block = section.blocks | where: 'type', 'headings' | first
+  assign values_blocks = section.blocks | where: 'type', 'values'
+  assign column_count = values_blocks.size
+  assign max_rows = section.settings.max_rows | default: 8
+  assign text_position = section.settings.text_position | default: 'left'
+
+  assign has_product = false
+  for block in values_blocks
+    if block.settings.product != blank
+      assign has_product = true
+      break
+    endif
+  endfor
+
+  comment
+    Count the rows that actually carry data so the toggle only appears when
+    there is genuinely something hidden.
+  endcomment
+  assign total_rows = 0
+  for i in (1..20)
+    assign heading_key = 'heading_' | append: i
+    assign value_key = 'value_' | append: i
+    assign heading_value = headings_block.settings[heading_key]
+
+    assign row_has_value = false
+    for vb in values_blocks
+      if vb.settings[value_key] != blank
+        assign row_has_value = true
+        break
+      endif
+    endfor
+
+    if heading_value != blank or row_has_value
+      assign total_rows = total_rows | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if headings_block != blank or column_count > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-fc-bg: {{ section.settings.background | default: 'transparent' }};
+      --es-fc-text: {{ section.settings.text_color | default: 'inherit' }};
+      --es-fc-heading: {{ section.settings.heading_color | default: 'inherit' }};
+      --es-fc-chart-bg: {{ section.settings.chart_background | default: '#f7f7f7' }};
+      --es-fc-chart-text: {{ section.settings.chart_text_color | default: '#121212' }};
+      --es-fc-icon: {{ section.settings.chart_true_false_color | default: '#121212' }};
+      --es-fc-rule: {{ section.settings.chart_divider_color | default: 'rgba(0,0,0,0.10)' }};
+      --es-fc-btn-bg: {{ section.settings.button_background | default: '#121212' }};
+      --es-fc-btn-text: {{ section.settings.button_text_color | default: '#ffffff' }};
+      --es-fc-columns: {{ column_count }};
+
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- else -%}
+        background-color: var(--es-fc-bg);
+      {%- endif -%}
+      color: var(--es-fc-text);
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3.2rem;
+      align-items: start;
+    }
+
+    @media screen and (min-width: 1000px) {
+      {%- if text_position != 'center' -%}
+        #shopify-section-{{ section.id }} .es-fc__layout {
+          grid-template-columns: minmax(300px, 380px) 1fr;
+          gap: 4.8rem;
+        }
+        {%- if text_position == 'right' -%}
+          #shopify-section-{{ section.id }} .es-fc__intro { order: 2; }
+        {%- endif -%}
+      {%- endif -%}
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__intro {
+      {%- if text_position == 'center' -%}
+        text-align: center;
+        max-width: 700px;
+        margin-inline: auto;
+      {%- endif -%}
+    }
+    #shopify-section-{{ section.id }} .es-fc__subheading {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin: 0 0 0.8rem;
+    }
+    #shopify-section-{{ section.id }} .es-fc__title {
+      color: var(--es-fc-heading);
+      margin: 0 0 1.2rem;
+    }
+    #shopify-section-{{ section.id }} .es-fc__intro-content > p:last-child { margin-bottom: 0; }
+    #shopify-section-{{ section.id }} .es-fc__cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1.6rem;
+      padding: 1.4rem 2.8rem;
+      border-radius: var(--button-radius, 8px);
+      font-weight: 600;
+      font-size: 1.5rem;
+      text-decoration: none;
+      background-color: var(--es-fc-btn-bg);
+      color: var(--es-fc-btn-text);
+    }
+
+    /* ---- Chart ---- */
+    #shopify-section-{{ section.id }} .es-fc__chart {
+      background-color: var(--es-fc-chart-bg);
+      color: var(--es-fc-chart-text);
+      border-radius: {{ section.settings.chart_radius | default: 12 }}px;
+      padding: 0.8rem 2.4rem;
+      overflow-x: auto;
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: {% if column_count > 1 %}520px{% else %}320px{% endif %};
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__table th,
+    #shopify-section-{{ section.id }} .es-fc__table td {
+      padding: 1.6rem 1.2rem;
+      text-align: {% if column_count > 1 %}center{% else %}right{% endif %};
+      font-size: 1.5rem;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--es-fc-rule);
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__table tbody tr:last-child th,
+    #shopify-section-{{ section.id }} .es-fc__table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__row-label {
+      text-align: left;
+      font-weight: 600;
+      width: {% if column_count > 1 %}40%{% else %}60%{% endif %};
+    }
+
+    #shopify-section-{{ section.id }} .es-fc__icon { width: 20px; height: 20px; color: var(--es-fc-icon); }
+    #shopify-section-{{ section.id }} .es-fc__icon--no { opacity: 0.35; }
+
+    /* Rows hidden behind the row limit */
+    #shopify-section-{{ section.id }} .es-fc__row[data-overflow="true"] { display: none; }
+    #shopify-section-{{ section.id }} .es-fc__table.is-expanded .es-fc__row[data-overflow="true"] { display: table-row; }
+
+    #shopify-section-{{ section.id }} .es-fc__toggle {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 1.6rem;
+      background: none;
+      border: none;
+      border-top: 1px solid var(--es-fc-rule);
+      color: inherit;
+      font: inherit;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      cursor: pointer;
+      border-radius: 0;
+    }
+    #shopify-section-{{ section.id }} .es-fc__toggle:hover {
+      transform: none;
+      box-shadow: none;
+      opacity: 0.75;
+    }
+
+    /* ---- Product header ---- */
+    #shopify-section-{{ section.id }} .es-fc__product {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      text-align: center;
+    }
+    #shopify-section-{{ section.id }} .es-fc__product img {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+    }
+    #shopify-section-{{ section.id }} .es-fc__product-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    #shopify-section-{{ section.id }} .es-fc__badge {
+      display: inline-block;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      background: var(--es-fc-icon);
+      color: var(--es-fc-chart-bg);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    #shopify-section-{{ section.id }} .es-fc__swatches {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    #shopify-section-{{ section.id }} .es-fc__swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      display: inline-block;
+    }
+    #shopify-section-{{ section.id }} .es-fc__product-link {
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  {%- endstyle -%}
+
+  <div class="{% if section.settings.full_width %}es-fc__full{% else %}page-width{% endif %}"
+       {% if section.settings.full_width %}style="padding-inline:1.5rem;"{% endif %}>
+    <div class="es-fc__layout">
+
+      {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.content != blank -%}
+        <div class="es-fc__intro">
+          {%- if section.settings.subheading != blank -%}
+            <p class="es-fc__subheading">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.title != blank -%}
+            <h2 class="h2 es-fc__title">
+              {%- render 'es-styled-text',
+                  content: section.settings.title,
+                  color: section.settings.heading_color,
+                  gradient: section.settings.heading_gradient -%}
+            </h2>
+          {%- endif -%}
+          {%- if section.settings.content != blank -%}
+            <div class="es-fc__intro-content">{{ section.settings.content }}</div>
+          {%- endif -%}
+          {%- if section.settings.button_text != blank and section.settings.button_url != blank -%}
+            <a href="{{ section.settings.button_url }}" class="es-fc__cta">{{ section.settings.button_text | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="es-fc__chart">
+        <table class="es-fc__table" id="EsFcTable-{{ section.id }}">
+          {%- if has_product -%}
+            <thead>
+              <tr>
+                <th scope="col"><span class="visually-hidden">Feature</span></th>
+                {%- for vb in values_blocks -%}
+                  {%- assign chart_product = vb.settings.product -%}
+                  <th scope="col" {{ vb.shopify_attributes }}>
+                    {%- if chart_product != blank -%}
+                      <span class="es-fc__product">
+                        {%- if section.settings.viewing_product != blank
+                              and request.page_type == 'product'
+                              and product.id == chart_product.id -%}
+                          <span class="es-fc__badge">{{ section.settings.viewing_product | escape }}</span>
+                        {%- endif -%}
+
+                        {%- if chart_product.featured_image != blank -%}
+                          <a href="{{ chart_product.url }}">
+                            {%- assign es_tagarg_1 = chart_product.title | escape -%}{{- chart_product.featured_image | image_url: width: 300 | image_tag:
+                                loading: 'lazy',
+                                widths: '80,150,300',
+                                sizes: '(max-width: 699px) 80px, 150px',
+                                alt: es_tagarg_1-}}
+                          </a>
+                        {%- endif -%}
+
+                        <span class="es-fc__product-title">{{ chart_product.title | escape }}</span>
+
+                        {%- if section.settings.show_product_swatch -%}
+                          {%- assign color_option = null -%}
+                          {%- for opt in chart_product.options_with_values -%}
+                            {%- assign opt_name = opt.name | downcase -%}
+                            {%- if opt_name contains 'color' or opt_name contains 'colour' -%}
+                              {%- assign color_option = opt -%}
+                              {%- break -%}
+                            {%- endif -%}
+                          {%- endfor -%}
+
+                          {%- if color_option != null -%}
+                            <span class="es-fc__swatches">
+                              {%- for value in color_option.values -%}
+                                {%- comment -%}
+                                  Prefer the merchant-configured swatch. Fall back to
+                                  treating the value as a CSS colour keyword, which
+                                  covers plain names like "Black" or "Olive".
+                                {%- endcomment -%}
+                                {%- liquid
+                                  assign swatch_style = ''
+                                  if value.swatch.image != blank
+                                    assign swatch_url = value.swatch.image | image_url: width: 40
+                                    assign swatch_style = 'background-image:url(' | append: swatch_url | append: ');background-size:cover;'
+                                  elsif value.swatch.color != blank
+                                    assign swatch_style = 'background-color:' | append: value.swatch.color | append: ';'
+                                  else
+                                    assign swatch_style = 'background-color:' | append: value | handle | replace: '-', '' | append: ';'
+                                  endif
+                                -%}
+                                <span class="es-fc__swatch"
+                                      title="{{ value | escape }}"
+                                      style="{{ swatch_style }}"></span>
+                              {%- endfor -%}
+                            </span>
+                          {%- endif -%}
+                        {%- endif -%}
+
+                        {%- if section.settings.view_product != blank -%}
+                          <a href="{{ chart_product.url }}" class="es-fc__product-link">
+                            {{ section.settings.view_product | escape }}
+                          </a>
+                        {%- endif -%}
+                      </span>
+                    {%- endif -%}
+                  </th>
+                {%- endfor -%}
+              </tr>
+            </thead>
+          {%- endif -%}
+
+          <tbody>
+            {%- assign rendered = 0 -%}
+            {%- for i in (1..20) -%}
+              {%- liquid
+                assign heading_key = 'heading_' | append: i
+                assign value_key = 'value_' | append: i
+                assign row_label = headings_block.settings[heading_key]
+
+                assign row_has_value = false
+                for vb in values_blocks
+                  if vb.settings[value_key] != blank
+                    assign row_has_value = true
+                    break
+                  endif
+                endfor
+              -%}
+
+              {%- if row_label != blank or row_has_value -%}
+                {%- assign rendered = rendered | plus: 1 -%}
+                {%- assign is_overflow = false -%}
+                {%- if rendered > max_rows -%}{%- assign is_overflow = true -%}{%- endif -%}
+
+                <tr class="es-fc__row" data-overflow="{{ is_overflow }}">
+                  <th scope="row" class="es-fc__row-label">{{ row_label | escape }}</th>
+
+                  {%- for vb in values_blocks -%}
+                    {%- liquid
+                      assign raw = vb.settings[value_key] | strip
+                      assign normalised = raw | downcase
+                    -%}
+                    <td>
+                      {%- if normalised == 'true' or normalised == 'yes' -%}
+                        <svg class="es-fc__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                             role="img" aria-label="Yes">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      {%- elsif normalised == 'false' or normalised == 'no' -%}
+                        <svg class="es-fc__icon es-fc__icon--no" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                             role="img" aria-label="No">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                      {%- else -%}
+                        {{ raw }}
+                      {%- endif -%}
+                    </td>
+                  {%- endfor -%}
+                </tr>
+              {%- endif -%}
+            {%- endfor -%}
+          </tbody>
+        </table>
+
+        {%- if total_rows > max_rows -%}
+          <button type="button"
+                  class="es-fc__toggle"
+                  data-es-fc-toggle
+                  aria-expanded="false"
+                  aria-controls="EsFcTable-{{ section.id }}"
+                  data-more="{{ section.settings.view_all_text | default: 'View all' | escape }}"
+                  data-less="{{ section.settings.view_less_text | default: 'View less' | escape }}">
+            {{ section.settings.view_all_text | default: 'View all' | escape }}
+          </button>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if total_rows > max_rows -%}
+    <script>
+      (function () {
+        var root = document.getElementById('shopify-section-{{ section.id }}');
+        if (!root) return;
+
+        var toggle = root.querySelector('[data-es-fc-toggle]');
+        var table = document.getElementById('EsFcTable-{{ section.id }}');
+        if (!toggle || !table) return;
+
+        toggle.addEventListener('click', function () {
+          var expanded = table.classList.toggle('is-expanded');
+          toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+          toggle.textContent = expanded ? toggle.dataset.less : toggle.dataset.more;
+        });
+      })();
+    </script>
+  {%- endif -%}
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add a headings column and at least one values column.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Feature chart",
+  "class": "shopify-section--es-feature-chart",
+  "tag": "section",
+  "max_blocks": 4,
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Compare the range"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Heading position",
+      "options": [
+        { "value": "left", "label": "Left of the chart" },
+        { "value": "right", "label": "Right of the chart" },
+        { "value": "center", "label": "Above the chart" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Chart behaviour"
+    },
+    {
+      "type": "range",
+      "id": "max_rows",
+      "min": 3,
+      "max": 20,
+      "step": 1,
+      "label": "Rows shown before collapsing",
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "Show-all label",
+      "default": "View all"
+    },
+    {
+      "type": "text",
+      "id": "view_less_text",
+      "label": "Show-less label",
+      "default": "View less"
+    },
+    {
+      "type": "text",
+      "id": "view_product",
+      "label": "Product link label",
+      "default": "View product"
+    },
+    {
+      "type": "text",
+      "id": "viewing_product",
+      "label": "Current product badge",
+      "default": "You're viewing",
+      "info": "Shown on the column matching the product being viewed."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_swatch",
+      "label": "Show colour swatches",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Section background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "chart_background",
+      "label": "Chart background",
+      "default": "#f7f7f7"
+    },
+    {
+      "type": "color",
+      "id": "chart_text_color",
+      "label": "Chart text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "chart_true_false_color",
+      "label": "Tick / cross color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "chart_divider_color",
+      "label": "Row divider color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "range",
+      "id": "chart_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Chart corner radius",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "headings",
+      "name": "Headings column",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "These are the row labels down the left of the chart. Leave a field blank to skip that row."
+        },
+        { "type": "text", "id": "heading_1", "label": "Row 1", "default": "Material" },
+        { "type": "text", "id": "heading_2", "label": "Row 2", "default": "Safety toe" },
+        { "type": "text", "id": "heading_3", "label": "Row 3", "default": "Waterproof" },
+        { "type": "text", "id": "heading_4", "label": "Row 4", "default": "Slip resistant" },
+        { "type": "text", "id": "heading_5", "label": "Row 5", "default": "Weight" },
+        { "type": "text", "id": "heading_6", "label": "Row 6" },
+        { "type": "text", "id": "heading_7", "label": "Row 7" },
+        { "type": "text", "id": "heading_8", "label": "Row 8" },
+        { "type": "text", "id": "heading_9", "label": "Row 9" },
+        { "type": "text", "id": "heading_10", "label": "Row 10" },
+        { "type": "text", "id": "heading_11", "label": "Row 11" },
+        { "type": "text", "id": "heading_12", "label": "Row 12" },
+        { "type": "text", "id": "heading_13", "label": "Row 13" },
+        { "type": "text", "id": "heading_14", "label": "Row 14" },
+        { "type": "text", "id": "heading_15", "label": "Row 15" },
+        { "type": "text", "id": "heading_16", "label": "Row 16" },
+        { "type": "text", "id": "heading_17", "label": "Row 17" },
+        { "type": "text", "id": "heading_18", "label": "Row 18" },
+        { "type": "text", "id": "heading_19", "label": "Row 19" },
+        { "type": "text", "id": "heading_20", "label": "Row 20" }
+      ]
+    },
+    {
+      "type": "values",
+      "name": "Values column",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Use \"true\" or \"false\" for a tick or cross. Anything else shows as text."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product",
+          "info": "Optional. Adds an image, swatches and a link above this column."
+        },
+        { "type": "text", "id": "value_1", "label": "Row 1" },
+        { "type": "text", "id": "value_2", "label": "Row 2" },
+        { "type": "text", "id": "value_3", "label": "Row 3" },
+        { "type": "text", "id": "value_4", "label": "Row 4" },
+        { "type": "text", "id": "value_5", "label": "Row 5" },
+        { "type": "text", "id": "value_6", "label": "Row 6" },
+        { "type": "text", "id": "value_7", "label": "Row 7" },
+        { "type": "text", "id": "value_8", "label": "Row 8" },
+        { "type": "text", "id": "value_9", "label": "Row 9" },
+        { "type": "text", "id": "value_10", "label": "Row 10" },
+        { "type": "text", "id": "value_11", "label": "Row 11" },
+        { "type": "text", "id": "value_12", "label": "Row 12" },
+        { "type": "text", "id": "value_13", "label": "Row 13" },
+        { "type": "text", "id": "value_14", "label": "Row 14" },
+        { "type": "text", "id": "value_15", "label": "Row 15" },
+        { "type": "text", "id": "value_16", "label": "Row 16" },
+        { "type": "text", "id": "value_17", "label": "Row 17" },
+        { "type": "text", "id": "value_18", "label": "Row 18" },
+        { "type": "text", "id": "value_19", "label": "Row 19" },
+        { "type": "text", "id": "value_20", "label": "Row 20" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature chart",
+      "blocks": [
+        { "type": "headings" },
+        { "type": "values" },
+        { "type": "values" }
+      ]
+    }
+  ]
+}
+{% endschema %}

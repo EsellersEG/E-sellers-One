@@ -1,0 +1,92 @@
+/* ==========================================================================
+   PRODUCT MEDIA GALLERY STYLES - E-sellers Professional (v4.9.0)
+   ========================================================================== */
+
+.product-gallery {
+  position: relative;
+  width: 100%;
+}
+
+@media screen and (min-width: 990px) {
+  .product-gallery--sticky {
+    position: sticky;
+    top: 90px;
+  }
+}
+
+.product-gallery__main {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--card-radius, 16px);
+  background-color: #f4f4f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.product-gallery__image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 125%; /* 4:5 Aspect Ratio standard for high-end product display */
+  overflow: hidden;
+}
+
+.product-gallery__image-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Zoom effect */
+.product-gallery__image-wrapper:hover img {
+  cursor: crosshair;
+}
+
+/* Thumbnails Strip */
+.product-gallery__thumbnails {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.product-gallery__thumbnail-btn {
+  width: 72px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: var(--card-radius, 8px);
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: #f4f4f5;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.product-gallery__thumbnail-btn:hover {
+  transform: translateY(-2px);
+}
+
+.product-gallery__thumbnail-btn.is-active {
+  border-color: #121212;
+}
+
+.product-gallery__thumbnail-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Media Badges */
+.product-gallery__badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+}

@@ -1,0 +1,251 @@
+{%- comment -%}
+  E-sellers Revealed Image on Scroll Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    overflow: hidden;
+  }
+
+  .es-reveal-scroll-track {
+    height: 180vh;
+    position: relative;
+  }
+
+  .es-reveal-sticky-wrap {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .es-reveal-mask {
+    position: absolute;
+    width: 320px;
+    height: 420px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    transition: transform 0.1s linear, width 0.1s linear, height 0.1s linear, border-radius 0.1s linear;
+    z-index: 2;
+    will-change: transform, width, height, border-radius;
+  }
+
+  .es-reveal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.1);
+    transition: transform 0.1s linear;
+  }
+
+  /* Dual Layer Content */
+  .es-reveal-content-layer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .es-reveal-content-layer--outside {
+    color: {{ section.settings.text_color_outside | default: '#0f172a' }};
+    z-index: 1;
+  }
+
+  .es-reveal-content-layer--inside {
+    color: {{ section.settings.text_color_inside | default: '#ffffff' }};
+    z-index: 3;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .es-reveal-subheading {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+  }
+
+  .es-reveal-heading {
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin: 0;
+    max-width: 900px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .es-reveal-mask {
+      width: 240px;
+      height: 320px;
+      border-radius: 16px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-revealed-image-section" id="RevealSection-{{ section.id }}">
+  <div class="es-reveal-scroll-track" id="RevealTrack-{{ section.id }}">
+    <div class="es-reveal-sticky-wrap">
+      
+      <!-- Outside Text Layer -->
+      <div class="es-reveal-content-layer es-reveal-content-layer--outside">
+        {%- if section.settings.subheading != blank -%}
+          <p class="es-reveal-subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="es-reveal-heading">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+      </div>
+
+      <!-- Expanding Image Mask Window -->
+      <div class="es-reveal-mask" id="RevealMask-{{ section.id }}">
+        {%- if section.settings.image != blank -%}
+          {%- if section.settings.mobile_image != blank -%}
+            <picture>
+              <source media="(max-width: 768px)" srcset="{{ section.settings.mobile_image | image_url: width: 1200 }}">
+              {%- assign es_tagarg_1 = section.settings.title | default: 'Featured lifestyle visual' | escape -%}{{ section.settings.image | image_url: width: 2600 | image_tag:
+                loading: 'lazy',
+                class: 'es-reveal-img',
+                alt: es_tagarg_1}}
+            </picture>
+          {%- else -%}
+            {%- assign es_tagarg_2 = section.settings.title | default: 'Featured lifestyle visual' | escape -%}{{ section.settings.image | image_url: width: 2600 | image_tag:
+              loading: 'lazy',
+              class: 'es-reveal-img',
+              alt: es_tagarg_2}}
+          {%- endif -%}
+        {%- else -%}
+          <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #0f172a 0%, #334155 100%);"></div>
+        {%- endif -%}
+
+        <!-- Inside Text Layer (Mirrored within mask for high contrast) -->
+        <div class="es-reveal-content-layer--inside">
+          {%- if section.settings.subheading != blank -%}
+            <p class="es-reveal-subheading">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+          {%- if section.settings.title != blank -%}
+            <h2 class="es-reveal-heading">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const track = document.getElementById('RevealTrack-{{ section.id }}');
+    const mask = document.getElementById('RevealMask-{{ section.id }}');
+    if (!track || !mask) return;
+
+    function handleRevealScroll() {
+      const rect = track.getBoundingClientRect();
+      const totalScroll = track.offsetHeight - window.innerHeight;
+      if (totalScroll <= 0) return;
+
+      const progress = Math.min(Math.max(-rect.top / totalScroll, 0), 1);
+
+      const isMobile = window.innerWidth <= 768;
+      const initialW = isMobile ? 240 : 360;
+      const initialH = isMobile ? 320 : 480;
+      const initialRadius = isMobile ? 16 : 24;
+
+      const targetW = window.innerWidth;
+      const targetH = window.innerHeight;
+
+      const currentW = initialW + (targetW - initialW) * progress;
+      const currentH = initialH + (targetH - initialH) * progress;
+      const currentRadius = initialRadius * (1 - progress);
+
+      mask.style.width = `${currentW}px`;
+      mask.style.height = `${currentH}px`;
+      mask.style.borderRadius = `${currentRadius}px`;
+    }
+
+    window.addEventListener('scroll', handleRevealScroll, { passive: true });
+    window.addEventListener('resize', handleRevealScroll, { passive: true });
+    handleRevealScroll();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Revealed image on scroll",
+  "tag": "section",
+  "class": "shopify-section--revealed-image",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image",
+      "info": "2400 x 1400px recommended"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image (optional)",
+      "info": "1000 x 1500px recommended"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Immersive Storytelling"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Engineered for Perfection"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color_outside",
+      "label": "Text color (Outside image)",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "text_color_inside",
+      "label": "Text color (Inside image)",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Revealed image on scroll"
+    }
+  ]
+}
+{% endschema %}

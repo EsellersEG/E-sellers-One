@@ -1,0 +1,266 @@
+{%- comment -%}
+  Main Activate Account Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+  }
+
+  .es-activate-account {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 40px 32px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 10px 40px -4px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+  }
+
+  .es-activate-account__heading {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: #0f172a;
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-activate-account__subtext {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #64748b;
+    margin: 0 0 28px 0;
+  }
+
+  .es-activate-account__form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+  }
+
+  .es-activate-account__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .es-activate-account__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .es-activate-account__input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #0f172a;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .es-activate-account__input:focus {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+  }
+
+  .es-activate-account__error {
+    font-size: 0.85rem;
+    color: #ef4444;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .es-activate-account__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .es-activate-account__btn-submit {
+    width: 100%;
+    padding: 14px 20px;
+    background-color: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .es-activate-account__btn-submit:hover {
+    background-color: #1e293b;
+    transform: translateY(-1px);
+  }
+
+  .es-activate-account__btn-decline {
+    width: 100%;
+    padding: 13px 20px;
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .es-activate-account__btn-decline:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+  }
+
+  .es-activate-account__errors-box {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .es-activate-account__errors-box ul {
+    margin: 6px 0 0 0;
+    padding-left: 20px;
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <div class="es-activate-account">
+    <h1 class="es-activate-account__heading">
+      {{ 'customer.activate_account.title' | t | default: 'Activate Account' }}
+    </h1>
+    <p class="es-activate-account__subtext">
+      {{ 'customer.activate_account.subtext' | t | default: 'Create your password to activate your account and start shopping.' }}
+    </p>
+
+    {%- form 'activate_customer_password', class: 'es-activate-account__form' -%}
+      {%- if form.errors -%}
+        <div class="es-activate-account__errors-box" role="alert" tabindex="-1" autofocus>
+          <strong>{{ 'templates.contact.form.error_heading' | t | default: 'Please fix the errors below:' }}</strong>
+          <ul>
+            {%- for field in form.errors -%}
+              <li>
+                {%- if field == 'form' -%}
+                  {{ form.errors.messages[field] }}
+                {%- else -%}
+                  {{ form.errors.translated_fields[field] | capitalize }}: {{ form.errors.messages[field] }}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <div class="es-activate-account__field">
+        <label class="es-activate-account__label" for="CustomerPassword">
+          {{ 'customer.activate_account.password' | t | default: 'Password' }}
+        </label>
+        <input
+          type="password"
+          name="customer[password]"
+          id="CustomerPassword"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          class="es-activate-account__input"
+          required
+        >
+        {%- if form.errors contains 'password' -%}
+          <small class="es-activate-account__error">
+            {{ form.errors.translated_fields.password | capitalize }} {{ form.errors.messages.password }}
+          </small>
+        {%- endif -%}
+      </div>
+
+      <div class="es-activate-account__field">
+        <label class="es-activate-account__label" for="CustomerPasswordConfirmation">
+          {{ 'customer.activate_account.password_confirm' | t | default: 'Confirm password' }}
+        </label>
+        <input
+          type="password"
+          name="customer[password_confirmation]"
+          id="CustomerPasswordConfirmation"
+          autocomplete="new-password"
+          placeholder="••••••••"
+          class="es-activate-account__input"
+          required
+        >
+        {%- if form.errors contains 'password_confirmation' -%}
+          <small class="es-activate-account__error">
+            {{ form.errors.translated_fields.password_confirmation | capitalize }} {{ form.errors.messages.password_confirmation }}
+          </small>
+        {%- endif -%}
+      </div>
+
+      <div class="es-activate-account__actions">
+        <button type="submit" class="es-activate-account__btn-submit">
+          {{ 'customer.activate_account.submit' | t | default: 'Activate account' }}
+        </button>
+        <button type="submit" name="decline" class="es-activate-account__btn-decline">
+          {{ 'customer.activate_account.cancel' | t | default: 'Decline invitation' }}
+        </button>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Activate account",
+  "tag": "section",
+  "class": "shopify-section--main-activate-account",
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ]
+}
+{% endschema %}

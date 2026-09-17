@@ -1,0 +1,221 @@
+{%- comment -%}
+  Cart Drawer Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'component-cart-drawer.js' | asset_url }}" defer="defer"></script>
+
+{%- comment -%}
+  Critical containment, inline so it cannot arrive late or fail to load.
+
+  Without it, if the drawer stylesheet is missing the whole drawer renders in
+  normal flow at the bottom of the page - a full-width heading, a close button
+  and an oversized icon - because `svg { max-width:100%; height:auto }` lets an
+  unsized icon expand to its container. Pinning position and visibility here
+  means the worst case is an invisible drawer, never a broken-looking page.
+{%- endcomment -%}
+{%- style -%}
+  #shopify-section-{{ section.id }} cart-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    justify-content: flex-end;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  #shopify-section-{{ section.id }} cart-drawer.is-open {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /* Icons must never scale to their container. */
+  #shopify-section-{{ section.id }} cart-drawer svg {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .cart-drawer__empty-icon {
+    width: 64px;
+    height: 64px;
+  }
+{%- endstyle -%}
+
+<cart-drawer class="cart-drawer" id="CartDrawer" aria-hidden="true">
+  <div class="cart-drawer__overlay"></div>
+
+  <div class="cart-drawer__inner" role="dialog" aria-modal="true" aria-label="{{ 'cart.drawer_title' | t | default: 'Shopping Cart' }}">
+    <!-- Drawer Header -->
+    <div class="cart-drawer__header">
+      <h2 class="cart-drawer__title">
+        {{ 'cart.drawer_title' | t | default: 'Shopping Cart' }}
+        {%- if cart.item_count > 0 -%}
+          <span class="cart-drawer__count">({{ cart.item_count }})</span>
+        {%- endif -%}
+      </h2>
+      <button type="button" class="cart-drawer__close" aria-label="{{ 'general.accessibility.close' | t | default: 'Close' }}">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    {%- if cart.item_count > 0 -%}
+      <!-- Free Shipping Goal (if threshold set) -->
+      {%- if section.settings.free_shipping_threshold > 0 -%}
+        {%- assign threshold_cents = section.settings.free_shipping_threshold | times: 100 -%}
+        <div class="cart-drawer__shipping-bar">
+          {%- if cart.total_price >= threshold_cents -%}
+            <p class="cart-drawer__shipping-text">{{ 'cart.free_shipping.unlocked' | t | default: '🎉 You have qualified for FREE SHIPPING!' }}</p>
+            <div class="cart-drawer__progress-bar">
+              <div class="cart-drawer__progress-fill" style="width: 100%;"></div>
+            </div>
+          {%- else -%}
+            {%- assign remaining_cents = threshold_cents | minus: cart.total_price -%}
+            <p class="cart-drawer__shipping-text">
+              Add <strong>{{ remaining_cents | money }}</strong> more for <strong>FREE SHIPPING!</strong>
+            </p>
+            {%- assign percent = cart.total_price | times: 100.0 | divided_by: threshold_cents -%}
+            <div class="cart-drawer__progress-bar">
+              <div class="cart-drawer__progress-fill" style="width: {{ percent | at_most: 100 }}%;"></div>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <!-- Cart Items List -->
+      <div class="cart-drawer__items">
+        {%- for item in cart.items -%}
+          <div class="cart-drawer__item" data-line="{{ forloop.index }}" data-key="{{ item.key }}">
+            <div class="cart-drawer__item-image-wrapper">
+              {%- if item.image != blank -%}
+                {%- assign es_tagarg_1 = item.title | escape -%}{{ item.image | image_url: width: 180 | image_tag:
+                  loading: 'lazy',
+                  class: 'cart-drawer__item-image',
+                  alt: es_tagarg_1}}
+              {%- endif -%}
+            </div>
+
+            <div class="cart-drawer__item-details">
+              <a href="{{ item.url }}" class="cart-drawer__item-title">{{ item.product.title | escape }}</a>
+              {%- unless item.product.has_only_default_variant -%}
+                <p class="cart-drawer__item-options">{{ item.variant.title | escape }}</p>
+              {%- endunless -%}
+
+              <div class="cart-drawer__item-price">
+                <span>{{ item.final_price | money }}</span>
+                {%- if item.original_price > item.final_price -%}
+                  <s style="color: #94a3b8; font-size: 0.85em; margin-left: 4px;">{{ item.original_price | money }}</s>
+                {%- endif -%}
+              </div>
+
+              <div class="cart-drawer__item-bottom">
+                <div class="cart-quantity-wrapper">
+                  <button type="button" class="cart-quantity-btn" name="minus" data-line="{{ forloop.index }}" data-key="{{ item.key }}" aria-label="Decrease quantity">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                  <input
+                    type="number"
+                    class="cart-quantity-input"
+                    value="{{ item.quantity }}"
+                    min="0"
+                    readonly
+                    aria-label="Quantity"
+                  >
+                  <button type="button" class="cart-quantity-btn" name="plus" data-line="{{ forloop.index }}" data-key="{{ item.key }}" aria-label="Increase quantity">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </button>
+                </div>
+
+                <button type="button" class="cart-item__remove" data-line="{{ forloop.index }}" data-key="{{ item.key }}" aria-label="Remove {{ item.title | escape }}">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <!-- Drawer Footer -->
+      <div class="cart-drawer__footer">
+        {%- if section.settings.show_cart_note -%}
+          <details class="cart-drawer__note-details">
+            <summary class="cart-drawer__note-summary">
+              <span>{{ 'cart.note' | t | default: 'Add order note' }}</span>
+            </summary>
+            <textarea
+              name="note"
+              id="CartDrawer-Note"
+              class="cart-drawer__note-input"
+              placeholder="{{ 'cart.note_placeholder' | t | default: 'Special instructions...' }}"
+            >{{ cart.note }}</textarea>
+          </details>
+        {%- endif -%}
+
+        <div class="cart-drawer__subtotal-row">
+          <span>{{ 'cart.subtotal' | t | default: 'Subtotal' }}</span>
+          <span class="cart-drawer__subtotal-price">{{ cart.total_price | money_with_currency }}</span>
+        </div>
+
+        <p class="cart-drawer__notice">
+          {{ 'cart.taxes_and_shipping_at_checkout' | t | default: 'Taxes and shipping calculated at checkout' }}
+        </p>
+
+        <div class="cart-drawer__buttons" style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="{{ routes.cart_url }}" class="cart-drawer__view-btn btn-secondary" style="display: block; text-align: center; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; text-decoration: none; font-weight: 600; color: inherit;">
+            {{ 'general.cart.view' | t: count: cart.item_count | default: 'View Cart' }}
+          </a>
+
+          <a href="/checkout" class="cart-drawer__checkout-btn btn-primary" style="display: block; text-align: center; padding: 14px 16px; background-color: #0f172a; color: #ffffff; border-radius: 8px; text-decoration: none; font-weight: 700;">
+            {{ 'cart.checkout' | t | default: 'Proceed to Checkout' }}
+          </a>
+        </div>
+      </div>
+
+    {%- else -%}
+      <!-- Empty State -->
+      <div class="cart-drawer__empty">
+        <svg viewBox="0 0 24 24" width="64" height="64" style="width: 64px; height: 64px; max-width: 64px; max-height: 64px;" class="cart-drawer__empty-icon" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <h3 class="cart-drawer__empty-title">{{ 'cart.empty' | t | default: 'Your cart is empty' }}</h3>
+        <p class="cart-drawer__empty-text">{{ 'templates.cart.subtext' | t | default: 'Browse our collections to find items you love.' }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="cart-drawer__empty-btn btn-primary" style="display: inline-block; padding: 12px 24px; background: #0f172a; color: #ffffff; border-radius: 8px; text-decoration: none; font-weight: 600;">
+          {{ 'general.continue_shopping' | t | default: 'Continue Shopping' }}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</cart-drawer>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "tag": "section",
+  "class": "section--cart-drawer",
+  "settings": [
+    {
+      "type": "range",
+      "id": "free_shipping_threshold",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "$",
+      "label": "Free shipping goal threshold (0 to disable)",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart_note",
+      "label": "Enable order note",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

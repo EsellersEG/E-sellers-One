@@ -1,0 +1,410 @@
+{%- comment -%}
+  E-sellers Newsletter - E-sellers Professional (v4.9.0)
+
+  Email capture in two layouts:
+    - Centred text-only block.
+    - Split layout with an image beside a coloured signup card.
+
+  Subscribers are tagged "newsletter" and land in the accepts-marketing list.
+{%- endcomment -%}
+
+{%- liquid
+  assign has_image = false
+  if section.settings.image != blank
+    assign has_image = true
+  endif
+  assign form_id = 'EsNewsletter-' | append: section.id
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-nl-bg: {{ section.settings.background | default: '#f5f5f5' }};
+    --es-nl-text: {{ section.settings.text_color | default: 'inherit' }};
+    --es-nl-btn-bg: {{ section.settings.button_background | default: '#121212' }};
+    --es-nl-btn-text: {{ section.settings.button_text_color | default: '#ffffff' }};
+    --es-nl-radius: {{ section.settings.corner_radius | default: 12 }}px;
+    --es-nl-pt: {{ section.settings.padding_top | default: 56 }}px;
+    --es-nl-pb: {{ section.settings.padding_bottom | default: 56 }}px;
+
+    padding-top: var(--es-nl-pt);
+    padding-bottom: var(--es-nl-pb);
+    {%- unless has_image -%}
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- else -%}
+        background-color: var(--es-nl-bg);
+      {%- endif -%}
+      color: var(--es-nl-text);
+    {%- endunless -%}
+  }
+
+  /* ---- Split layout ---- */
+  #shopify-section-{{ section.id }} .es-nl__split {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    border-radius: var(--es-nl-radius);
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .es-nl__split {
+      grid-template-columns: 1fr 1fr;
+    }
+    {%- if section.settings.image_position == 'right' -%}
+      #shopify-section-{{ section.id }} .es-nl__media { order: 2; }
+    {%- endif -%}
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__media {
+    position: relative;
+    min-height: 280px;
+  }
+  #shopify-section-{{ section.id }} .es-nl__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 3.2rem;
+    {%- if section.settings.background_gradient != blank -%}
+      background-image: {{ section.settings.background_gradient }};
+    {%- else -%}
+      background-color: var(--es-nl-bg);
+    {%- endif -%}
+    color: var(--es-nl-text);
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .es-nl__box { padding: 5.6rem 4.8rem; }
+  }
+
+  /* ---- Centred layout ---- */
+  #shopify-section-{{ section.id }} .es-nl__centered {
+    max-width: 620px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ---- Shared content ---- */
+  #shopify-section-{{ section.id }} .es-nl__icon {
+    margin-bottom: 1.6rem;
+    color: currentColor;
+  }
+  #shopify-section-{{ section.id }} .es-nl__icon svg { width: 32px; height: 32px; }
+
+  #shopify-section-{{ section.id }} .es-nl__title {
+    margin: 0 0 1.2rem;
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__body {
+    margin-bottom: 2.4rem;
+    color: inherit;
+    opacity: 0.9;
+  }
+  #shopify-section-{{ section.id }} .es-nl__body > p:last-child { margin-bottom: 0; }
+
+  #shopify-section-{{ section.id }} .es-nl__form { width: 100%; }
+
+  #shopify-section-{{ section.id }} .es-nl__fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    width: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__input {
+    flex: 1 1 220px;
+    min-width: 0;
+    font-family: inherit;
+    font-size: 1.5rem;
+    color: #121212;
+    background-color: #ffffff;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: var(--input-radius, 8px);
+    padding: 1.4rem 1.6rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  #shopify-section-{{ section.id }} .es-nl__input:focus {
+    border-color: var(--es-nl-btn-bg);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--es-nl-btn-bg) 20%, transparent);
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__submit {
+    flex: 0 0 auto;
+    background-color: var(--es-nl-btn-bg);
+    color: var(--es-nl-btn-text);
+    padding: 1.4rem 2.8rem;
+    border-radius: var(--button-radius, 8px);
+    font-weight: 600;
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__subtext {
+    margin: 1.2rem 0 0;
+    font-size: 1.3rem;
+    opacity: 0.7;
+  }
+
+  #shopify-section-{{ section.id }} .es-nl__banner {
+    padding: 1.2rem 1.6rem;
+    border-radius: 8px;
+    margin-bottom: 1.6rem;
+    font-size: 1.4rem;
+    text-align: left;
+  }
+  #shopify-section-{{ section.id }} .es-nl__banner--success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+  #shopify-section-{{ section.id }} .es-nl__banner--error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+{%- endstyle -%}
+
+{%- capture es_nl_content -%}
+  {%- if section.settings.show_icon -%}
+    <span class="es-nl__icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+      </svg>
+    </span>
+  {%- endif -%}
+
+  {%- if section.settings.title != blank -%}
+    <h2 class="h2 es-nl__title">{{ section.settings.title | escape }}</h2>
+  {%- endif -%}
+
+  {%- if section.settings.content != blank -%}
+    <div class="es-nl__body">{{ section.settings.content }}</div>
+  {%- endif -%}
+
+  {%- form 'customer', id: form_id, class: 'es-nl__form' -%}
+    {%- if form.posted_successfully? -%}
+      <p class="es-nl__banner es-nl__banner--success" role="status">
+        {{ 'general.newsletter_form.confirmation' | t | default: 'Thanks for subscribing.' }}
+      </p>
+    {%- else -%}
+      {%- if form.errors -%}
+        <p class="es-nl__banner es-nl__banner--error" role="alert">
+          {{ form.errors.translated_fields['email'] }} {{ form.errors.messages['email'] }}
+        </p>
+      {%- endif -%}
+
+      <input type="hidden" name="contact[tags]" value="newsletter">
+
+      <div class="es-nl__fieldset">
+        <label class="visually-hidden" for="{{ form_id }}-email">
+          {{ 'general.newsletter_form.email_label' | t | default: 'Email' }}
+        </label>
+        <input
+          id="{{ form_id }}-email"
+          class="es-nl__input"
+          type="email"
+          name="contact[email]"
+          value="{{ form.email }}"
+          autocomplete="email"
+          enterkeyhint="send"
+          placeholder="{{ section.settings.placeholder | default: 'your@email.com' | escape }}"
+          required
+          {% if form.errors %}aria-invalid="true"{% endif %}
+        >
+        <button type="submit" class="es-nl__submit">
+          {{ section.settings.button_text | default: 'Subscribe' | escape }}
+        </button>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.subtext != blank -%}
+      <p class="es-nl__subtext">{{ section.settings.subtext | escape }}</p>
+    {%- endif -%}
+  {%- endform -%}
+{%- endcapture -%}
+
+<div class="{% unless section.settings.full_width and has_image %}page-width{% endunless %}">
+  {%- if has_image -%}
+    <div class="es-nl__split">
+      <div class="es-nl__media">
+        {%- assign es_tagarg_1 = section.settings.title | escape -%}{{ section.settings.image | image_url: width: 1500 | image_tag:
+           loading: 'lazy',
+           sizes: '(max-width: 999px) 100vw, 50vw',
+           widths: '600,900,1200,1500',
+           alt: es_tagarg_1}}
+      </div>
+      <div class="es-nl__box">
+        {{ es_nl_content }}
+      </div>
+    </div>
+  {%- else -%}
+    <div class="es-nl__centered">
+      {{ es_nl_content }}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "shopify-section--es-newsletter",
+  "tag": "section",
+  "disabled_on": {
+    "templates": ["password"],
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Subscribers are added to your accepts-marketing customer list and tagged \"newsletter\"."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "Adding an image switches to the split layout. 1500 x 1000px recommended."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false,
+      "info": "Split layout only."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show envelope icon",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Newsletter"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "default": "<p>Tell customers what they will receive by subscribing to your newsletter.</p>"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email placeholder",
+      "default": "your@email.com"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Subtext",
+      "info": "Small print below the form, e.g. an unsubscribe note."
+    },
+    {
+      "type": "header",
+      "content": "Colors",
+      "info": "A gradient replaces the solid background when set."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 56
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter"
+    }
+  ]
+}
+{% endschema %}

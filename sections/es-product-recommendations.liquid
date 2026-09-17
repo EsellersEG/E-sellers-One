@@ -1,0 +1,277 @@
+{%- comment -%}
+  E-sellers Product Recommendations Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#0f172a' }};
+  }
+
+  .es-recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.products_per_row_desktop | default: 4 }}, minmax(0, 1fr));
+    gap: 24px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .es-recommendations-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    .es-recommendations-grid {
+      {% if section.settings.stack_products %}
+        grid-template-columns: repeat({{ section.settings.products_per_row_mobile | default: 1 }}, minmax(0, 1fr));
+      {% else %}
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 12px;
+        -webkit-overflow-scrolling: touch;
+      {% endif %}
+    }
+
+    {% unless section.settings.stack_products %}
+      .es-recommendations-grid > li {
+        flex: 0 0 74vw;
+        scroll-snap-align: start;
+      }
+    {% endunless %}
+  }
+{%- endstyle -%}
+
+<div
+  class="es-product-recommendations-section"
+  id="Recommendations-{{ section.id }}"
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.recommendations_count | default: 4 }}&intent=related"
+>
+  {%- if section.settings.products.count > 0 -%}
+    <!-- Manual Selection -->
+    <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+      {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+        {% render 'section-header',
+          subheading: section.settings.subheading,
+          heading: section.settings.title,
+          heading_color: section.settings.heading_color,
+          heading_gradient: section.settings.heading_gradient,
+          content: section.settings.content
+        %}
+      {%- endif -%}
+
+      <ul class="es-recommendations-grid">
+        {%- for rec_product in section.settings.products -%}
+          <li>
+            {% render 'card-product',
+              card_product: rec_product,
+              show_secondary_image: true,
+              show_vendor: false,
+              show_rating: true,
+              show_quick_add: true
+            %}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+  {%- elsif recommendations.performed and recommendations.products_count > 0 -%}
+    <!-- Automatic Recommendations Loaded via AJAX -->
+    <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+      {%- if section.settings.title != blank or section.settings.subheading != blank -%}
+        {% render 'section-header',
+          subheading: section.settings.subheading,
+          heading: section.settings.title,
+          heading_color: section.settings.heading_color,
+          heading_gradient: section.settings.heading_gradient,
+          content: section.settings.content
+        %}
+      {%- endif -%}
+
+      <ul class="es-recommendations-grid">
+        {%- for rec_product in recommendations.products -%}
+          <li>
+            {% render 'card-product',
+              card_product: rec_product,
+              show_secondary_image: true,
+              show_vendor: false,
+              show_rating: true,
+              show_quick_add: true
+            %}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+</div>
+
+{%- if section.settings.products.count == 0 -%}
+  <script>
+    (function() {
+      const container = document.getElementById('Recommendations-{{ section.id }}');
+      if (!container) return;
+
+      const url = container.getAttribute('data-url');
+      if (!url) return;
+
+      fetch(url)
+        .then(response => response.text())
+        .then(text => {
+          const html = document.createElement('div');
+          html.innerHTML = text;
+          const recommendations = html.querySelector('.es-product-recommendations-section');
+          if (recommendations && recommendations.innerHTML.trim().length) {
+            container.innerHTML = recommendations.innerHTML;
+          }
+        })
+        .catch(e => console.error('Recommendations loading error:', e));
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Related products",
+  "tag": "section",
+  "class": "shopify-section--product-recommendations",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Automatic recommendations are generated by Shopify based on shopper behavior. You can also pick manual items below."
+    },
+    {
+      "type": "product_list",
+      "id": "products",
+      "label": "Manual related products",
+      "info": "Overrides automated recommendations when selected."
+    },
+    {
+      "type": "range",
+      "id": "recommendations_count",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "label": "Dynamic recommendations count",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width container",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Products per row (Desktop)",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Products per row (Mobile)",
+      "options": [
+        { "value": "1", "label": "1 product per row" },
+        { "value": "2", "label": "2 products per row" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_products",
+      "label": "Stack products on mobile",
+      "default": false,
+      "info": "If unchecked, products will swipe as a carousel on mobile."
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Complete Your Look"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Related products"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,337 @@
+{%- comment -%}
+  E-sellers Logo List / Brand Cloud - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .es-logo-list {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.items_per_row | default: 5 }}, minmax(0, 1fr));
+    gap: {{ section.settings.gap | default: 20 }}px;
+    align-items: center;
+  }
+
+  .es-logo-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background-color: {{ section.settings.logo_item_background | default: '#f8fafc' }};
+    border: 1px solid {{ section.settings.logo_item_border | default: 'rgba(0, 0, 0, 0.06)' }};
+    text-decoration: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .es-logo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
+  }
+
+  .es-logo-card__image {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
+    {% if section.settings.enable_grayscale %}
+      filter: grayscale(100%);
+      opacity: 0.7;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+    {% endif %}
+  }
+
+  {% if section.settings.enable_grayscale %}
+    .es-logo-card:hover .es-logo-card__image {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+  {% endif %}
+
+  .es-logo-card__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 1024px) {
+    .es-logo-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    {% if section.settings.stack_mobile %}
+      .es-logo-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    {% else %}
+      .es-logo-list {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 12px;
+        padding-bottom: 12px;
+        scrollbar-width: none;
+      }
+      .es-logo-list::-webkit-scrollbar {
+        display: none;
+      }
+      .es-logo-card {
+        flex: 0 0 45vw;
+        scroll-snap-align: start;
+      }
+    {% endif %}
+  }
+{%- endstyle -%}
+
+<div class="es-logo-list-section">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    {%- if section.settings.title != blank or section.settings.subheading != blank or section.settings.content != blank -%}
+      {% render 'section-header',
+        subheading: section.settings.subheading,
+        heading: section.settings.title,
+        heading_color: section.settings.heading_color,
+        heading_gradient: section.settings.heading_gradient,
+        content: section.settings.content,
+        alignment: section.settings.text_alignment
+      %}
+    {%- endif -%}
+
+    <div class="es-logo-list">
+      {%- for block in section.blocks -%}
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}" class="es-logo-card" {{ block.shopify_attributes }}>
+        {%- else -%}
+          <div class="es-logo-card" {{ block.shopify_attributes }}>
+        {%- endif -%}
+
+          {%- if block.settings.logo != blank -%}
+            {%- assign logo_alt = block.settings.logo.alt | default: 'Brand logo' | escape -%}
+            {%- assign logo_max_width = block.settings.logo_width | default: 120 -%}
+            {%- capture logo_custom_style -%}max-width: {{ logo_max_width }}px;{%- endcapture -%}
+            {{ block.settings.logo | image_url: width: 600 | image_tag:
+              loading: 'lazy',
+              class: 'es-logo-card__image',
+              alt: logo_alt,
+              style: logo_custom_style
+            }}
+          {%- else -%}
+            <div class="es-logo-card__placeholder">
+              <span>Brand Logo</span>
+            </div>
+          {%- endif -%}
+
+        {%- if block.settings.link != blank -%}
+          </a>
+        {%- else -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Logo List",
+  "class": "shopify-section--es-logo-list",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width container",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Trusted Brands"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "As Seen In & Featured By"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Description"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Header alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Grid Layout"
+    },
+    {
+      "type": "range",
+      "id": "items_per_row",
+      "min": 3,
+      "max": 7,
+      "step": 1,
+      "label": "Logos per row (Desktop)",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid spacing",
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "label": "Stack in 2-column grid on mobile",
+      "info": "When unchecked, logos scroll horizontally on mobile.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale",
+      "label": "Grayscale logos (full color on hover)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors & Padding"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "logo_item_background",
+      "label": "Logo card background",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "color",
+      "id": "logo_item_border",
+      "label": "Logo card border",
+      "default": "rgba(0, 0, 0, 0.06)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Brand logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo image"
+        },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "min": 50,
+          "max": 250,
+          "step": 5,
+          "unit": "px",
+          "label": "Max logo width",
+          "default": 120
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Logo link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Logo List",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

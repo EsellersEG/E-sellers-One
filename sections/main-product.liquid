@@ -1,0 +1,223 @@
+{%- comment -%}
+  Main Product Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color | default: '#ffffff' }};
+    padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .main-product {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  @media screen and (max-width: 989px) {
+    .main-product {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  .main-product__info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .main-product__title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+    margin: 0;
+  }
+
+  .main-product__text {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  .main-product__tab {
+    border-top: 1px solid #e2e8f0;
+    padding: 16px 0;
+  }
+
+  .main-product__tab summary {
+    font-weight: 600;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .main-product__tab-content {
+    padding-top: 12px;
+    color: #475569;
+    line-height: 1.6;
+  }
+{%- endstyle -%}
+
+<div class="page-width">
+  <div class="main-product">
+    <!-- Media Gallery Column -->
+    <div class="main-product__media">
+      {% render 'product-media-gallery', product: product, is_sticky: section.settings.enable_sticky_gallery %}
+    </div>
+
+    <!-- Product Info Column -->
+    <div class="main-product__info">
+      {%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'text' -%}
+            <div class="main-product__text" {{ block.shopify_attributes }}>
+              {{ block.settings.text | escape }}
+            </div>
+
+          {%- when 'title' -%}
+            <h1 class="main-product__title" {{ block.shopify_attributes }}>
+              {{ product.title | escape }}
+            </h1>
+
+          {%- when 'rating' -%}
+            <div class="main-product__rating" {{ block.shopify_attributes }}>
+              <span style="color: #f59e0b; font-size: 1.1rem;">★★★★★</span>
+              <span style="font-size: 0.9rem; color: #64748b; margin-left: 6px;">(4.9/5 based on customer reviews)</span>
+            </div>
+
+          {%- when 'price' -%}
+            <div class="main-product__price" {{ block.shopify_attributes }}>
+              {% render 'price', product: product, use_variant: true %}
+            </div>
+
+          {%- when 'variant_picker' -%}
+            <div class="main-product__variants" {{ block.shopify_attributes }}>
+              {% render 'product-variant-picker', product: product, product_form_id: product_form_id %}
+            </div>
+
+          {%- when 'buy_buttons' -%}
+            <div {{ block.shopify_attributes }}>
+              {% render 'buy-buttons',
+                product: product,
+                block: block,
+                product_form_id: product_form_id,
+                show_dynamic_checkout: block.settings.show_dynamic_checkout,
+                show_quantity: true
+              %}
+            </div>
+
+          {%- when 'pickup_availability' -%}
+            {%- comment -%}
+              Store pickup for the selected variant. The snippet renders nothing
+              when no location has pickup enabled, so it is safe to always place.
+            {%- endcomment -%}
+            <div {{ block.shopify_attributes }}>
+              {%- render 'pickup-availability',
+                  product_variant: product.selected_or_first_available_variant -%}
+            </div>
+
+          {%- when 'trust_badges' -%}
+            <div class="main-product__trust" style="display: flex; gap: 16px; padding: 16px; background: #f8fafc; border-radius: 8px; font-size: 0.9rem;" {{ block.shopify_attributes }}>
+              <div>🛡️ <strong>Secure Checkout</strong></div>
+              <div>🚚 <strong>Fast Express Shipping</strong></div>
+              <div>🔄 <strong>30-Day Returns</strong></div>
+            </div>
+
+          {%- when 'description' -%}
+            {%- if product.description != blank -%}
+              <div class="main-product__description rte" {{ block.shopify_attributes }}>
+                {{ product.description }}
+              </div>
+            {%- endif -%}
+
+          {%- when 'collapsible_tab' -%}
+            <details class="main-product__tab" {{ block.shopify_attributes }}>
+              <summary>
+                <span>{{ block.settings.heading | escape }}</span>
+                <span>+</span>
+              </summary>
+              <div class="main-product__tab-content rte">
+                {{ block.settings.content }}
+                {{ block.settings.page.content }}
+              </div>
+            </details>
+
+          {%- when 'share' -%}
+            <div class="main-product__share" {{ block.shopify_attributes }}>
+              <span style="font-size: 0.9rem; font-weight: 600; color: #64748b;">Share:</span>
+              <a href="https://www.facebook.com/sharer.php?u={{ shop.url | append: product.url }}" target="_blank" rel="noopener" style="color: inherit; margin-left: 8px; text-decoration: none;">Facebook</a>
+              <a href="https://twitter.com/intent/tweet?text={{ product.title | escape }}&url={{ shop.url | append: product.url }}" target="_blank" rel="noopener" style="color: inherit; margin-left: 8px; text-decoration: none;">Twitter</a>
+            </div>
+
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Main product",
+  "tag": "section",
+  "class": "section--main-product",
+  "blocks": [
+    { "type": "text", "name": "Text", "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Premium Quality" }] },
+    { "type": "title", "name": "Title", "limit": 1 },
+    { "type": "rating", "name": "Rating", "limit": 1 },
+    { "type": "price", "name": "Price", "limit": 1 },
+    { "type": "variant_picker", "name": "Variant picker", "limit": 1 },
+    {
+      "type": "buy_buttons",
+      "name": "Buy buttons",
+      "limit": 1,
+      "settings": [
+        { "type": "checkbox", "id": "show_dynamic_checkout", "default": true, "label": "Show dynamic checkout button" }
+      ]
+    },
+    {
+      "type": "pickup_availability",
+      "name": "Pickup availability",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows local pickup for the selected variant. Nothing renders unless a location has pickup enabled in Settings > Shipping and delivery."
+        }
+      ]
+    },
+    { "type": "trust_badges", "name": "Trust badges", "limit": 1 },
+    { "type": "description", "name": "Description", "limit": 1 },
+    {
+      "type": "collapsible_tab",
+      "name": "Collapsible tab",
+      "settings": [
+        { "type": "text", "id": "heading", "default": "Free Shipping & Returns", "label": "Heading" },
+        { "type": "richtext", "id": "content", "label": "Content" },
+        { "type": "page", "id": "page", "label": "Page content" }
+      ]
+    },
+    { "type": "share", "name": "Share", "limit": 1 }
+  ],
+  "settings": [
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#ffffff" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#121212" },
+    { "type": "color", "id": "text_color", "label": "Text color", "default": "#121212" },
+    { "type": "color", "id": "btn_bg_color", "label": "Button background color", "default": "#121212" },
+    { "type": "color", "id": "btn_text_color", "label": "Button text color", "default": "#ffffff" },
+    { "type": "checkbox", "id": "enable_sticky_gallery", "default": true, "label": "Enable sticky gallery on desktop" },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 80, "step": 4, "unit": "px", "label": "Padding top", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 80, "step": 4, "unit": "px", "label": "Padding bottom", "default": 60 }
+  ]
+}
+{% endschema %}

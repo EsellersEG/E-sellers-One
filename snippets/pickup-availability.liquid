@@ -1,0 +1,178 @@
+{%- comment -%}
+  Store Pickup Availability Snippet - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- assign pick_up_availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+
+{%- if pick_up_availabilities.size > 0 -%}
+  {%- assign closest_location = pick_up_availabilities.first -%}
+
+  {%- style -%}
+    .es-pickup-avail-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      margin: 16px 0;
+      box-sizing: border-box;
+    }
+
+    .es-pickup-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .es-pickup-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .es-pickup-status {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .es-pickup-time {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .es-pickup-btn-stores {
+      background: none;
+      border: none;
+      padding: 0;
+      color: #0f172a;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+      align-self: flex-start;
+      margin-top: 4px;
+    }
+
+    .es-pickup-drawer-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .es-pickup-drawer-modal.is-open {
+      display: flex;
+    }
+
+    .es-pickup-drawer-box {
+      max-width: 480px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .es-pickup-drawer-list {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .es-pickup-drawer-item {
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+  {%- endstyle -%}
+
+  <div class="es-pickup-avail-container">
+    <div class="es-pickup-icon">
+      {%- if closest_location.available -%}
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      {%- else -%}
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ef4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      {%- endif -%}
+    </div>
+
+    <div class="es-pickup-info">
+      {%- if closest_location.available -%}
+        <p class="es-pickup-status">Pickup available at <strong>{{ closest_location.location.name }}</strong></p>
+        <p class="es-pickup-time">{{ closest_location.pick_up_time }}</p>
+      {%- else -%}
+        <p class="es-pickup-status">Pickup currently unavailable at <strong>{{ closest_location.location.name }}</strong></p>
+      {%- endif -%}
+
+      {%- if pick_up_availabilities.size > 1 -%}
+        <button type="button" class="es-pickup-btn-stores" onclick="document.getElementById('PickupModal_{{ product_variant.id }}').classList.add('is-open')">
+          Check availability at other stores ({{ pick_up_availabilities.size }} locations)
+        </button>
+      {%- elsif closest_location.available -%}
+        <button type="button" class="es-pickup-btn-stores" onclick="document.getElementById('PickupModal_{{ product_variant.id }}').classList.add('is-open')">
+          View store details & address
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <!-- Store Pickup Locations Modal -->
+  <div id="PickupModal_{{ product_variant.id }}" class="es-pickup-drawer-modal" role="dialog" aria-modal="true" onclick="if(event.target === this) this.classList.remove('is-open')">
+    <div class="es-pickup-drawer-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: #0f172a;">Store Availability</h3>
+        <button type="button" style="background: none; border: none; font-size: 1.5rem; color: #64748b; cursor: pointer;" onclick="document.getElementById('PickupModal_{{ product_variant.id }}').classList.remove('is-open')">&times;</button>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <strong style="color: #0f172a; font-size: 1rem;">{{ product_variant.product.title }}</strong>
+        {%- unless product_variant.product.has_only_default_variant -%}
+          <p style="margin: 2px 0 0 0; color: #64748b; font-size: 0.9rem;">{{ product_variant.title }}</p>
+        {%- endunless -%}
+      </div>
+
+      <ul class="es-pickup-drawer-list">
+        {%- for availability in pick_up_availabilities -%}
+          <li class="es-pickup-drawer-item">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+              <strong style="color: #0f172a; font-size: 1rem;">{{ availability.location.name }}</strong>
+              {%- if availability.available -%}
+                <span style="font-size: 0.8rem; font-weight: 700; color: #16a34a; background: #dcfce7; padding: 2px 8px; border-radius: 4px;">Available</span>
+              {%- else -%}
+                <span style="font-size: 0.8rem; font-weight: 700; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 4px;">Unavailable</span>
+              {%- endif -%}
+            </div>
+
+            {%- if availability.available -%}
+              <p style="margin: 0 0 8px 0; font-size: 0.85rem; color: #475569;">{{ availability.pick_up_time }}</p>
+            {%- endif -%}
+
+            <div style="font-size: 0.85rem; line-height: 1.5; color: #64748b;">
+              {{ availability.location.address | format_address }}
+              {%- if availability.location.address.phone.size > 0 -%}
+                <p style="margin: 4px 0 0 0;"><a href="tel:{{ availability.location.address.phone }}" style="color: #0f172a; text-decoration: underline;">{{ availability.location.address.phone }}</a></p>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+{%- endif -%}

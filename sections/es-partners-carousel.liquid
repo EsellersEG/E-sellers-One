@@ -1,0 +1,335 @@
+{%- comment -%}
+  E-sellers Partners Carousel - E-sellers Professional (v4.9.0)
+  Infinite marquee of partner / accreditation logos. Pure CSS animation, no JS.
+  All rules are scoped to the section id so multiple instances never collide.
+{%- endcomment -%}
+
+{%- liquid
+  assign logo_blocks = section.blocks | where: 'type', 'logo'
+  assign heading_tag = section.settings.heading_level | default: 'h2'
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-pc-bg: {{ section.settings.background | default: 'transparent' }};
+    --es-pc-heading: {{ section.settings.heading_color | default: '#000000' }};
+    --es-pc-logo-height: {{ section.settings.logo_size | default: 60 }}px;
+    --es-pc-gap: {{ section.settings.logo_gap | default: 40 }}px;
+    --es-pc-speed: {{ section.settings.carousel_speed | default: 30 }}s;
+    --es-pc-grayscale: {{ section.settings.grayscale | default: 100 }}%;
+    --es-pc-opacity: {{ section.settings.inactive_opacity | default: 85 | divided_by: 100.0 }};
+    --es-pc-pt: {{ section.settings.padding_top | default: 32 }}px;
+    --es-pc-pb: {{ section.settings.padding_bottom | default: 32 }}px;
+
+    background-color: var(--es-pc-bg);
+    padding-top: var(--es-pc-pt);
+    padding-bottom: var(--es-pc-pb);
+  }
+
+  #shopify-section-{{ section.id }} .es-pc__heading {
+    text-align: center;
+    margin: 0 0 2.4rem;
+    color: var(--es-pc-heading);
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .es-pc__viewport {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  {%- if section.settings.edge_fade -%}
+    #shopify-section-{{ section.id }} .es-pc__viewport {
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    }
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .es-pc__track {
+    display: flex;
+    align-items: center;
+    gap: var(--es-pc-gap);
+    width: max-content;
+    animation: es-pc-scroll-{{ section.id | replace: '-', '_' }} var(--es-pc-speed) linear infinite;
+    will-change: transform;
+  }
+
+  {%- if section.settings.pause_on_hover -%}
+    #shopify-section-{{ section.id }} .es-pc__viewport:hover .es-pc__track {
+      animation-play-state: paused;
+    }
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .es-pc__item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: grayscale(var(--es-pc-grayscale)) contrast(1.15);
+    opacity: var(--es-pc-opacity);
+    transition: filter 0.25s ease, opacity 0.25s ease;
+  }
+
+  #shopify-section-{{ section.id }} .es-pc__item:hover,
+  #shopify-section-{{ section.id }} .es-pc__item:focus-within {
+    filter: none;
+    opacity: 1;
+  }
+
+  #shopify-section-{{ section.id }} .es-pc__item img {
+    height: var(--es-pc-logo-height);
+    width: auto;
+    max-width: none;
+    display: block;
+    object-fit: contain;
+  }
+
+  @keyframes es-pc-scroll-{{ section.id | replace: '-', '_' }} {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-50% - (var(--es-pc-gap) / 2))); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .es-pc__track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+    #shopify-section-{{ section.id }} .es-pc__item--clone {
+      display: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- if logo_blocks.size > 0 -%}
+  <div class="page-width">
+    {%- if section.settings.heading != blank -%}
+      <{{ heading_tag }} class="es-pc__heading">{{ section.settings.heading | escape }}</{{ heading_tag }}>
+    {%- endif -%}
+
+    <div class="es-pc__viewport">
+      <div class="es-pc__track">
+        {%- comment -%} Pass 1: the real logos {%- endcomment -%}
+        {%- for block in logo_blocks -%}
+          {%- if block.settings.logo != blank -%}
+            <div class="es-pc__item" {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}
+                <a href="{{ block.settings.link }}" rel="noopener" {% if block.settings.open_new_tab %}target="_blank"{% endif %}>
+                  {%- assign es_tagarg_1 = block.settings.alt | default: block.settings.logo.alt | escape -%}{{ block.settings.logo | image_url: width: 400 | image_tag:
+                     loading: 'lazy',
+                     alt: es_tagarg_1}}
+                </a>
+              {%- else -%}
+                {%- assign es_tagarg_2 = block.settings.alt | default: block.settings.logo.alt | escape -%}{{ block.settings.logo | image_url: width: 400 | image_tag:
+                   loading: 'lazy',
+                   alt: es_tagarg_2}}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- comment -%}
+          Pass 2: aria-hidden duplicate so the marquee loops seamlessly at -50%.
+          Hidden from assistive tech so logos are not announced twice.
+        {%- endcomment -%}
+        {%- for block in logo_blocks -%}
+          {%- if block.settings.logo != blank -%}
+            <div class="es-pc__item es-pc__item--clone" aria-hidden="true">
+              {{ block.settings.logo | image_url: width: 400 | image_tag: loading: 'lazy', alt: '' }}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add partner logo blocks to populate this carousel.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Partners carousel",
+  "tag": "section",
+  "class": "shopify-section--es-partners-carousel",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Trusted by"
+    },
+    {
+      "type": "select",
+      "id": "heading_level",
+      "label": "Heading size",
+      "options": [
+        { "value": "h1", "label": "H1 (largest)" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" },
+        { "value": "h4", "label": "H4" },
+        { "value": "h5", "label": "H5" },
+        { "value": "h6", "label": "H6 (smallest)" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "type": "range",
+      "id": "carousel_speed",
+      "label": "Seconds per loop",
+      "min": 5,
+      "max": 90,
+      "step": 5,
+      "default": 30,
+      "unit": "s",
+      "info": "Lower is faster."
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "edge_fade",
+      "label": "Fade logos at the edges",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Logo appearance"
+    },
+    {
+      "type": "range",
+      "id": "logo_size",
+      "label": "Logo height",
+      "min": 20,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "logo_gap",
+      "label": "Space between logos",
+      "min": 8,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "grayscale",
+      "label": "Grayscale amount",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "default": 100,
+      "info": "Logos return to full colour on hover."
+    },
+    {
+      "type": "range",
+      "id": "inactive_opacity",
+      "label": "Resting opacity",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 85
+    },
+    {
+      "type": "header",
+      "content": "Colors & spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Partner logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo image"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text",
+          "info": "Describes the logo for screen readers. Falls back to the image's own alt text."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_new_tab",
+          "label": "Open link in a new tab",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "max_blocks": 50,
+  "presets": [
+    {
+      "name": "Partners carousel",
+      "blocks": [
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" },
+        { "type": "logo" }
+      ]
+    }
+  ]
+}
+{% endschema %}

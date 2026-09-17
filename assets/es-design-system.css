@@ -1,0 +1,520 @@
+/* ==========================================================================
+   E-SELLERS DESIGN SYSTEM
+   Version: 5.0.0 | E-sellers (info@e-sellers.net)
+
+   The single source of visual truth for the theme. Sections consume these
+   tokens and primitives instead of hard-coding values, so the whole storefront
+   can be retuned from theme settings without touching a section.
+
+   The language is deliberately utilitarian: a tight modular grid, high-contrast
+   type with close tracking, rule lines rather than heavy shadows, and restrained
+   purposeful motion. It suits technical and workwear catalogues and reads as a
+   system rather than a collection of separate designs.
+
+   Contents
+     1. Scales ........... spacing, type, measure
+     2. Geometry ......... radii, rules, elevation
+     3. Motion ........... durations, easings
+     4. Surface .......... colour roles
+     5. Density modes .... compact / comfortable / spacious
+     6. Primitives ....... eyebrow, section head, button, card, badge, field
+     7. Layout helpers ... containers, grids, rails
+   ========================================================================== */
+
+:root {
+  /* -- 1. Spacing scale -------------------------------------------------- */
+  /* A 4px base with a doubling rhythm; --es-density rescales the whole set. */
+  --es-density: 1;
+  --es-space-0: 0;
+  --es-space-1: calc(0.4rem * var(--es-density));
+  --es-space-2: calc(0.8rem * var(--es-density));
+  --es-space-3: calc(1.2rem * var(--es-density));
+  --es-space-4: calc(1.6rem * var(--es-density));
+  --es-space-5: calc(2.4rem * var(--es-density));
+  --es-space-6: calc(3.2rem * var(--es-density));
+  --es-space-7: calc(4rem * var(--es-density));
+  --es-space-8: calc(5.6rem * var(--es-density));
+  --es-space-9: calc(7.2rem * var(--es-density));
+  --es-space-10: calc(9.6rem * var(--es-density));
+
+  /* Vertical rhythm between sections. */
+  --es-section-y: var(--es-space-8);
+  --es-section-y-tight: var(--es-space-6);
+
+  /* -- 1b. Type scale ---------------------------------------------------- */
+  /* Fluid across the viewport; --font-heading-scale/-body-scale still apply. */
+  --es-text-2xs: 1.1rem;
+  --es-text-xs: 1.2rem;
+  --es-text-sm: 1.35rem;
+  --es-text-base: calc(1.5rem * var(--font-body-scale, 1));
+  --es-text-md: calc(1.7rem * var(--font-body-scale, 1));
+  --es-text-lg: clamp(1.8rem, 0.4vw + 1.7rem, 2.1rem);
+  --es-text-xl: clamp(2.1rem, 0.8vw + 1.9rem, 2.6rem);
+  --es-text-2xl: clamp(2.6rem, 1.4vw + 2.2rem, 3.4rem);
+  --es-text-3xl: clamp(3.2rem, 2.4vw + 2.6rem, 4.6rem);
+  --es-text-4xl: clamp(4rem, 4vw + 3rem, 6.4rem);
+  --es-text-5xl: clamp(5rem, 7vw + 3rem, 9.6rem);
+
+  /* Tracking tightens as type grows - the signature of the system. */
+  --es-track-tight: -0.03em;
+  --es-track-snug: -0.015em;
+  --es-track-normal: 0;
+  --es-track-wide: 0.06em;
+  --es-track-caps: 0.1em;
+
+  --es-leading-tight: 1.08;
+  --es-leading-snug: 1.25;
+  --es-leading-normal: 1.55;
+  --es-leading-relaxed: 1.7;
+
+  /* Optimal line length for body copy. */
+  --es-measure: 68ch;
+  --es-measure-narrow: 46ch;
+
+  /* -- 2. Geometry ------------------------------------------------------- */
+  /* --es-geometry scales every radius at once: 0 = sharp, 1 = soft, 2 = round */
+  --es-geometry: 1;
+  --es-radius-xs: calc(2px * var(--es-geometry));
+  --es-radius-sm: calc(4px * var(--es-geometry));
+  --es-radius-md: calc(8px * var(--es-geometry));
+  --es-radius-lg: calc(14px * var(--es-geometry));
+  --es-radius-xl: calc(22px * var(--es-geometry));
+  --es-radius-pill: 999px;
+
+  /* Rules carry structure in place of heavy shadows. */
+  --es-rule-width: 1px;
+  --es-rule: color-mix(in srgb, var(--es-fg) 14%, transparent);
+  --es-rule-strong: color-mix(in srgb, var(--es-fg) 32%, transparent);
+  --es-rule-faint: color-mix(in srgb, var(--es-fg) 7%, transparent);
+
+  /* -- 2b. Elevation ----------------------------------------------------- */
+  /* Layered, low-opacity shadows; --es-elevation can flatten them globally. */
+  --es-elevation: 1;
+  --es-elev-0: none;
+  --es-elev-1:
+    0 1px 2px rgb(0 0 0 / calc(0.04 * var(--es-elevation))),
+    0 1px 3px rgb(0 0 0 / calc(0.05 * var(--es-elevation)));
+  --es-elev-2:
+    0 2px 4px rgb(0 0 0 / calc(0.04 * var(--es-elevation))),
+    0 6px 14px rgb(0 0 0 / calc(0.07 * var(--es-elevation)));
+  --es-elev-3:
+    0 4px 8px rgb(0 0 0 / calc(0.05 * var(--es-elevation))),
+    0 16px 32px rgb(0 0 0 / calc(0.10 * var(--es-elevation)));
+
+  /* -- 3. Motion --------------------------------------------------------- */
+  --es-motion: 1;
+  --es-dur-fast: calc(120ms * var(--es-motion));
+  --es-dur-base: calc(240ms * var(--es-motion));
+  --es-dur-slow: calc(420ms * var(--es-motion));
+  --es-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --es-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --es-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* -- 4. Surface roles -------------------------------------------------- */
+  /* Fallbacks; layout/theme.liquid overrides these from the colour scheme. */
+  --es-bg: var(--color-base-background, #ffffff);
+  --es-fg: var(--color-base-text, #121212);
+  --es-fg-muted: color-mix(in srgb, var(--es-fg) 62%, transparent);
+  --es-fg-subtle: color-mix(in srgb, var(--es-fg) 42%, transparent);
+  --es-surface: color-mix(in srgb, var(--es-fg) 4%, var(--es-bg));
+  --es-surface-strong: color-mix(in srgb, var(--es-fg) 8%, var(--es-bg));
+  --es-accent: var(--color-btn-primary-bg, #121212);
+  --es-on-accent: var(--color-btn-primary-text, #ffffff);
+  --es-focus: #005bd3;
+
+  --es-positive: #0f7b4f;
+  --es-critical: #b42318;
+  --es-notice: #b25e09;
+
+  /* -- 7. Layout --------------------------------------------------------- */
+  --es-container: var(--page-width, 1360px);
+  --es-container-narrow: 820px;
+  --es-gutter: var(--es-space-4);
+  --es-grid-gap: var(--grid-gap, 24px);
+}
+
+@media screen and (min-width: 750px) {
+  :root {
+    --es-gutter: var(--es-space-6);
+  }
+}
+
+/* -- 5. Density modes ------------------------------------------------------
+   Set on <body> from theme settings. Compact suits dense catalogues; spacious
+   suits editorial storefronts. Only the scale multiplier changes, so every
+   section retunes together. */
+body[data-es-density="compact"] { --es-density: 0.8; --es-section-y: var(--es-space-7); }
+body[data-es-density="comfortable"] { --es-density: 1; }
+body[data-es-density="spacious"] { --es-density: 1.25; --es-section-y: var(--es-space-9); }
+
+body[data-es-geometry="sharp"] { --es-geometry: 0; }
+body[data-es-geometry="soft"] { --es-geometry: 1; }
+body[data-es-geometry="round"] { --es-geometry: 2; }
+
+body[data-es-elevation="flat"] { --es-elevation: 0; }
+body[data-es-elevation="raised"] { --es-elevation: 1; }
+body[data-es-elevation="lifted"] { --es-elevation: 1.6; }
+
+body[data-es-motion="none"] { --es-motion: 0; }
+body[data-es-motion="subtle"] { --es-motion: 0.7; }
+body[data-es-motion="expressive"] { --es-motion: 1.25; }
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --es-motion: 0; }
+}
+
+/* ==========================================================================
+   6. PRIMITIVES
+   ========================================================================== */
+
+/* -- Eyebrow: the small caps label above a heading ------------------------ */
+.es-eyebrow {
+  display: block;
+  font-size: var(--es-text-xs);
+  font-weight: 700;
+  letter-spacing: var(--es-track-caps);
+  text-transform: uppercase;
+  color: var(--es-fg-muted);
+  margin: 0 0 var(--es-space-2);
+}
+
+/* -- Section head: eyebrow + title + lede + action ------------------------ */
+.es-section-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--es-space-2);
+  margin-bottom: var(--es-space-6);
+  max-width: var(--es-measure);
+}
+
+.es-section-head--center {
+  align-items: center;
+  text-align: center;
+  margin-inline: auto;
+}
+
+.es-section-head__title {
+  font-size: var(--es-text-2xl);
+  line-height: var(--es-leading-tight);
+  letter-spacing: var(--es-track-tight);
+  margin: 0;
+}
+
+.es-section-head__lede {
+  font-size: var(--es-text-md);
+  line-height: var(--es-leading-relaxed);
+  color: var(--es-fg-muted);
+  margin: 0;
+}
+
+.es-section-head__lede > p:last-child { margin-bottom: 0; }
+
+/* A hairline under the section head, the system's structural signature. */
+.es-section-head--ruled {
+  border-bottom: var(--es-rule-width) solid var(--es-rule);
+  padding-bottom: var(--es-space-4);
+  max-width: none;
+}
+
+/* -- Button --------------------------------------------------------------- */
+.es-btn {
+  --_bg: var(--es-accent);
+  --_fg: var(--es-on-accent);
+  --_border: transparent;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--es-space-2);
+  font-family: inherit;
+  font-size: var(--es-text-sm);
+  font-weight: 650;
+  letter-spacing: var(--es-track-snug);
+  line-height: 1;
+  padding: var(--es-space-3) var(--es-space-5);
+  border: var(--es-rule-width) solid var(--_border);
+  border-radius: var(--es-radius-md);
+  background-color: var(--_bg);
+  color: var(--_fg);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  position: relative;
+  transition:
+    background-color var(--es-dur-base) var(--es-ease),
+    color var(--es-dur-base) var(--es-ease),
+    border-color var(--es-dur-base) var(--es-ease),
+    box-shadow var(--es-dur-base) var(--es-ease);
+}
+
+/* Weight shift rather than lift - quieter and avoids layout jitter. */
+.es-btn:hover {
+  --_bg: color-mix(in srgb, var(--es-accent) 86%, var(--es-fg));
+  box-shadow: var(--es-elev-1);
+}
+
+.es-btn:active { --_bg: color-mix(in srgb, var(--es-accent) 74%, var(--es-fg)); }
+
+.es-btn--secondary {
+  --_bg: transparent;
+  --_fg: var(--es-fg);
+  --_border: var(--es-rule-strong);
+}
+.es-btn--secondary:hover {
+  --_bg: var(--es-surface);
+  --_border: var(--es-fg);
+}
+
+.es-btn--ghost {
+  --_bg: transparent;
+  --_fg: var(--es-fg);
+  --_border: transparent;
+  padding-inline: var(--es-space-2);
+}
+.es-btn--ghost:hover { --_bg: var(--es-surface); box-shadow: none; }
+
+.es-btn--link {
+  --_bg: transparent;
+  --_fg: currentColor;
+  --_border: transparent;
+  padding: 0;
+  border-radius: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  text-decoration-thickness: 1px;
+}
+.es-btn--link:hover { box-shadow: none; text-decoration-thickness: 2px; }
+
+.es-btn--sm { font-size: var(--es-text-xs); padding: var(--es-space-2) var(--es-space-4); }
+.es-btn--lg { font-size: var(--es-text-md); padding: var(--es-space-4) var(--es-space-6); }
+.es-btn--full { width: 100%; }
+
+.es-btn:disabled,
+.es-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* -- Card ----------------------------------------------------------------- */
+.es-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--es-bg);
+  border: var(--es-rule-width) solid var(--es-rule);
+  border-radius: var(--es-radius-lg);
+  overflow: hidden;
+  transition:
+    border-color var(--es-dur-base) var(--es-ease),
+    box-shadow var(--es-dur-base) var(--es-ease);
+}
+
+.es-card:hover { border-color: var(--es-rule-strong); box-shadow: var(--es-elev-2); }
+.es-card--flat { border-radius: 0; border-inline: 0; }
+.es-card--filled { background-color: var(--es-surface); border-color: transparent; }
+.es-card__body { padding: var(--es-space-5); display: flex; flex-direction: column; gap: var(--es-space-2); }
+
+/* -- Badge ---------------------------------------------------------------- */
+.es-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--es-space-1);
+  font-size: var(--es-text-2xs);
+  font-weight: 700;
+  letter-spacing: var(--es-track-wide);
+  text-transform: uppercase;
+  padding: var(--es-space-1) var(--es-space-2);
+  border-radius: var(--es-radius-sm);
+  background: var(--es-fg);
+  color: var(--es-bg);
+  line-height: 1;
+}
+
+.es-badge--sale { background: var(--es-critical); color: #fff; }
+.es-badge--sold-out { background: var(--es-fg-subtle); color: var(--es-bg); }
+.es-badge--positive { background: var(--es-positive); color: #fff; }
+.es-badge--outline { background: transparent; color: inherit; border: var(--es-rule-width) solid currentColor; }
+
+/* -- Field ---------------------------------------------------------------- */
+.es-field {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--es-text-base);
+  color: var(--es-fg);
+  background-color: var(--es-bg);
+  border: var(--es-rule-width) solid var(--es-rule-strong);
+  border-radius: var(--es-radius-md);
+  padding: var(--es-space-3) var(--es-space-4);
+  transition: border-color var(--es-dur-fast) var(--es-ease), box-shadow var(--es-dur-fast) var(--es-ease);
+  outline: none;
+}
+
+.es-field:focus {
+  border-color: var(--es-fg);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--es-fg) 12%, transparent);
+}
+
+.es-field[aria-invalid="true"] { border-color: var(--es-critical); }
+
+.es-label {
+  display: block;
+  font-size: var(--es-text-xs);
+  font-weight: 650;
+  letter-spacing: var(--es-track-wide);
+  text-transform: uppercase;
+  color: var(--es-fg-muted);
+  margin-bottom: var(--es-space-1);
+}
+
+/* -- Rule ----------------------------------------------------------------- */
+.es-rule { border: 0; border-top: var(--es-rule-width) solid var(--es-rule); margin: 0; }
+.es-rule--strong { border-top-color: var(--es-rule-strong); }
+
+/* ==========================================================================
+   7. LAYOUT HELPERS
+   ========================================================================== */
+
+.es-container {
+  width: 100%;
+  max-width: var(--es-container);
+  margin-inline: auto;
+  padding-inline: var(--es-gutter);
+}
+
+.es-container--narrow { max-width: var(--es-container-narrow); }
+.es-container--full { max-width: none; }
+
+.es-section { padding-block: var(--es-section-y); }
+.es-section--tight { padding-block: var(--es-section-y-tight); }
+.es-section--flush { padding-block: 0; }
+
+/* Auto-fitting grid: set --es-col-min per section, columns resolve themselves. */
+.es-grid {
+  display: grid;
+  gap: var(--es-grid-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--es-col-min, 260px), 100%), 1fr));
+}
+
+.es-grid--fixed {
+  grid-template-columns: repeat(var(--es-cols, 3), minmax(0, 1fr));
+}
+
+/* Horizontal scroll rail; the mobile fallback for any grid. */
+.es-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--es-rail-item, 78%);
+  gap: var(--es-grid-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-inline: var(--es-gutter);
+  margin-inline: calc(var(--es-gutter) * -1);
+}
+
+.es-rail::-webkit-scrollbar { display: none; }
+.es-rail > * { scroll-snap-align: start; }
+
+@media screen and (min-width: 750px) {
+  .es-rail { --es-rail-item: 42%; }
+}
+
+@media screen and (min-width: 1000px) {
+  .es-rail--grid-desktop {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(var(--es-cols, 3), minmax(0, 1fr));
+    overflow: visible;
+    padding-inline: 0;
+    margin-inline: 0;
+  }
+}
+
+/* Media frame with a controllable aspect ratio. */
+.es-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background-color: var(--es-surface);
+  aspect-ratio: var(--es-media-ratio, 1);
+}
+
+.es-media > img,
+.es-media > video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: var(--es-media-fit, cover);
+  transition: transform var(--es-dur-slow) var(--es-ease-out);
+}
+
+.es-media--zoom:hover > img { transform: scale(1.04); }
+.es-media--contain { --es-media-fit: contain; }
+
+/* Reveal-on-scroll: sections add .is-visible via IntersectionObserver. */
+.es-reveal {
+  opacity: 0;
+  transform: translateY(calc(12px * var(--es-motion)));
+  transition:
+    opacity var(--es-dur-slow) var(--es-ease-out),
+    transform var(--es-dur-slow) var(--es-ease-out);
+  transition-delay: calc(var(--es-reveal-index, 0) * 60ms * var(--es-motion));
+}
+
+.es-reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .es-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ==========================================================================
+   8. SHARED PRIMITIVES (button icon, highlight text)
+   Added to support ported sections that reference es-button / es-highlight-text.
+   ========================================================================== */
+
+.es-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+.es-btn__icon svg { width: 100%; height: 100%; }
+
+/* -- Highlight text: decorative emphasis for merchant-typed <em> runs -- */
+.es-hl {
+  font-style: normal;
+  position: relative;
+  color: var(--es-hl-color, currentColor);
+}
+
+.es-hl--underline {
+  text-decoration: underline;
+  text-decoration-color: var(--es-hl-color, var(--es-accent));
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.15em;
+}
+
+.es-hl--circle {
+  display: inline-block;
+  padding-inline: 0.15em;
+}
+.es-hl--circle::after {
+  content: "";
+  position: absolute;
+  inset: -0.2em -0.15em;
+  border: 1.5px solid var(--es-hl-color, var(--es-accent));
+  border-radius: 50% / 45%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.es-hl--color {
+  color: var(--es-hl-color, var(--es-accent));
+}
+

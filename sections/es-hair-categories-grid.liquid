@@ -1,0 +1,618 @@
+{%- comment -%}
+  E-sellers Hair Care Categories Grid - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.section_background_color | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.section_padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.section_padding_bottom | default: 40 }}px;
+  }
+
+  .es-hair-grid__container {
+    max-width: {{ section.settings.container_max_width | default: 1400 }}px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+
+  .es-hair-grid__heading {
+    text-align: {{ section.settings.heading_alignment | default: 'center' }};
+    margin: 0 0 32px 0;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.2;
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-hair-grid__subheading {
+    text-align: {{ section.settings.heading_alignment | default: 'center' }};
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #64748b;
+  }
+
+  .es-hair-grid__grid {
+    display: grid;
+    gap: {{ section.settings.gap | default: 20 }}px;
+    grid-template-columns: repeat({{ section.settings.desktop_columns | default: 4 }}, minmax(0, 1fr));
+  }
+
+  @media screen and (max-width: 1024px) and (min-width: 750px) {
+    .es-hair-grid__grid {
+      grid-template-columns: repeat({{ section.settings.tablet_columns | default: 2 }}, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .es-hair-grid__grid {
+      grid-template-columns: repeat({{ section.settings.mobile_columns | default: 1 }}, minmax(0, 1fr));
+      gap: {{ section.settings.gap | divided_by: 1.5 | at_least: 12 }}px;
+    }
+  }
+
+  /* Card Item */
+  .es-hair-card {
+    display: flex;
+    align-items: stretch;
+    min-height: 76px;
+    border-radius: var(--es-card-radius, 10px);
+    text-decoration: none;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .es-hair-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  /* 40:60 Division */
+  .es-hair-card__left {
+    width: 40%;
+    min-width: 40%;
+    max-width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .es-hair-card__divider {
+    position: absolute;
+    right: 0;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background-color: #e2e8f0;
+  }
+
+  .es-hair-card__left-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.15;
+    font-family: inherit;
+    letter-spacing: -0.02em;
+    word-break: break-word;
+  }
+
+  .es-hair-card__left-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-hair-card__left-image img {
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .es-hair-card__right {
+    width: 60%;
+    min-width: 60%;
+    max-width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    box-sizing: border-box;
+    direction: rtl;
+    text-align: right;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .es-hair-card__right-text {
+    line-height: 1.35;
+    word-break: break-word;
+    letter-spacing: 0;
+  }
+{%- endstyle -%}
+
+<div class="es-hair-categories-section">
+  <div class="es-hair-grid__container">
+    {%- if section.settings.section_subheading != blank -%}
+      <p class="es-hair-grid__subheading">{{ section.settings.section_subheading | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.section_heading != blank -%}
+      <h2 class="es-hair-grid__heading">{{ section.settings.section_heading | escape }}</h2>
+    {%- endif -%}
+
+    <div class="es-hair-grid__grid">
+      {%- for block in section.blocks -%}
+        {%- assign border_width = block.settings.card_border_width | default: 1 -%}
+        {%- assign border_color = block.settings.card_border_color | default: '#E0E0E0' -%}
+        {%- assign bg_color = block.settings.card_bg_color | default: '#FFFFFF' -%}
+
+        <a
+          href="{{ block.settings.card_link | default: '#' }}"
+          class="es-hair-card"
+          style="
+            border: {{ border_width }}px solid {{ border_color }};
+            background-color: {{ bg_color }};
+          "
+          {{ block.shopify_attributes }}
+        >
+          <!-- Left 40% (Brand / Logo / English Title) -->
+          <div class="es-hair-card__left">
+            {%- if block.settings.left_type == 'image' -%}
+              <div class="es-hair-card__left-image">
+                {%- if block.settings.left_image != blank -%}
+                  {%- assign cat_logo_alt = block.settings.left_image.alt | default: 'Category logo' | escape -%}
+                  {%- capture cat_logo_style -%}max-height: {{ block.settings.image_height }}px;{%- endcapture -%}
+                  {{ block.settings.left_image | image_url: width: 300 | image_tag:
+                    loading: 'lazy',
+                    alt: cat_logo_alt,
+                    style: cat_logo_style
+                  }}
+                {%- else -%}
+                  <span style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">Logo</span>
+                {%- endif -%}
+              </div>
+            {%- else -%}
+              <div class="es-hair-card__left-text">
+                {%- if block.settings.left_primary != blank -%}
+                  <span style="color: {{ block.settings.left_primary_color }}; font-size: {{ block.settings.left_font_size }}px; font-weight: 700;">
+                    {{ block.settings.left_primary }}
+                  </span>
+                {%- endif -%}
+                {%- if block.settings.left_secondary != blank -%}
+                  <span style="color: {{ block.settings.left_secondary_color }}; font-size: {{ block.settings.left_font_size }}px; font-weight: 700;">
+                    {{ block.settings.left_secondary }}
+                  </span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.show_divider -%}
+              <div class="es-hair-card__divider"></div>
+            {%- endif -%}
+          </div>
+
+          <!-- Right 60% (Arabic Category Text) -->
+          <div class="es-hair-card__right">
+            <span
+              class="es-hair-card__right-text"
+              style="
+                color: {{ block.settings.right_color | default: '#000000' }};
+                font-size: {{ block.settings.right_font_size | default: 16 }}px;
+                font-weight: {{ block.settings.right_weight | default: '400' }};
+              "
+            >
+              {{ block.settings.right_text | default: 'اسم الفئة' }}
+            </span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hair Care Categories Grid",
+  "class": "shopify-section--es-hair-categories",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "section_subheading",
+      "label": "Subheading",
+      "default": "Targeted Solutions"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "Explore Our Hair Solutions"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "header",
+      "content": "Grid Columns"
+    },
+    {
+      "type": "select",
+      "id": "desktop_columns",
+      "label": "Desktop columns",
+      "options": [
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" },
+        { "value": "4", "label": "4 Columns" },
+        { "value": "5", "label": "5 Columns" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "select",
+      "id": "tablet_columns",
+      "label": "Tablet columns",
+      "options": [
+        { "value": "1", "label": "1 Column" },
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Mobile columns",
+      "options": [
+        { "value": "1", "label": "1 Column" },
+        { "value": "2", "label": "2 Columns" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Grid Gap",
+      "min": 5,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "label": "Container max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "header",
+      "content": "Section Spacing & Background"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category_card",
+      "name": "Category Card",
+      "settings": [
+        {
+          "type": "url",
+          "id": "card_link",
+          "label": "Card link"
+        },
+        {
+          "type": "header",
+          "content": "Left Content (40%)"
+        },
+        {
+          "type": "radio",
+          "id": "left_type",
+          "label": "Left content type",
+          "options": [
+            { "value": "text", "label": "Styled Text" },
+            { "value": "image", "label": "Image / Logo" }
+          ],
+          "default": "text"
+        },
+        {
+          "type": "image_picker",
+          "id": "left_image",
+          "label": "Left image / logo"
+        },
+        {
+          "type": "range",
+          "id": "image_height",
+          "label": "Image max height",
+          "min": 20,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "default": 30
+        },
+        {
+          "type": "text",
+          "id": "left_primary",
+          "label": "Left primary text",
+          "default": "make/my/"
+        },
+        {
+          "type": "color",
+          "id": "left_primary_color",
+          "label": "Left primary color",
+          "default": "#888888"
+        },
+        {
+          "type": "text",
+          "id": "left_secondary",
+          "label": "Left secondary text",
+          "default": "day"
+        },
+        {
+          "type": "color",
+          "id": "left_secondary_color",
+          "label": "Left secondary color",
+          "default": "#FFDD00"
+        },
+        {
+          "type": "range",
+          "id": "left_font_size",
+          "label": "Left font size",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "default": 16
+        },
+        {
+          "type": "checkbox",
+          "id": "show_divider",
+          "label": "Show vertical divider line",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Right Content (60% - Arabic)"
+        },
+        {
+          "type": "text",
+          "id": "right_text",
+          "label": "Right text (Arabic)",
+          "default": "شعر ناعم سدات / شابات"
+        },
+        {
+          "type": "range",
+          "id": "right_font_size",
+          "label": "Right font size",
+          "min": 14,
+          "max": 22,
+          "step": 1,
+          "unit": "px",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "id": "right_color",
+          "label": "Right text color",
+          "default": "#000000"
+        },
+        {
+          "type": "select",
+          "id": "right_weight",
+          "label": "Right font weight",
+          "options": [
+            { "value": "300", "label": "Light" },
+            { "value": "400", "label": "Normal" },
+            { "value": "500", "label": "Medium" },
+            { "value": "700", "label": "Bold" }
+          ],
+          "default": "400"
+        },
+        {
+          "type": "header",
+          "content": "Card Styling"
+        },
+        {
+          "type": "color",
+          "id": "card_border_color",
+          "label": "Border color",
+          "default": "#E0E0E0"
+        },
+        {
+          "type": "range",
+          "id": "card_border_width",
+          "label": "Border width",
+          "min": 0,
+          "max": 4,
+          "step": 1,
+          "unit": "px",
+          "default": 1
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": "Card background color",
+          "default": "#FFFFFF"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hair Care Categories Grid",
+      "blocks": [
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/make-my-day",
+            "left_primary": "make/my/",
+            "left_primary_color": "#888888",
+            "left_secondary": "day",
+            "left_secondary_color": "#FFDD00",
+            "right_text": "شعر ناعم سدات / شابات",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/colour-care",
+            "left_primary": "colour",
+            "left_primary_color": "#B565A7",
+            "left_secondary": "care",
+            "left_secondary_color": "#B565A7",
+            "right_text": "الشعر المصبوغ",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/integrity-system",
+            "left_primary": "integrity",
+            "left_primary_color": "#8A7968",
+            "left_secondary": "system",
+            "left_secondary_color": "#8A7968",
+            "right_text": "علاج وتغذية الشعر التالف",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/silver-shine",
+            "left_primary": "silver",
+            "left_primary_color": "#6366F1",
+            "left_secondary": "shine",
+            "left_secondary_color": "#6366F1",
+            "right_text": "الشعر الأشقر والرمادي",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/curl-passion",
+            "left_primary": "curl",
+            "left_primary_color": "#F97316",
+            "left_secondary": "passion",
+            "left_secondary_color": "#F97316",
+            "right_text": "الشعر الكيرلي والمموج",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/volume-solution",
+            "left_primary": "volume",
+            "left_primary_color": "#06B6D4",
+            "left_secondary": "solution",
+            "left_secondary_color": "#06B6D4",
+            "right_text": "كثافة وحجم إضافي للشعر الخفيف",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/purifying",
+            "left_primary": "purifying",
+            "left_primary_color": "#10B981",
+            "left_secondary": "blend",
+            "left_secondary_color": "#10B981",
+            "right_text": "تنقية الفروة ومكافحة القشرة",
+            "show_divider": true
+          }
+        },
+        {
+          "type": "category_card",
+          "settings": {
+            "card_link": "/collections/energizing",
+            "left_primary": "energizing",
+            "left_primary_color": "#EF4444",
+            "left_secondary": "blend",
+            "left_secondary_color": "#EF4444",
+            "right_text": "تقوية البصيلات ومنع تساقط الشعر",
+            "show_divider": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,666 @@
+{%- comment -%}
+  E-sellers Media Grid - E-sellers Professional (v4.9.0)
+
+  Mosaic of image and video tiles on a 6-column CSS grid. Each tile chooses its
+  own column and row span, text placement, overlay and colours, so editors can
+  build asymmetric editorial layouts without touching code.
+
+  Tiles collapse to a single column on mobile with their own row height.
+{%- endcomment -%}
+
+{%- liquid
+  assign tiles = section.blocks
+  assign desktop_row_h = section.settings.desktop_row_height | default: 180
+  assign mobile_row_h = section.settings.mobile_row_height | default: 200
+-%}
+
+{%- if tiles.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-mg-gap: {{ section.settings.grid_gap | default: 16 }}px;
+      --es-mg-row-h: {{ mobile_row_h }}px;
+      --es-mg-radius: {{ section.settings.corner_radius | default: 8 }}px;
+
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- elsif section.settings.background != blank -%}
+        background-color: {{ section.settings.background }};
+      {%- endif -%}
+      padding-top: {{ section.settings.padding_top | default: 40 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 40 }}px;
+    }
+
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} { --es-mg-row-h: {{ desktop_row_h }}px; }
+    }
+
+    {%- if section.settings.reduce_width -%}
+      #shopify-section-{{ section.id }} .es-mg { max-width: 1100px; margin-inline: auto; }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .es-mg {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: var(--es-mg-row-h);
+      gap: var(--es-mg-gap);
+    }
+
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-mg {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+    }
+
+    /* ---- Tile ---- */
+    #shopify-section-{{ section.id }} .es-mg__tile {
+      position: relative;
+      display: block;
+      overflow: hidden;
+      border-radius: var(--es-mg-radius);
+      /* Default span; each tile overrides via its own scoped rule. */
+      grid-column: span 2;
+      grid-row: span 2;
+      color: inherit;
+    }
+
+    #shopify-section-{{ section.id }} .es-mg__media,
+    #shopify-section-{{ section.id }} .es-mg__media img,
+    #shopify-section-{{ section.id }} .es-mg__media video,
+    #shopify-section-{{ section.id }} .es-mg__media iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 0;
+    }
+
+    #shopify-section-{{ section.id }} .es-mg__media img {
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    {%- if section.settings.zoom_on_hover -%}
+      #shopify-section-{{ section.id }} a.es-mg__tile:hover .es-mg__media img {
+        transform: scale(1.05);
+      }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .es-mg__overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #shopify-section-{{ section.id }} .es-mg__content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding: 2.4rem;
+      z-index: 2;
+    }
+
+    #shopify-section-{{ section.id }} .es-mg__title {
+      margin: 0;
+      color: inherit;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    #shopify-section-{{ section.id }} .es-mg__link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      align-self: flex-start;
+      margin-top: 0.4rem;
+      padding: 1rem 2rem;
+      border-radius: var(--button-radius, 8px);
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    #shopify-section-{{ section.id }} .es-mg__play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.92);
+      color: #121212;
+      cursor: pointer;
+      z-index: 3;
+    }
+    #shopify-section-{{ section.id }} .es-mg__play svg { width: 20px; height: 20px; margin-left: 2px; }
+    #shopify-section-{{ section.id }} .es-mg__tile.is-playing .es-mg__play,
+    #shopify-section-{{ section.id }} .es-mg__tile.is-playing .es-mg__content,
+    #shopify-section-{{ section.id }} .es-mg__tile.is-playing .es-mg__poster { display: none; }
+
+    {%- comment -%} Per-tile spans, alignment and colours. {%- endcomment -%}
+    {%- for block in tiles -%}
+      {%- liquid
+        assign col_span = block.settings.desktop_column_span | default: 2
+        assign row_span = block.settings.desktop_row_span | default: 2
+        assign d_pos = block.settings.desktop_text_position | default: 'bottom-left'
+        assign m_pos = block.settings.mobile_text_position | default: 'bottom-left'
+      -%}
+
+      #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} {
+        color: {{ block.settings.text_color | default: '#ffffff' }};
+      }
+
+      #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} .es-mg__overlay {
+        {%- if block.settings.background_gradient != blank -%}
+          background-image: {{ block.settings.background_gradient }};
+        {%- else -%}
+          background-color: {{ block.settings.overlay_color | default: '#000000' }};
+        {%- endif -%}
+        opacity: {{ block.settings.overlay_opacity | default: 25 | divided_by: 100.0 }};
+      }
+
+      {%- if block.settings.background != blank -%}
+        #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} {
+          background-color: {{ block.settings.background }};
+        }
+      {%- endif -%}
+
+      #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} .es-mg__link {
+        background-color: {{ block.settings.button_background | default: '#ffffff' }};
+        color: {{ block.settings.button_text_color | default: '#121212' }};
+      }
+
+      {%- comment -%} Mobile text placement {%- endcomment -%}
+      #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} .es-mg__content {
+        {%- render 'es-position-styles', position: m_pos -%}
+      }
+
+      @media screen and (min-width: 750px) {
+        #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} {
+          grid-column: span {{ col_span }};
+          grid-row: span {{ row_span }};
+        }
+        #shopify-section-{{ section.id }} #EsMgTile-{{ block.id }} .es-mg__content {
+          {%- render 'es-position-styles', position: d_pos -%}
+        }
+      }
+    {%- endfor -%}
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .es-mg__media img { transition: none; }
+    }
+  {%- endstyle -%}
+
+  <div class="{% if section.settings.full_width %}es-mg__full{% else %}page-width{% endif %}"
+       {% if section.settings.full_width %}style="padding-inline:1.5rem;"{% endif %}>
+    <div class="es-mg">
+      {%- for block in tiles -%}
+        {%- liquid
+          assign tile_link = block.settings.link_url
+          assign is_link = false
+          if tile_link != blank and block.settings.link_text == blank
+            assign is_link = true
+          endif
+          assign heading_tag = block.settings.heading_tag | default: 'h3'
+        -%}
+
+        {%- capture tile_body -%}
+          {%- case block.type -%}
+
+            {%- when 'image' -%}
+              <div class="es-mg__media">
+                {%- if block.settings.image != blank -%}
+                  {%- assign es_tagarg_1 = block.settings.title | default: block.settings.image.alt | escape -%}{{ block.settings.image | image_url: width: 1600 | image_tag:
+                     loading: 'lazy',
+                     widths: '300,450,600,900,1200,1600',
+                     sizes: '(max-width: 749px) 50vw, 60vw',
+                     alt: es_tagarg_1}}
+                {%- else -%}
+                  {{ 'lifestyle-2' | placeholder_svg_tag: '' }}
+                {%- endif -%}
+              </div>
+
+            {%- when 'video' -%}
+              <div class="es-mg__media" data-es-mg-target
+                   {% if block.settings.external_video_url != blank %}
+                     data-embed-type="{{ block.settings.external_video_url.type }}"
+                     data-embed-id="{{ block.settings.external_video_url.id }}"
+                   {% endif %}>
+                {%- if block.settings.video != blank -%}
+                  {{ block.settings.video | video_tag:
+                     image_size: '1200x',
+                     autoplay: false,
+                     loop: block.settings.loop_video,
+                     muted: true,
+                     controls: block.settings.show_video_controls,
+                     playsinline: true }}
+                {%- elsif block.settings.poster != blank -%}
+                  {%- assign es_tagarg_2 = block.settings.title | escape -%}{{ block.settings.poster | image_url: width: 1600 | image_tag:
+                     class: 'es-mg__poster',
+                     loading: 'lazy',
+                     alt: es_tagarg_2}}
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.external_video_url != blank and block.settings.video == blank -%}
+                <button type="button" class="es-mg__play" data-es-mg-play aria-label="Play video">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+              {%- endif -%}
+          {%- endcase -%}
+
+          <div class="es-mg__overlay"></div>
+
+          {%- if block.settings.title != blank or block.settings.link_text != blank -%}
+            <div class="es-mg__content">
+              {%- if block.settings.title != blank -%}
+                <{{ heading_tag }} class="es-mg__title {{ block.settings.heading_size | default: 'h4' }}">
+                  {%- render 'es-styled-text',
+                      content: block.settings.title,
+                      color: block.settings.text_color,
+                      gradient: block.settings.text_gradient -%}
+                </{{ heading_tag }}>
+              {%- endif -%}
+
+              {%- if block.settings.link_text != blank and tile_link != blank -%}
+                <a href="{{ tile_link }}" class="es-mg__link">{{ block.settings.link_text | escape }}</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endcapture -%}
+
+        {%- if is_link -%}
+          <a href="{{ tile_link }}" class="es-mg__tile" id="EsMgTile-{{ block.id }}" {{ block.shopify_attributes }}>
+            {{ tile_body }}
+          </a>
+        {%- else -%}
+          <div class="es-mg__tile" id="EsMgTile-{{ block.id }}" {{ block.shopify_attributes }}>
+            {{ tile_body }}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+
+      root.querySelectorAll('[data-es-mg-play]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var tile = btn.closest('.es-mg__tile');
+          var target = tile && tile.querySelector('[data-es-mg-target]');
+          if (!target || target.dataset.loaded === 'true') return;
+
+          var type = target.dataset.embedType;
+          var id = target.dataset.embedId;
+          var src = '';
+
+          if (type === 'youtube') {
+            src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0';
+          } else if (type === 'vimeo') {
+            src = 'https://player.vimeo.com/video/' + id + '?autoplay=1&playsinline=1';
+          }
+          if (!src) return;
+
+          var iframe = document.createElement('iframe');
+          iframe.setAttribute('src', src);
+          iframe.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+          iframe.setAttribute('allowfullscreen', '');
+          iframe.setAttribute('title', 'Video');
+          target.appendChild(iframe);
+
+          target.dataset.loaded = 'true';
+          tile.classList.add('is-playing');
+        });
+      });
+    })();
+  </script>
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add image or video blocks to build the grid.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Media grid",
+  "class": "shopify-section--es-media-grid",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "reduce_width",
+      "label": "Reduce maximum width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "zoom_on_hover",
+      "label": "Zoom images on hover",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "desktop_row_height",
+      "min": 80,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Row height (desktop)",
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "mobile_row_height",
+      "min": 80,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "label": "Row height (mobile)",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between tiles",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "corner_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Tile corner radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Section background gradient"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Heading" },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "HTML tag",
+          "options": [
+            { "value": "h2", "label": "h2" },
+            { "value": "h3", "label": "h3" },
+            { "value": "p", "label": "p" }
+          ],
+          "default": "h3"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Visual size",
+          "options": [
+            { "value": "h2", "label": "Large" },
+            { "value": "h3", "label": "Medium" },
+            { "value": "h4", "label": "Small" }
+          ],
+          "default": "h4"
+        },
+        { "type": "url", "id": "link_url", "label": "Link" },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Button label",
+          "info": "Leave blank to make the whole tile clickable instead."
+        },
+        { "type": "header", "content": "Layout" },
+        {
+          "type": "range",
+          "id": "desktop_column_span",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "label": "Column span (desktop)",
+          "default": 2
+        },
+        {
+          "type": "range",
+          "id": "desktop_row_span",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "label": "Row span (desktop)",
+          "default": 2
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_position",
+          "label": "Text position (desktop)",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle-left", "label": "Middle left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "middle-right", "label": "Middle right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ],
+          "default": "bottom-left"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_position",
+          "label": "Text position (mobile)",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" }
+          ],
+          "default": "bottom-left"
+        },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "background", "label": "Tile background" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#ffffff" },
+        { "type": "color_background", "id": "text_gradient", "label": "Text gradient" },
+        { "type": "color", "id": "button_background", "label": "Button background", "default": "#ffffff" },
+        { "type": "color", "id": "button_text_color", "label": "Button text", "default": "#121212" },
+        { "type": "color", "id": "overlay_color", "label": "Overlay", "default": "#000000" },
+        {
+          "type": "color_background",
+          "id": "background_gradient",
+          "label": "Overlay gradient",
+          "info": "Replaces the flat overlay colour when set."
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 25
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        { "type": "video", "id": "video", "label": "Video" },
+        {
+          "type": "video_url",
+          "id": "external_video_url",
+          "label": "Or video URL",
+          "accept": ["youtube", "vimeo"]
+        },
+        { "type": "image_picker", "id": "poster", "label": "Poster image" },
+        { "type": "checkbox", "id": "show_video_controls", "label": "Show controls", "default": true },
+        { "type": "checkbox", "id": "loop_video", "label": "Loop", "default": false },
+        { "type": "text", "id": "title", "label": "Heading" },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "HTML tag",
+          "options": [
+            { "value": "h2", "label": "h2" },
+            { "value": "h3", "label": "h3" },
+            { "value": "p", "label": "p" }
+          ],
+          "default": "h3"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "Visual size",
+          "options": [
+            { "value": "h2", "label": "Large" },
+            { "value": "h3", "label": "Medium" },
+            { "value": "h4", "label": "Small" }
+          ],
+          "default": "h4"
+        },
+        { "type": "url", "id": "link_url", "label": "Link" },
+        { "type": "text", "id": "link_text", "label": "Button label" },
+        { "type": "header", "content": "Layout" },
+        {
+          "type": "range",
+          "id": "desktop_column_span",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "label": "Column span (desktop)",
+          "default": 3
+        },
+        {
+          "type": "range",
+          "id": "desktop_row_span",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "label": "Row span (desktop)",
+          "default": 3
+        },
+        {
+          "type": "select",
+          "id": "desktop_text_position",
+          "label": "Text position (desktop)",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "top-center", "label": "Top center" },
+            { "value": "top-right", "label": "Top right" },
+            { "value": "middle-left", "label": "Middle left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "middle-right", "label": "Middle right" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" },
+            { "value": "bottom-right", "label": "Bottom right" }
+          ],
+          "default": "bottom-left"
+        },
+        {
+          "type": "select",
+          "id": "mobile_text_position",
+          "label": "Text position (mobile)",
+          "options": [
+            { "value": "top-left", "label": "Top left" },
+            { "value": "middle-center", "label": "Middle center" },
+            { "value": "bottom-left", "label": "Bottom left" },
+            { "value": "bottom-center", "label": "Bottom center" }
+          ],
+          "default": "bottom-left"
+        },
+        { "type": "header", "content": "Colors" },
+        { "type": "color", "id": "background", "label": "Tile background" },
+        { "type": "color", "id": "text_color", "label": "Text", "default": "#ffffff" },
+        { "type": "color_background", "id": "text_gradient", "label": "Text gradient" },
+        { "type": "color", "id": "button_background", "label": "Button background", "default": "#ffffff" },
+        { "type": "color", "id": "button_text_color", "label": "Button text", "default": "#121212" },
+        { "type": "color", "id": "overlay_color", "label": "Overlay", "default": "#000000" },
+        { "type": "color_background", "id": "background_gradient", "label": "Overlay gradient" },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "label": "Overlay opacity",
+          "default": 25
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Media grid",
+      "blocks": [
+        { "type": "image", "settings": { "desktop_column_span": 4, "desktop_row_span": 4 } },
+        { "type": "image", "settings": { "desktop_column_span": 2, "desktop_row_span": 2 } },
+        { "type": "image", "settings": { "desktop_column_span": 2, "desktop_row_span": 2 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,507 @@
+{%- comment -%}
+  E-sellers FAQ Section with Schema.org Microdata - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 56 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .es-faq {
+    display: flex;
+    gap: 56px;
+    align-items: flex-start;
+  }
+
+  .es-faq--start {
+    flex-direction: row;
+  }
+
+  .es-faq--end {
+    flex-direction: row-reverse;
+  }
+
+  .es-faq--center {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Intro Column */
+  .es-faq__intro {
+    flex: 1 1 {% if section.settings.text_position == 'center' %}100%{% else %}40%{% endif %};
+    max-width: {% if section.settings.text_position == 'center' %}760px{% else %}460px{% endif %};
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .es-faq__subheading {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #64748b;
+  }
+
+  .es-faq__heading {
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-faq__content {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  /* Team Support Box */
+  .es-faq__support-box {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border-radius: 12px;
+    background-color: {{ section.settings.accordion_background | default: '#f8fafc' }};
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .es-faq__team-avatar {
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .es-faq__support-hours {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .es-faq__answer-time {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 4px 0 0 0;
+  }
+
+  .es-faq__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    background-color: {{ section.settings.button_background | default: '#0f172a' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    align-self: flex-start;
+  }
+
+  .es-faq--center .es-faq__btn {
+    align-self: center;
+  }
+
+  .es-faq__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* Accordion Column */
+  .es-faq__main {
+    flex: 1 1 {% if section.settings.text_position == 'center' %}100%{% else %}60%{% endif %};
+    width: 100%;
+    max-width: {% if section.settings.text_position == 'center' %}840px{% else %}none{% endif %};
+  }
+
+  .es-faq__accordion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .es-faq-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: {{ section.settings.accordion_background | default: '#ffffff' }};
+    color: {{ section.settings.accordion_text_color | default: '#121212' }};
+    overflow: hidden;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .es-faq-item[open] {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+    border-color: #cbd5e1;
+  }
+
+  .es-faq-item__summary {
+    padding: 18px 24px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    list-style: none;
+  }
+
+  .es-faq-item__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .es-faq-item__chevron {
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  .es-faq-item[open] .es-faq-item__chevron {
+    transform: rotate(180deg);
+  }
+
+  .es-faq-item__content {
+    padding: 0 24px 20px 24px;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    opacity: 0.9;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 16px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .es-faq {
+      flex-direction: column;
+      gap: 36px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-faq-section">
+  <div class="{% if section.settings.full_width %}page-width-full{% else %}page-width{% endif %}">
+    <div class="es-faq es-faq--{{ section.settings.text_position | default: 'start' }}">
+      
+      <!-- Intro & Support Info -->
+      <div class="es-faq__intro">
+        <div class="es-faq__intro-text">
+          {%- if section.settings.subheading != blank -%}
+            <p class="es-faq__subheading">{{ section.settings.subheading | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="es-faq__heading">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+
+          {%- if section.settings.content != blank -%}
+            <div class="es-faq__content">{{ section.settings.content }}</div>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.team_avatar != blank or section.settings.support_hours != blank or section.settings.button_text != blank -%}
+          <div class="es-faq__support-box">
+            {%- if section.settings.team_avatar != blank -%}
+              <img
+                src="{{ section.settings.team_avatar | image_url: width: 700 }}"
+                width="{{ section.settings.team_avatar.width }}"
+                height="{{ section.settings.team_avatar.height }}"
+                alt="Support team"
+                class="es-faq__team-avatar"
+                style="max-width: {{ section.settings.team_avatar_width | default: 160 }}px;"
+                loading="lazy"
+              >
+            {%- endif -%}
+
+            {%- if section.settings.support_hours != blank or section.settings.answer_time != blank -%}
+              <div>
+                {%- if section.settings.support_hours != blank -%}
+                  <p class="es-faq__support-hours">{{ section.settings.support_hours }}</p>
+                {%- endif -%}
+                {%- if section.settings.answer_time != blank -%}
+                  <p class="es-faq__answer-time">{{ section.settings.answer_time }}</p>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+
+            {%- if section.settings.button_text != blank and section.settings.button_url != blank -%}
+              <a href="{{ section.settings.button_url }}" class="es-faq__btn">
+                {{ section.settings.button_text | escape }}
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Accordion Questions Column -->
+      <div class="es-faq__main">
+        <div class="es-faq__accordion-list">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.title != blank and block.settings.content != blank -%}
+              <details class="es-faq-item" {{ block.shopify_attributes }}>
+                <summary class="es-faq-item__summary">
+                  <span>{{ block.settings.title | escape }}</span>
+                  <svg class="es-faq-item__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </summary>
+                <div class="es-faq-item__content">
+                  {{ block.settings.content }}
+                </div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Structured data schema for SEO {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for block in section.blocks -%}
+      {
+        "@type": "Question",
+        "name": {{ block.settings.title | json }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ block.settings.content | strip_html | json }}
+        }
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+
+{% schema %}
+{
+  "name": "E-sellers FAQ",
+  "class": "shopify-section--es-faq",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "footer", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Got Questions?"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Description",
+      "default": "<p>Find quick answers to common questions regarding shipping, returns, and ordering.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Layout orientation",
+      "options": [
+        { "value": "start", "label": "Left (Side by side)" },
+        { "value": "center", "label": "Center (Stacked)" },
+        { "value": "end", "label": "Right (Side by side reversed)" }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "header",
+      "content": "Support Team Widget"
+    },
+    {
+      "type": "image_picker",
+      "id": "team_avatar",
+      "label": "Team avatar image",
+      "info": "700 x 160px recommended"
+    },
+    {
+      "type": "range",
+      "id": "team_avatar_width",
+      "min": 50,
+      "max": 350,
+      "step": 10,
+      "unit": "px",
+      "label": "Avatar width",
+      "default": 160
+    },
+    {
+      "type": "text",
+      "id": "support_hours",
+      "label": "Support hours",
+      "default": "Our support team is available Monday to Friday: 8am - 8:30pm."
+    },
+    {
+      "type": "text",
+      "id": "answer_time",
+      "label": "Response time",
+      "default": "Average answer time: Under 2 hours"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Contact button label",
+      "default": "Contact Support"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Contact button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Padding"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "accordion_background",
+      "label": "Accordion item background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accordion_text_color",
+      "label": "Accordion item text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "FAQ item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Question",
+          "default": "How long will shipping take?"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Answer",
+          "default": "<p>Orders are dispatched within 24-48 business hours. Domestic delivery takes 3-5 days, while international takes 7-14 days.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers FAQ",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "What is your return policy?",
+            "content": "<p>We offer hassle-free 30-day returns on all unused and unopened products in their original packaging.</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Do you ship internationally?",
+            "content": "<p>Yes, we offer insured worldwide shipping with live parcel tracking provided upon fulfillment.</p>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "How can I track my order?",
+            "content": "<p>Once your order ships, you will receive a tracking link via email and SMS to track your package in real time.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

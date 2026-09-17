@@ -1,0 +1,231 @@
+{%- comment -%}
+  Gift Card template - E-sellers Professional (v4.9.0)
+
+  Standalone page shown when a customer opens a gift card link. It renders
+  outside the normal theme chrome (layout none) so the card can be printed or
+  saved cleanly, and includes an offline-friendly QR code for in-store use.
+{%- endcomment -%}
+
+{%- layout none -%}
+
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>{{ 'gift_cards.issued.title' | t: value: gift_card.balance | money }} | {{ shop.name }}</title>
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    {{ content_for_header }}
+
+    {%- liquid
+      assign header_font = settings.type_header_font
+      assign body_font = settings.type_body_font
+    -%}
+
+    {%- style -%}
+      {{ header_font | font_face: font_display: 'swap' }}
+      {{ body_font | font_face: font_display: 'swap' }}
+
+      :root {
+        --gc-font-heading: {{ header_font.family }}, {{ header_font.fallback_families }};
+        --gc-font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+        --gc-bg: #f4f4f5;
+        --gc-surface: #ffffff;
+        --gc-text: #18181b;
+        --gc-muted: #71717a;
+        --gc-accent: #18181b;
+        --gc-border: #e4e4e7;
+      }
+
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: var(--gc-font-body);
+        background-color: var(--gc-bg);
+        color: var(--gc-text);
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .gc {
+        width: 100%;
+        max-width: 520px;
+        background: var(--gc-surface);
+        border-radius: 16px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        padding: 40px 32px;
+        text-align: center;
+      }
+
+      .gc__shop {
+        font-family: var(--gc-font-heading);
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .gc__logo { max-width: 180px; margin: 0 auto 12px; display: block; height: auto; }
+
+      .gc__label {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--gc-muted);
+        margin-bottom: 24px;
+      }
+
+      .gc__balance {
+        font-family: var(--gc-font-heading);
+        font-size: 48px;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        margin-bottom: 8px;
+      }
+
+      .gc__initial {
+        font-size: 14px;
+        color: var(--gc-muted);
+        margin-bottom: 24px;
+      }
+
+      .gc__image { width: 100%; height: auto; border-radius: 12px; margin-bottom: 24px; }
+
+      .gc__code {
+        display: inline-block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        padding: 14px 20px;
+        border: 2px dashed var(--gc-border);
+        border-radius: 10px;
+        margin-bottom: 20px;
+        word-break: break-all;
+      }
+
+      .gc__qr { display: flex; justify-content: center; margin-bottom: 24px; }
+      .gc__qr img, .gc__qr canvas { display: block; }
+
+      .gc__expiry { font-size: 14px; color: var(--gc-muted); margin-bottom: 24px; }
+
+      .gc__actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+      .gc__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 28px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        font-family: inherit;
+        background: var(--gc-accent);
+        color: #ffffff;
+      }
+
+      .gc__button--secondary {
+        background: transparent;
+        color: var(--gc-text);
+        border-color: var(--gc-border);
+      }
+
+      .gc__disabled {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #fef2f2;
+        color: #991b1b;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      @media print {
+        body { background: #ffffff; padding: 0; }
+        .gc { box-shadow: none; max-width: 100%; }
+        .gc__actions { display: none; }
+      }
+    {%- endstyle -%}
+  </head>
+
+  <body>
+    <main class="gc">
+      {%- if settings.logo != blank -%}
+        {{ settings.logo | image_url: width: 360 | image_tag: class: 'gc__logo', alt: shop.name }}
+      {%- else -%}
+        <p class="gc__shop">{{ shop.name }}</p>
+      {%- endif -%}
+
+      <p class="gc__label">{{ 'gift_cards.issued.subtext' | t | default: 'Gift card' }}</p>
+
+      {%- unless gift_card.enabled -%}
+        <p class="gc__disabled">{{ 'gift_cards.issued.disabled' | t | default: 'This gift card is disabled' }}</p>
+      {%- endunless -%}
+
+      {%- if gift_card.image != blank -%}
+        {{ gift_card.image | image_url: width: 1000 | image_tag: class: 'gc__image', alt: shop.name }}
+      {%- endif -%}
+
+      <p class="gc__balance">{{ gift_card.balance | money }}</p>
+
+      {%- if gift_card.balance != gift_card.initial_value -%}
+        <p class="gc__initial">
+          {{ 'gift_cards.issued.initial_value' | t: value: gift_card.initial_value | money }}
+        </p>
+      {%- endif -%}
+
+      <p class="gc__code" id="GiftCardCode">{{ gift_card.code | format_code }}</p>
+
+      <div class="gc__qr" id="GiftCardQr" data-identifier="{{ gift_card.qr_identifier }}"></div>
+
+      {%- if gift_card.expires_on -%}
+        <p class="gc__expiry">
+          {{ 'gift_cards.issued.expiration_date' | t: expires_on: gift_card.expires_on | date: format: 'date' }}
+        </p>
+      {%- endif -%}
+
+      <div class="gc__actions">
+        <a href="{{ shop.url }}" class="gc__button">
+          {{ 'gift_cards.issued.shop_link' | t | default: 'Start shopping' }}
+        </a>
+        <button type="button" class="gc__button gc__button--secondary" onclick="window.print();">
+          {{ 'gift_cards.issued.print' | t | default: 'Print' }}
+        </button>
+      </div>
+    </main>
+
+    {%- comment -%}
+      QR generator ships with Shopify, so no third-party CDN is involved.
+    {%- endcomment -%}
+    <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var host = document.getElementById('GiftCardQr');
+        if (!host || typeof QRCode === 'undefined') return;
+
+        new QRCode(host, {
+          text: host.dataset.identifier,
+          width: 160,
+          height: 160,
+          colorDark: '#18181b',
+          colorLight: '#ffffff'
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,245 @@
+{%- comment -%}
+  E-sellers Offers Banner - E-sellers One (v5.0.0)
+
+  Infinite CSS marquee of offer cards (eyebrow + big label + optional CTA).
+  The block set is emitted twice for a seamless loop; direction and speed are
+  merchant settings. Pure CSS animation, pauses on hover, respects
+  prefers-reduced-motion by wrapping instead of scrolling.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_ob_offers = section.blocks | where: 'type', 'offer'
+  assign es_ob_uid = section.id | replace: '-', '_'
+-%}
+
+{%- if es_ob_offers.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-ob-bg: {{ section.settings.background_color | default: '#f5f0eb' }};
+      --es-ob-text: {{ section.settings.text_color | default: '#1a1a1a' }};
+      --es-ob-accent: {{ section.settings.accent_color | default: 'var(--es-accent)' }};
+      --es-ob-duration: {{ section.settings.speed | default: 22 }}s;
+
+      background: var(--es-ob-bg);
+      overflow: hidden;
+      position: relative;
+      padding-block: 28px;
+    }
+
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} { padding-block: 36px; }
+    }
+
+    #shopify-section-{{ section.id }}::before,
+    #shopify-section-{{ section.id }}::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    #shopify-section-{{ section.id }}::before {
+      left: 0;
+      background: linear-gradient(to right, var(--es-ob-bg), transparent);
+    }
+    #shopify-section-{{ section.id }}::after {
+      right: 0;
+      background: linear-gradient(to left, var(--es-ob-bg), transparent);
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }}::before,
+      #shopify-section-{{ section.id }}::after { width: 140px; }
+    }
+
+    #shopify-section-{{ section.id }} .es-ob__viewport { overflow: hidden; width: 100%; }
+
+    #shopify-section-{{ section.id }} .es-ob__track {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: max-content;
+      animation: es-ob-scroll-{{ es_ob_uid }} var(--es-ob-duration) linear infinite;
+      {%- if section.settings.direction == 'rtl' -%}
+        animation-direction: reverse;
+      {%- endif -%}
+      will-change: transform;
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-ob__track { gap: 24px; }
+    }
+
+    #shopify-section-{{ section.id }}:hover .es-ob__track { animation-play-state: paused; }
+
+    @keyframes es-ob-scroll-{{ es_ob_uid }} {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    #shopify-section-{{ section.id }} .es-ob__card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--es-ob-card-bg, var(--es-bg));
+      border-radius: var(--es-radius-xl);
+      padding: 22px 28px;
+      min-width: 160px;
+      min-height: 130px;
+      text-align: center;
+      box-shadow: var(--es-elev-1);
+      transition: transform var(--es-dur-base) var(--es-ease), box-shadow var(--es-dur-base) var(--es-ease);
+      flex-shrink: 0;
+    }
+    #shopify-section-{{ section.id }} .es-ob__card:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: var(--es-elev-2);
+    }
+    #shopify-section-{{ section.id }} .es-ob__card--hero {
+      min-width: 190px;
+      min-height: 158px;
+      padding: 28px 36px;
+      box-shadow: var(--es-elev-2);
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-ob__card { min-width: 200px; min-height: 160px; padding: 28px 36px; }
+      #shopify-section-{{ section.id }} .es-ob__card--hero { min-width: 240px; min-height: 192px; padding: 36px 48px; }
+    }
+
+    #shopify-section-{{ section.id }} .es-ob__eyebrow {
+      color: var(--es-ob-text);
+      font-size: var(--es-text-xs);
+      font-weight: 650;
+      letter-spacing: var(--es-track-caps);
+      text-transform: uppercase;
+      opacity: 0.55;
+    }
+    #shopify-section-{{ section.id }} .es-ob__label {
+      color: var(--es-ob-text);
+      font-size: var(--es-text-2xl);
+      font-weight: 800;
+      letter-spacing: var(--es-track-tight);
+      line-height: 1;
+    }
+    #shopify-section-{{ section.id }} .es-ob__card--hero .es-ob__label { font-size: var(--es-text-3xl); }
+
+    #shopify-section-{{ section.id }} .es-ob__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      color: var(--es-ob-accent);
+      font-size: var(--es-text-xs);
+      font-weight: 700;
+      letter-spacing: var(--es-track-wide);
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: gap var(--es-dur-fast) var(--es-ease);
+    }
+    #shopify-section-{{ section.id }} .es-ob__cta:hover { gap: 8px; opacity: 1; }
+    #shopify-section-{{ section.id }} .es-ob__cta svg { width: 14px; height: 14px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      #shopify-section-{{ section.id }} .es-ob__track {
+        animation: none;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+      }
+      #shopify-section-{{ section.id }} .es-ob__set--clone { display: none; }
+    }
+  {%- endstyle -%}
+
+  <div class="es-ob__viewport">
+    <div class="es-ob__track">
+      {%- for pass in (1..2) -%}
+        <div class="es-ob__set{% if pass == 2 %} es-ob__set--clone{% endif %}" aria-hidden="{% if pass == 2 %}true{% else %}false{% endif %}">
+          {%- for block in es_ob_offers -%}
+            <div class="es-ob__card{% if block.settings.is_hero %} es-ob__card--hero{% endif %}"
+                 style="--es-ob-card-bg: {{ block.settings.card_bg | default: '#ffffff' }};"
+                 {% if pass == 1 %}{{ block.shopify_attributes }}{% endif %}>
+              {%- if block.settings.eyebrow != blank -%}<span class="es-ob__eyebrow">{{ block.settings.eyebrow | escape }}</span>{%- endif -%}
+              <span class="es-ob__label">{{ block.settings.label | escape }}</span>
+              {%- if block.settings.cta_text != blank -%}
+                <a href="{{ block.settings.cta_url | default: '#' }}" class="es-ob__cta" aria-label="{{ block.settings.cta_text | escape }} - {{ block.settings.label | escape }}">
+                  {{ block.settings.cta_text | escape }}
+                  <svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add offer card blocks to populate this marquee.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Offers Banner",
+  "tag": "section",
+  "class": "shopify-section--es-offers-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#F5F0EB" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#1A1A1A" },
+    { "type": "color", "id": "accent_color", "label": "CTA / accent", "default": "#B5813A" },
+    {
+      "type": "header",
+      "content": "Motion"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Scroll direction",
+      "options": [
+        { "value": "ltr", "label": "Left to right" },
+        { "value": "rtl", "label": "Right to left" }
+      ],
+      "default": "ltr"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Seconds per loop",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "default": 22
+    }
+  ],
+  "blocks": [
+    {
+      "type": "offer",
+      "name": "Offer card",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow label", "default": "Deal" },
+        { "type": "text", "id": "label", "label": "Offer text", "default": "30% OFF" },
+        { "type": "color", "id": "card_bg", "label": "Card background", "default": "#FFFFFF" },
+        { "type": "checkbox", "id": "is_hero", "label": "Hero card (larger)", "default": false },
+        { "type": "text", "id": "cta_text", "label": "Button text", "default": "Shop now" },
+        { "type": "url", "id": "cta_url", "label": "Button link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "E-sellers Offers Banner",
+      "blocks": [
+        { "type": "offer", "settings": { "eyebrow": "Flash sale", "label": "30% OFF" } },
+        { "type": "offer", "settings": { "eyebrow": "Today only", "label": "50% OFF", "is_hero": true } },
+        { "type": "offer", "settings": { "eyebrow": "Members", "label": "10% OFF" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

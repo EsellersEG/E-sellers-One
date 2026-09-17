@@ -1,0 +1,496 @@
+{%- comment -%}
+  E-sellers Email Signup Banner Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .es-signup-banner {
+    position: relative;
+    width: 100%;
+    min-height: {% if section.settings.image_height == 'small' %}380px{% elsif section.settings.image_height == 'large' %}620px{% else %}500px{% endif %};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: {{ section.settings.background | default: '#0f172a' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+  }
+
+  /* Media Background */
+  .es-signup-banner__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .es-signup-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .es-signup-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: {{ section.settings.overlay_color | default: '#000000' }};
+    opacity: {{ section.settings.image_overlay_opacity | default: 40 | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  /* Content Wrapper */
+  .es-signup-banner__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 60px 24px;
+    display: flex;
+    box-sizing: border-box;
+  }
+
+  .es-signup-banner__content--top-left { justify-content: flex-start; align-items: flex-start; }
+  .es-signup-banner__content--top-center { justify-content: center; align-items: flex-start; }
+  .es-signup-banner__content--top-right { justify-content: flex-end; align-items: flex-start; }
+  .es-signup-banner__content--middle-left { justify-content: flex-start; align-items: center; }
+  .es-signup-banner__content--middle-center { justify-content: center; align-items: center; }
+  .es-signup-banner__content--middle-right { justify-content: flex-end; align-items: center; }
+  .es-signup-banner__content--bottom-left { justify-content: flex-start; align-items: flex-end; }
+  .es-signup-banner__content--bottom-center { justify-content: center; align-items: flex-end; }
+  .es-signup-banner__content--bottom-right { justify-content: flex-end; align-items: flex-end; }
+
+  /* Signup Box */
+  .es-signup-box {
+    max-width: 540px;
+    width: 100%;
+    padding: 40px 36px;
+    border-radius: 16px;
+    box-sizing: border-box;
+    {% if section.settings.show_text_box %}
+      background-color: {{ section.settings.box_background | default: '#ffffff' }};
+      color: {{ section.settings.box_text_color | default: '#121212' }};
+      box-shadow: 0 10px 40px -4px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    {% else %}
+      background: transparent;
+      color: {{ section.settings.box_text_color | default: '#ffffff' }};
+    {% endif %}
+  }
+
+  .es-signup-banner--align-left .es-signup-box { text-align: left; }
+  .es-signup-banner--align-center .es-signup-box { text-align: center; }
+  .es-signup-banner--align-right .es-signup-box { text-align: right; }
+
+  .es-signup-box__heading {
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 12px 0;
+    color: inherit;
+  }
+
+  .es-signup-box__subheading {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 24px 0;
+    opacity: 0.9;
+    color: inherit;
+  }
+
+  /* Email Form */
+  .es-newsletter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .es-newsletter-form__field {
+    display: flex;
+    gap: 8px;
+    position: relative;
+  }
+
+  .es-newsletter-form__input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .es-newsletter-form__input:focus {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+  }
+
+  .es-newsletter-form__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    background-color: {{ section.settings.button_background | default: '#0f172a' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .es-newsletter-form__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .es-newsletter-form__success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .es-newsletter-form__error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  @media screen and (max-width: 640px) {
+    .es-newsletter-form__field {
+      flex-direction: column;
+    }
+    .es-signup-box {
+      padding: 28px 20px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="es-signup-banner es-signup-banner--align-{{ section.settings.desktop_content_alignment | default: 'center' }}">
+  {%- if section.settings.show_background_image and section.settings.image != blank -%}
+    <div class="es-signup-banner__media">
+      {{ section.settings.image | image_url: width: 2800 | image_tag:
+        loading: 'eager',
+        fetchpriority: 'high',
+        sizes: '100vw',
+        widths: '400, 600, 800, 1200, 1600, 2000, 2600',
+        class: 'es-signup-banner__image'
+      }}
+    </div>
+    <div class="es-signup-banner__overlay"></div>
+  {%- endif -%}
+
+  <div class="page-width es-signup-banner__content es-signup-banner__content--{{ section.settings.desktop_content_position | default: 'middle-center' }}">
+    <div class="es-signup-box">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'heading' -%}
+            <h2 class="es-signup-box__heading" {{ block.shopify_attributes }}>
+              {{ block.settings.heading | default: 'Opening Soon' | escape }}
+            </h2>
+
+          {%- when 'paragraph' -%}
+            <div class="es-signup-box__subheading" {{ block.shopify_attributes }}>
+              {{ block.settings.text | default: '<p>Be the first to know when we launch. Subscribe for exclusive updates and VIP offers.</p>' }}
+            </div>
+
+          {%- when 'email_form' -%}
+            <div class="es-signup-box__form-wrapper" {{ block.shopify_attributes }}>
+              {% form 'customer', class: 'es-newsletter-form' %}
+                <input type="hidden" name="contact[tags]" value="newsletter, password_page">
+
+                {%- if form.posted_successfully? -%}
+                  <div class="es-newsletter-form__success" role="status">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>{{ 'sections.newsletter.success' | t | default: 'Thanks for subscribing! Check your email soon.' }}</span>
+                  </div>
+                {%- else -%}
+                  <div class="es-newsletter-form__field">
+                    <input
+                      type="email"
+                      name="contact[email]"
+                      id="NewsletterForm--{{ section.id }}"
+                      value="{{ form.email }}"
+                      placeholder="{{ 'sections.newsletter.email_placeholder' | t | default: 'Enter your email address' }}"
+                      class="es-newsletter-form__input"
+                      required
+                      autocomplete="email"
+                    >
+                    <button type="submit" class="es-newsletter-form__btn">
+                      {{ block.settings.button_text | default: 'Subscribe' }}
+                    </button>
+                  </div>
+
+                  {%- if form.errors -%}
+                    <div class="es-newsletter-form__error" role="alert">
+                      {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+              {% endform %}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "E-sellers Email Banner",
+  "class": "shopify-section--es-email-signup-banner",
+  "tag": "section",
+  "enabled_on": {
+    "templates": [
+      "password"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_background_image",
+      "label": "Show background image",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner background image",
+      "info": "2400 x 1200px recommended"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Image overlay opacity",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "label": "Banner height",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "Box Layout & Alignment"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "label": "Box position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top right"
+        },
+        {
+          "value": "middle-left",
+          "label": "Middle left"
+        },
+        {
+          "value": "middle-center",
+          "label": "Middle center"
+        },
+        {
+          "value": "middle-right",
+          "label": "Middle right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom-center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "middle-center"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_alignment",
+      "label": "Content text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_box",
+      "label": "Show styled background container card",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "box_background",
+      "label": "Box background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "box_text_color",
+      "label": "Box text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#0f172a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Advanced styling"
+    },
+    {
+      "id": "background",
+      "label": "Background",
+      "type": "color",
+      "default": "#0f172a"
+    },
+    {
+      "id": "background_gradient",
+      "label": "Background gradient",
+      "type": "color_background"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Opening Soon",
+          "label": "Heading text"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "name": "Paragraph",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Be the first to know when we launch our new collection. Sign up for early access.</p>",
+          "label": "Description"
+        }
+      ]
+    },
+    {
+      "type": "email_form",
+      "name": "Email form",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button label",
+          "default": "Notify me"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Email Banner",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "paragraph"
+        },
+        {
+          "type": "email_form"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

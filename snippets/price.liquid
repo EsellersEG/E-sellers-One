@@ -1,0 +1,91 @@
+{%- comment -%}
+  Renders a list of product's price (regular, sale, unit).
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - use_variant: {Boolean} Renders selected or first_available_variant price instead of lowest price (optional)
+  - show_badges: {Boolean} Renders 'Sale' and 'Sold Out' badges (optional)
+  - price_class: {String} Adds a price class to the price element (optional)
+
+  Usage:
+  {% render 'price', product: product, show_badges: true %}
+{%- endcomment -%}
+
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign available = target.available | default: false
+  assign money_price = price | money
+
+  if target == product and product.price_varies
+    assign money_price = 'products.product.price.from_price_html' | t: price: money_price
+  endif
+-%}
+
+<div class="price
+  {%- if price_class %} {{ price_class }}{% endif -%}
+  {%- if available == false %} price--sold-out{% endif -%}
+  {%- if compare_at_price > price %} price--on-sale{% endif -%}
+">
+  <div class="price__container">
+    {%- if compare_at_price > price -%}
+      <div class="price__sale" style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+        <span class="price-item price-item--sale" style="font-weight: 700; color: #dc2626; font-size: 1.6rem;">
+          {{ money_price }}
+        </span>
+        <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+        <s class="price-item price-item--regular" style="color: #71717a; text-decoration: line-through; font-size: 1.4rem;">
+          {{ compare_at_price | money }}
+        </s>
+      </div>
+    {%- else -%}
+      <div class="price__regular">
+        <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="price-item price-item--regular" style="font-weight: 700; font-size: 1.6rem;">
+          {{ money_price }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    {%- if target.unit_price_measurement -%}
+      <div class="unit-price" style="font-size: 1.2rem; color: #71717a; margin-top: 2px;">
+        <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+        <span>{{ target.unit_price | money }}</span>
+        <span aria-hidden="true">/</span>
+        <span>
+          {%- if target.unit_price_measurement.reference_value != 1 -%}
+            {{- target.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ target.unit_price_measurement.reference_unit }}
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if show_badges -%}
+    {%- if compare_at_price > price and available -%}
+      {%- assign discount = compare_at_price | minus: price -%}
+      {%- assign percent_off = discount | times: 100 | divided_by: compare_at_price -%}
+      <span class="badge badge--sale" style="margin-left: 6px;">
+        {%- if settings.sale_badge_type == 'percentage' -%}
+          -{{ percent_off }}%
+        {%- elsif settings.sale_badge_type == 'amount' -%}
+          {{ 'products.product.save_html' | t: amount: discount | money }}
+        {%- else -%}
+          {{ 'products.product.on_sale' | t }}
+        {%- endif -%}
+      </span>
+    {%- elsif available == false and settings.show_sold_out_badge -%}
+      <span class="badge badge--sold-out" style="margin-left: 6px;">
+        {{ 'products.product.sold_out' | t }}
+      </span>
+    {%- endif -%}
+  {%- endif -%}
+</div>

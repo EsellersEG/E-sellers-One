@@ -1,0 +1,52 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "color_schemes": {
+      "scheme-1": {
+        "background": "#ffffff",
+        "text": "#121212",
+        "button": "#121212",
+        "button_label": "#ffffff",
+        "outline_button": "#121212",
+        "shadow": "#121212",
+        "background_gradient": ""
+      }
+    },
+    "type_header_font": "sans-serif",
+    "heading_scale": 100,
+    "heading_text_transform": "none",
+    "type_body_font": "sans-serif",
+    "body_scale": 100,
+    "page_width": 1360,
+    "grid_gap": 24,
+    "card_corner_radius": 12,
+    "button_corner_radius": 8,
+    "input_corner_radius": 8,
+    "badge_corner_radius": 6,
+    "cart_type": "drawer",
+    "show_cart_note": true,
+    "enable_free_shipping_bar": true,
+    "free_shipping_threshold": 100,
+    "free_shipping_text_progress": "Add [amount] more to unlock FREE shipping!",
+    "free_shipping_text_success": "Congratulations! You unlocked FREE standard shipping!",
+    "card_image_ratio": "portrait",
+    "show_secondary_image": true,
+    "show_vendor": false,
+    "show_rating": true,
+    "enable_quick_add": true,
+    "enable_color_swatches": true,
+    "show_sale_badge": true,
+    "sale_badge_type": "percentage",
+    "show_sold_out_badge": true,
+    "enable_hover_zoom": true,
+    "enable_button_animation": true
+  }
+}

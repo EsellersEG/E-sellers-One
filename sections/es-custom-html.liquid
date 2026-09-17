@@ -1,0 +1,125 @@
+{%- comment -%}
+  E-sellers Custom HTML Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- if section.settings.html != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      background-color: {{ section.settings.background | default: 'transparent' }};
+      {% if section.settings.background_gradient != blank %}
+        background: {{ section.settings.background_gradient }};
+      {% endif %}
+      color: {{ section.settings.text_color | default: '#121212' }};
+      padding-top: {% if section.settings.remove_vertical_spacing %}0{% else %}{{ section.settings.padding_top | default: 40 }}{% endif %}px;
+      padding-bottom: {% if section.settings.remove_vertical_spacing %}0{% else %}{{ section.settings.padding_bottom | default: 40 }}{% endif %}px;
+    }
+
+    .es-custom-html {
+      width: 100%;
+      position: relative;
+    }
+
+    .es-custom-html--contained {
+      max-width: {{ section.settings.max_width | default: 1400 }}px;
+      margin-inline: auto;
+      padding-inline: {% if section.settings.remove_horizontal_spacing %}0{% else %}20px{% endif %};
+      box-sizing: border-box;
+    }
+  {%- endstyle -%}
+
+  <div class="es-custom-html {% unless section.settings.full_width %}es-custom-html--contained{% endunless %}">
+    {{ section.settings.html }}
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Custom HTML",
+  "class": "shopify-section--es-custom-html",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width layout",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Container max width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_vertical_spacing",
+      "label": "Remove vertical padding (top & bottom)",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_horizontal_spacing",
+      "label": "Remove horizontal padding (left & right)",
+      "default": false
+    },
+    {
+      "type": "html",
+      "id": "html",
+      "label": "HTML Code",
+      "default": "<div style=\"text-align: center; padding: 40px; background: #f8fafc; border-radius: 12px;\"><h3>Custom HTML Section</h3><p>Write or paste your custom HTML, embedded widgets, or scripts here.</p></div>"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Padding"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Custom HTML"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,517 @@
+{%- comment -%}
+  E-sellers Testimonials - E-sellers Professional (v4.9.0)
+
+  Customer quote cards as either a responsive grid or a scroll-snap carousel
+  with native scrollbar-free paging. Carousel mode uses CSS scroll-snap plus a
+  small progress bar; no carousel library involved.
+{%- endcomment -%}
+
+{%- liquid
+  assign cards = section.blocks | where: 'type', 'testimonial'
+  assign stacked = section.settings.stack_testimonials
+-%}
+
+{%- if cards.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      --es-tm-bg: {{ section.settings.background | default: 'transparent' }};
+      --es-tm-text: {{ section.settings.text_color | default: 'inherit' }};
+      --es-tm-heading: {{ section.settings.heading_color | default: 'inherit' }};
+      --es-tm-card-bg: {{ section.settings.testimonial_card_background | default: '#f5f5f5' }};
+      --es-tm-card-text: {{ section.settings.testimonial_card_text_color | default: 'inherit' }};
+      --es-tm-star: {{ section.settings.star_color | default: '#f5a623' }};
+      --es-tm-radius: {{ section.settings.card_radius | default: 12 }}px;
+      --es-tm-gap: {{ section.settings.card_gap | default: 24 }}px;
+      --es-tm-per-row: 1;
+      --es-tm-card-w: 74vw;
+
+      {%- if section.settings.background_gradient != blank -%}
+        background-image: {{ section.settings.background_gradient }};
+      {%- else -%}
+        background-color: var(--es-tm-bg);
+      {%- endif -%}
+      color: var(--es-tm-text);
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    @media screen and (min-width: 700px) {
+      #shopify-section-{{ section.id }} { --es-tm-per-row: 2; --es-tm-card-w: 52vw; }
+    }
+    @media screen and (min-width: 1000px) {
+      #shopify-section-{{ section.id }} { --es-tm-card-w: 36vw; }
+    }
+    @media screen and (min-width: 1150px) {
+      #shopify-section-{{ section.id }} {
+        --es-tm-per-row: {{ section.settings.items_per_row | default: 3 }};
+        --es-tm-card-w: calc((100% - (var(--es-tm-gap) * 2)) / 3);
+      }
+    }
+
+    /* ---- Intro ---- */
+    #shopify-section-{{ section.id }} .es-tm__intro {
+      margin-bottom: 3.2rem;
+      text-align: {{ section.settings.heading_alignment | default: 'center' }};
+      {%- if section.settings.heading_alignment == 'center' or section.settings.heading_alignment == blank -%}
+        max-width: 700px;
+        margin-inline: auto;
+      {%- endif -%}
+    }
+    #shopify-section-{{ section.id }} .es-tm__subheading {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin: 0 0 0.8rem;
+    }
+    #shopify-section-{{ section.id }} .es-tm__title {
+      color: var(--es-tm-heading);
+      margin: 0 0 1.2rem;
+    }
+    #shopify-section-{{ section.id }} .es-tm__intro-content > p:last-child { margin-bottom: 0; }
+    #shopify-section-{{ section.id }} .es-tm__intro-link {
+      display: inline-block;
+      margin-top: 1.6rem;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    /* ---- Track ---- */
+    #shopify-section-{{ section.id }} .es-tm__list {
+      display: grid;
+      gap: var(--es-tm-gap);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      {%- if stacked -%}
+        grid-template-columns: repeat(var(--es-tm-per-row), minmax(0, 1fr));
+      {%- else -%}
+        grid-auto-flow: column;
+        grid-auto-columns: var(--es-tm-card-w);
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-inline: 1.5rem;
+        margin-inline: -1.5rem;
+      {%- endif -%}
+    }
+    #shopify-section-{{ section.id }} .es-tm__list::-webkit-scrollbar { display: none; }
+    #shopify-section-{{ section.id }} .es-tm__card { scroll-snap-align: start; }
+
+    /* ---- Card ---- */
+    #shopify-section-{{ section.id }} .es-tm__card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+      background-color: var(--es-tm-card-bg);
+      color: var(--es-tm-card-text);
+      border-radius: var(--es-tm-radius);
+      padding: 2.4rem;
+      height: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .es-tm__head {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.6rem;
+    }
+    #shopify-section-{{ section.id }} .es-tm__avatar {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border-radius: 8px;
+    }
+    #shopify-section-{{ section.id }} .es-tm__avatar--round { border-radius: 50%; }
+
+    #shopify-section-{{ section.id }} .es-tm__stars {
+      display: inline-flex;
+      gap: 2px;
+      color: var(--es-tm-star);
+    }
+    #shopify-section-{{ section.id }} .es-tm__star { width: 16px; height: 16px; }
+    #shopify-section-{{ section.id }} .es-tm__star--empty { opacity: 0.28; }
+
+    #shopify-section-{{ section.id }} .es-tm__author {
+      font-size: 1.4rem;
+      opacity: 0.75;
+      margin: 0.4rem 0 0;
+    }
+    #shopify-section-{{ section.id }} .es-tm__card-title {
+      font-weight: 700;
+      margin: 0 0 0.6rem;
+    }
+    #shopify-section-{{ section.id }} .es-tm__content > p:last-child { margin-bottom: 0; }
+
+    /* ---- Carousel progress ---- */
+    #shopify-section-{{ section.id }} .es-tm__progress {
+      display: {% if stacked %}none{% else %}block{% endif %};
+      height: 3px;
+      border-radius: 2px;
+      background: color-mix(in srgb, currentColor 15%, transparent);
+      margin-top: 2.4rem;
+      overflow: hidden;
+    }
+    #shopify-section-{{ section.id }} .es-tm__progress-bar {
+      height: 100%;
+      width: 25%;
+      border-radius: 2px;
+      background: currentColor;
+      transition: transform 0.15s linear;
+    }
+    @media screen and (min-width: 1150px) {
+      {%- if stacked -%}
+        #shopify-section-{{ section.id }} .es-tm__progress { display: none; }
+      {%- endif -%}
+    }
+  {%- endstyle -%}
+
+  <div class="{% if section.settings.full_width %}es-tm__full{% else %}page-width{% endif %}"
+       {% if section.settings.full_width %}style="padding-inline:1.5rem;"{% endif %}>
+
+    {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.content != blank -%}
+      <div class="es-tm__intro">
+        {%- if section.settings.subheading != blank -%}
+          <p class="es-tm__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="h2 es-tm__title">
+            {%- render 'es-styled-text',
+                content: section.settings.title,
+                color: section.settings.heading_color,
+                gradient: section.settings.heading_gradient -%}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.content != blank -%}
+          <div class="es-tm__intro-content">{{ section.settings.content }}</div>
+        {%- endif -%}
+        {%- if section.settings.link_text != blank and section.settings.link_url != blank -%}
+          <a href="{{ section.settings.link_url }}" class="es-tm__intro-link">{{ section.settings.link_text | escape }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <ul class="es-tm__list" role="list" data-es-tm-list>
+      {%- for block in cards -%}
+        <li class="es-tm__card" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank or block.settings.author != blank or block.settings.show_rating -%}
+            <div class="es-tm__head">
+              {%- if block.settings.image != blank -%}
+                {%- capture avatar_class -%}
+                  es-tm__avatar{% if block.settings.round_avatar %} es-tm__avatar--round{% endif %}
+                {%- endcapture -%}
+                {%- assign es_tagarg_1 = block.settings.author | escape -%}{{ block.settings.image | image_url: width: 168 | image_tag:
+                   loading: 'lazy',
+                   widths: '56,112,168',
+                   sizes: '56px',
+                   class: avatar_class,
+                   alt: es_tagarg_1}}
+              {%- endif -%}
+
+              <div>
+                {%- if block.settings.show_rating -%}
+                  {%- assign rating_value = block.settings.rating | default: 5 -%}
+                  <span class="es-tm__stars" role="img" aria-label="{{ rating_value }} out of 5 stars">
+                    {%- for i in (1..5) -%}
+                      <svg class="es-tm__star{% if i > rating_value %} es-tm__star--empty{% endif %}"
+                           viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/>
+                      </svg>
+                    {%- endfor -%}
+                  </span>
+                {%- endif -%}
+
+                {%- if block.settings.author != blank -%}
+                  <p class="es-tm__author">{{ block.settings.author | escape }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.title != blank or block.settings.content != blank -%}
+            <div>
+              {%- if block.settings.title != blank -%}
+                <p class="es-tm__card-title">{{ block.settings.title | escape }}</p>
+              {%- endif -%}
+              {%- if block.settings.content != blank -%}
+                <div class="es-tm__content">{{ block.settings.content }}</div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- unless stacked -%}
+      <div class="es-tm__progress" aria-hidden="true">
+        <div class="es-tm__progress-bar" data-es-tm-bar></div>
+      </div>
+    {%- endunless -%}
+  </div>
+
+  {%- unless stacked -%}
+    <script>
+      (function () {
+        var root = document.getElementById('shopify-section-{{ section.id }}');
+        if (!root) return;
+
+        var list = root.querySelector('[data-es-tm-list]');
+        var bar = root.querySelector('[data-es-tm-bar]');
+        if (!list || !bar) return;
+
+        function update() {
+          var scrollable = list.scrollWidth - list.clientWidth;
+          var visibleRatio = list.clientWidth / list.scrollWidth;
+
+          bar.style.width = Math.max(visibleRatio * 100, 8) + '%';
+
+          if (scrollable <= 0) {
+            bar.style.transform = 'translateX(0)';
+            return;
+          }
+          var progress = list.scrollLeft / scrollable;
+          var travel = (1 / visibleRatio - 1) * 100;
+          bar.style.transform = 'translateX(' + progress * travel + '%)';
+        }
+
+        list.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+      })();
+    </script>
+  {%- endunless -%}
+
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">
+    Add testimonial blocks to populate this section.
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Testimonials",
+  "class": "shopify-section--es-testimonials",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_testimonials",
+      "label": "Show as a grid",
+      "default": true,
+      "info": "Off turns the list into a swipeable carousel."
+    },
+    {
+      "type": "range",
+      "id": "items_per_row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Cards per row (desktop grid)",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Testimonials"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link text"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_card_background",
+      "label": "Card background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "testimonial_card_text_color",
+      "label": "Card text"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#f5a623"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Avatar"
+        },
+        {
+          "type": "checkbox",
+          "id": "round_avatar",
+          "label": "Round avatar",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_rating",
+          "label": "Show rating",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Rating",
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Testimonial"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Share what your customers are saying about your products, service or shipping.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "blocks": [
+        { "type": "testimonial" },
+        { "type": "testimonial" },
+        { "type": "testimonial" }
+      ]
+    }
+  ]
+}
+{% endschema %}

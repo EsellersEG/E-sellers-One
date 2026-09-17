@@ -1,0 +1,195 @@
+{%- comment -%}
+  Variant Added Section - E-sellers Professional (v4.9.0)
+  Used by AJAX Section Rendering API on /cart/add.js
+{%- endcomment -%}
+
+{%- style -%}
+  .es-variant-added-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .es-variant-added-alert {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .es-variant-added-item {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 0;
+  }
+
+  .es-variant-added-thumb {
+    width: 64px;
+    height: 76px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #f1f5f9;
+    flex-shrink: 0;
+  }
+
+  .es-variant-added-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .es-variant-added-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    line-height: 1.3;
+  }
+
+  .es-variant-added-title:hover {
+    text-decoration: underline;
+  }
+
+  .es-variant-added-variant-name {
+    font-size: 0.85rem;
+    color: #64748b;
+  }
+
+  .es-variant-added-price {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 2px;
+  }
+
+  .es-variant-added-discount {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #15803d;
+    background: #dcfce7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  .es-variant-added-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .es-variant-added-btn-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: transparent;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .es-variant-added-btn-cart:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
+
+  .es-variant-added-btn-checkout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .es-variant-added-btn-checkout:hover {
+    background: #1e293b;
+  }
+{%- endstyle -%}
+
+<div class="es-variant-added-wrap">
+  <!-- Success Confirmation -->
+  <div class="es-variant-added-alert" role="status">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span>{{ 'product.general.added_to_cart' | t | default: 'Added to your cart!' }}</span>
+  </div>
+
+  <!-- Item Preview -->
+  <div class="es-variant-added-item">
+    {%- assign item_image = product_variant.featured_media | default: product_variant.product.featured_media -%}
+    {%- if item_image != blank -%}
+      {%- assign es_tagarg_1 = product_variant.product.title | escape -%}{{ item_image | image_url: width: 140 | image_tag:
+        loading: 'lazy',
+        class: 'es-variant-added-thumb',
+        alt: es_tagarg_1}}
+    {%- endif -%}
+
+    <div class="es-variant-added-info">
+      <a href="{{ product_variant.url }}" class="es-variant-added-title">
+        {{ product_variant.product.title | escape }}
+      </a>
+
+      {%- unless product_variant.product.has_only_default_variant -%}
+        <span class="es-variant-added-variant-name">{{ product_variant.title | escape }}</span>
+      {%- endunless -%}
+
+      {%- assign matched_line_item = cart.items | where: 'product_id', product_variant.product.id | first -%}
+      <span class="es-variant-added-price">{{ product_variant.price | money }}</span>
+
+      {%- if matched_line_item.line_level_discount_allocations.size > 0 -%}
+        {%- for discount_allocation in matched_line_item.line_level_discount_allocations -%}
+          <span class="es-variant-added-discount">
+            {{ discount_allocation.discount_application.title }} (-{{ discount_allocation.amount | money }})
+          </span>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+
+  <!-- Direct Buy & Cart Navigation -->
+  <form action="{{ routes.cart_url }}" method="post" class="es-variant-added-actions">
+    <a href="{{ routes.cart_url }}" class="es-variant-added-btn-cart">
+      {{ 'cart.general.view_cart' | t | default: 'View Cart' }}
+    </a>
+    <button type="submit" name="checkout" class="es-variant-added-btn-checkout">
+      {{ 'cart.general.checkout' | t | default: 'Checkout' }}
+    </button>
+  </form>
+</div>
+
+{% schema %}
+{
+  "name": "Variant added",
+  "tag": "aside",
+  "class": "shopify-section--variant-added",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,440 @@
+{%- comment -%}
+  E-sellers Accordion Content - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background: {{ section.settings.background | default: 'transparent' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 48 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 48 }}px;
+    color: {{ section.settings.text_color | default: '#121212' }};
+  }
+
+  .es-accordion-section {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  /* Layout Variants based on text_position */
+  .es-accordion-section--start {
+    flex-direction: row;
+  }
+
+  .es-accordion-section--end {
+    flex-direction: row-reverse;
+  }
+
+  .es-accordion-section--center {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .es-accordion-section__intro {
+    flex: 1 1 40%;
+    max-width: {% if section.settings.text_position == 'center' %}720px{% else %}480px{% endif %};
+  }
+
+  .es-accordion-section__main {
+    flex: 1 1 60%;
+    width: 100%;
+    max-width: {% if section.settings.text_position == 'center' %}840px{% else %}none{% endif %};
+  }
+
+  /* Typography */
+  .es-accordion-section__subheading {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    opacity: 0.8;
+  }
+
+  .es-accordion-section__heading {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+    color: {{ section.settings.heading_color | default: 'inherit' }};
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+
+  .es-accordion-section__content {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    opacity: 0.85;
+  }
+
+  /* Button */
+  .es-accordion-section__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    background-color: {{ section.settings.button_background | default: '#121212' }};
+    color: {{ section.settings.button_text_color | default: '#ffffff' }};
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .es-accordion-section__btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Accordion Box */
+  .es-accordion-box {
+    background-color: {{ section.settings.accordion_background | default: '#f8fafc' }};
+    color: {{ section.settings.accordion_text_color | default: '#121212' }};
+    border-radius: 12px;
+    padding: 12px 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .es-accordion-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .es-accordion-item:last-child {
+    border-bottom: none;
+  }
+
+  .es-accordion-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.05rem;
+    font-weight: 600;
+    user-select: none;
+    transition: color 0.2s ease;
+  }
+
+  .es-accordion-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .es-accordion-item summary:hover {
+    opacity: 0.75;
+  }
+
+  .es-accordion-item__icon {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+
+  .es-accordion-item__icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s ease;
+  }
+
+  .es-accordion-item[open] .es-accordion-item__icon svg {
+    transform: rotate(180deg);
+  }
+
+  .es-accordion-item__content {
+    padding-bottom: 20px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  @media screen and (max-width: 899px) {
+    .es-accordion-section {
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .es-accordion-section__intro,
+    .es-accordion-section__main {
+      max-width: 100%;
+      flex: 1 1 100%;
+    }
+
+    .es-accordion-box {
+      padding: 8px 18px;
+    }
+  }
+{%- endstyle -%}
+
+<!-- ====================================================================== -->
+<!-- HTML / LIQUID LAYOUT                                                   -->
+<!-- ====================================================================== -->
+<div class="{% if section.settings.full_width %}page-width--full{% else %}page-width{% endif %}">
+  
+  <div class="es-accordion-section es-accordion-section--{{ section.settings.text_position | default: 'start' }}">
+    
+    <!-- Intro Column (Subheading, Heading, Content, Button) -->
+    {%- if section.settings.subheading != blank or section.settings.title != blank or section.settings.content != blank or section.settings.button_text != blank -%}
+      <div class="es-accordion-section__intro">
+        {%- if section.settings.subheading != blank -%}
+          <p class="es-accordion-section__subheading">{{ section.settings.subheading | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="es-accordion-section__heading">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.content != blank -%}
+          <div class="es-accordion-section__content">{{ section.settings.content }}</div>
+        {%- endif -%}
+
+        {%- if section.settings.button_text != blank -%}
+          <a href="{{ section.settings.button_url | default: '#' }}" class="es-accordion-section__btn">
+            {{ section.settings.button_text | escape }}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <!-- Main Accordion List -->
+    {%- if section.blocks.size > 0 -%}
+      <div class="es-accordion-section__main">
+        <div class="es-accordion-box">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.title != blank -%}
+              <details class="es-accordion-item" {{ block.shopify_attributes }}>
+                <summary>
+                  <span>{{ block.settings.title | escape }}</span>
+                  <span class="es-accordion-item__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </summary>
+                <div class="es-accordion-item__content">
+                  {{ block.settings.content }}
+                </div>
+              </details>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+  </div>
+
+</div>
+
+{% schema %}
+{
+  "name": "ES Accordion Content",
+  "class": "section--es-accordion-content",
+  "tag": "section",
+  "disabled_on": {
+    "templates": ["password"],
+    "groups": ["header", "custom.overlay"]
+  },
+  "blocks": [
+    {
+      "name": "Accordion Item",
+      "type": "item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Frequently asked question"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Write content to help your customers to better understand your products, shipping, or policies.</p>"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width container",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "FAQ"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Accordion Content"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Description",
+      "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button link"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Layout position",
+      "options": [
+        {
+          "value": "start",
+          "label": "Text on left"
+        },
+        {
+          "value": "center",
+          "label": "Centered on top"
+        },
+        {
+          "value": "end",
+          "label": "Text on right"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading gradient"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "accordion_background",
+      "label": "Accordion box background",
+      "default": "#f8fafc"
+    },
+    {
+      "type": "color",
+      "id": "accordion_text_color",
+      "label": "Accordion text color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "E-sellers Accordion Content",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "What is your return policy?"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "How long does shipping take?"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Do you ship internationally?"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

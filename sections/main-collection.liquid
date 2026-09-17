@@ -1,0 +1,494 @@
+{%- comment -%}
+  Main Collection Section - E-sellers Professional (v4.9.0)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.bg_color | default: '#ffffff' }};
+    padding-top: {{ section.settings.padding_top | default: 40 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+  }
+
+  .main-collection__header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .main-collection__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: {{ section.settings.heading_color | default: '#121212' }};
+    margin: 0 0 12px;
+  }
+
+  .main-collection__description {
+    color: {{ section.settings.text_color | default: '#64748b' }};
+    font-size: 1.1rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ---- Layout with sidebar ---- */
+  .main-collection__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3.2rem;
+    align-items: start;
+  }
+
+  {%- if section.settings.enable_filtering and section.settings.filter_layout != 'horizontal' -%}
+    @media screen and (min-width: 1000px) {
+      .main-collection__layout {
+        grid-template-columns: 260px 1fr;
+        gap: 4rem;
+      }
+    }
+  {%- endif -%}
+
+  /* ---- Mobile Filter Bar ---- */
+  .main-collection__mobile-filter-bar {
+    display: none;
+    margin-bottom: 2rem;
+  }
+
+  .main-collection__mobile-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: #121212;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 999px) {
+    {%- if section.settings.enable_filtering -%}
+      .main-collection__mobile-filter-bar {
+        display: block;
+      }
+      .main-collection__facets {
+        display: none;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 2rem;
+      }
+      .main-collection__facets.is-open {
+        display: block;
+      }
+    {%- endif -%}
+  }
+
+  .main-collection__results {
+    transition: opacity 0.2s ease;
+  }
+
+  .main-collection__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop | default: 4 }}, minmax(0, 1fr));
+    gap: 24px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .main-collection__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 2 }}, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="main-collection page-width">
+  <header class="main-collection__header">
+    <h1 class="main-collection__title">{{ collection.title }}</h1>
+    {%- if section.settings.show_description and collection.description != blank -%}
+      <div class="main-collection__description rte">
+        {{ collection.description }}
+      </div>
+    {%- endif -%}
+  </header>
+
+  {%- if section.settings.enable_filtering -%}
+    <div class="main-collection__mobile-filter-bar">
+      <button type="button" class="main-collection__mobile-filter-btn" aria-expanded="false" aria-controls="main-collection-facets-{{ section.id }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+        <span>{{ 'products.facets.filter_button' | t | default: 'Filters & Sort' }}</span>
+      </button>
+    </div>
+  {%- endif -%}
+
+  <div class="main-collection__layout"
+       data-section-id="{{ section.id }}"
+       data-collection-handle="{{ collection.handle | default: 'all' }}"
+       data-collection-url="{{ collection.url | default: '/collections/all' }}">
+    {%- if section.settings.enable_filtering -%}
+      <aside class="main-collection__facets es-bc__filters" id="main-collection-facets-{{ section.id }}" data-collection-handle="{{ collection.handle | default: 'all' }}">
+        {%- assign facet_layout = section.settings.filter_layout | default: 'sidebar' -%}
+        {% render 'facet-filters',
+            results: collection,
+            enable_filtering: section.settings.enable_filtering,
+            enable_sorting: section.settings.enable_sorting,
+            filter_layout: facet_layout %}
+      </aside>
+    {%- endif -%}
+
+    <div class="main-collection__results es-bc__results" id="main-collection-results-{{ section.id }}">
+      {%- paginate collection.products by section.settings.products_per_page -%}
+        <ul class="main-collection__grid es-bc__grid" role="list">
+          {%- for product in collection.products -%}
+            <li>
+              {% render 'card-product',
+                  card_product: product,
+                  show_vendor: section.settings.show_vendor,
+                  show_rating: section.settings.show_rating,
+                  show_quick_add: section.settings.show_quick_add,
+                  section_id: section.id %}
+            </li>
+          {%- else -%}
+            <li style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px 0;">No products found in this collection.</li>
+          {%- endfor -%}
+        </ul>
+
+        {%- if paginate.pages > 1 -%}
+          <div style="margin-top: 4rem; display: flex; justify-content: center;">
+            {% render 'pagination', paginate: paginate %}
+          </div>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</div>
+
+{%- if section.settings.enable_filtering or section.settings.enable_sorting -%}
+<script>
+(function() {
+  var section = document.getElementById('shopify-section-{{ section.id }}');
+  if (!section) return;
+
+  var layoutEl = section.querySelector('.main-collection__layout');
+  if (!layoutEl) return;
+
+  var handle = layoutEl.dataset.collectionHandle || 'all';
+  var collectionBaseUrl = layoutEl.dataset.collectionUrl || ('/collections/' + handle);
+
+  function getDetailsState() {
+    var state = {};
+    section.querySelectorAll('.main-collection__facets details').forEach(function(d, idx) {
+      var key = d.querySelector('summary') ? d.querySelector('summary').textContent.trim() : idx;
+      state[key] = d.hasAttribute('open');
+    });
+    return state;
+  }
+
+  function applyDetailsState(state) {
+    section.querySelectorAll('.main-collection__facets details').forEach(function(d, idx) {
+      var key = d.querySelector('summary') ? d.querySelector('summary').textContent.trim() : idx;
+      if (key in state) {
+        if (state[key]) {
+          d.setAttribute('open', '');
+        } else {
+          d.removeAttribute('open');
+        }
+      }
+    });
+  }
+
+  function updateFacetsFromHtml(doc) {
+    var sourceFacets = doc.querySelector('.main-collection__facets') || doc.querySelector('.es-bc__filters') || doc.querySelector('#FacetFiltersForm');
+    var targetContainer = section.querySelector('.main-collection__facets');
+    if (sourceFacets && targetContainer) {
+      var detailsState = getDetailsState();
+      targetContainer.innerHTML = sourceFacets.innerHTML;
+      applyDetailsState(detailsState);
+      bindFilterEvents();
+    }
+  }
+
+  function updateResultsFromHtml(doc) {
+    var newResults = doc.querySelector('.main-collection__results') || doc.querySelector('.es-bc__results');
+    var currentResults = section.querySelector('.main-collection__results');
+    if (newResults && currentResults) {
+      currentResults.innerHTML = newResults.innerHTML;
+    }
+  }
+
+  function fetchAndReplace(url, updateHistory) {
+    var resultsEl = section.querySelector('.main-collection__results');
+    if (resultsEl) {
+      resultsEl.style.opacity = '0.35';
+      resultsEl.style.pointerEvents = 'none';
+    }
+
+    fetch(url)
+      .then(function(res) { return res.text(); })
+      .then(function(html) {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+
+        updateResultsFromHtml(doc);
+        updateFacetsFromHtml(doc);
+
+        if (updateHistory !== false) {
+          var newSearch = url.indexOf('?') > -1 ? url.substring(url.indexOf('?')) : '';
+          var newUrl = window.location.pathname + newSearch;
+          window.history.pushState({ path: newUrl }, '', newUrl);
+        }
+      })
+      .catch(function(err) {
+        console.error('[main-collection] Filter error:', err);
+      })
+      .finally(function() {
+        if (resultsEl) {
+          resultsEl.style.opacity = '1';
+          resultsEl.style.pointerEvents = '';
+        }
+      });
+  }
+
+  function triggerFilterAjax(form) {
+    var formData = new FormData(form);
+    var params = new URLSearchParams();
+
+    formData.forEach(function(value, key) {
+      if (value !== '') {
+        params.append(key, value);
+      }
+    });
+
+    var targetUrl = collectionBaseUrl + (params.toString() ? '?' + params.toString() : '');
+    fetchAndReplace(targetUrl);
+  }
+
+  function bindFilterEvents() {
+    var form = section.querySelector('#FacetFiltersForm');
+    if (!form) return;
+
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      triggerFilterAjax(form);
+    };
+
+    form.onchange = function(e) {
+      if (e.target.matches('input[type="number"], .facet-price-input')) return;
+      triggerFilterAjax(form);
+    };
+  }
+
+  // Delegated interactions: Apply button, Clear, Chips, Pagination
+  section.addEventListener('click', function(e) {
+    // 1. Price apply button
+    if (e.target.closest('.facet-price-apply-btn')) {
+      e.preventDefault();
+      var form = section.querySelector('#FacetFiltersForm');
+      if (form) triggerFilterAjax(form);
+      return;
+    }
+
+    // 2. Clear all button
+    var clearBtn = e.target.closest('[data-facet-clear]');
+    if (clearBtn) {
+      e.preventDefault();
+      var form = section.querySelector('#FacetFiltersForm');
+      if (form) {
+        form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function(input) {
+          input.checked = false;
+        });
+        form.querySelectorAll('input[type="number"]').forEach(function(input) {
+          input.value = '';
+        });
+      }
+      fetchAndReplace(collectionBaseUrl);
+      return;
+    }
+
+    // 3. Remove single filter chip
+    var removeChip = e.target.closest('[data-facet-remove]');
+    if (removeChip) {
+      e.preventDefault();
+      var paramName = removeChip.dataset.paramName;
+      var paramValue = removeChip.dataset.paramValue;
+      var paramMin = removeChip.dataset.paramMin;
+      var paramMax = removeChip.dataset.paramMax;
+      var form = section.querySelector('#FacetFiltersForm');
+
+      if (form) {
+        if (paramName && paramValue) {
+          var input = form.querySelector('input[name="' + paramName + '"][value="' + paramValue + '"]');
+          if (input) input.checked = false;
+        }
+        if (paramMin) {
+          var minInput = form.querySelector('input[name="' + paramMin + '"]');
+          if (minInput) minInput.value = '';
+        }
+        if (paramMax) {
+          var maxInput = form.querySelector('input[name="' + paramMax + '"]');
+          if (maxInput) maxInput.value = '';
+        }
+        triggerFilterAjax(form);
+      } else if (removeChip.getAttribute('href')) {
+        fetchAndReplace(removeChip.getAttribute('href'));
+      }
+      return;
+    }
+
+    // 4. Pagination links
+    var pageLink = e.target.closest('.pagination a');
+    if (pageLink && !pageLink.closest('.product-card')) {
+      e.preventDefault();
+      var href = pageLink.getAttribute('href');
+      if (href) fetchAndReplace(href);
+      return;
+    }
+  });
+
+  // Mobile drawer toggle
+  var mobileToggleBtn = section.querySelector('.main-collection__mobile-filter-btn');
+  if (mobileToggleBtn) {
+    mobileToggleBtn.addEventListener('click', function() {
+      var facetsEl = section.querySelector('.main-collection__facets');
+      if (facetsEl) {
+        var isOpen = facetsEl.classList.toggle('is-open');
+        mobileToggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+    });
+  }
+
+  // Browser back/forward navigation
+  window.addEventListener('popstate', function() {
+    var search = window.location.search || '';
+    fetchAndReplace(collectionBaseUrl + search, false);
+  });
+
+  bindFilterEvents();
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Main collection",
+  "tag": "section",
+  "class": "section--main-collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 16,
+      "label": "Products per page"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2",
+      "label": "Columns on mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "default": true,
+      "label": "Show collection description"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable sorting"
+    },
+    {
+      "type": "select",
+      "id": "filter_layout",
+      "label": "Filter layout",
+      "options": [
+        { "value": "sidebar", "label": "Sidebar" },
+        { "value": "horizontal", "label": "Horizontal" }
+      ],
+      "default": "sidebar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#121212"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 60
+    }
+  ]
+}
+{% endschema %}
