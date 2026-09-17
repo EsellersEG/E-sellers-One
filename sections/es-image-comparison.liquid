@@ -1,0 +1,134 @@
+{%- comment -%}
+  E-sellers Image Comparison - E-sellers One (v5.0.0)
+
+  Two (or more) labelled images side by side - "Before / After", "Then / Now",
+  material or colourway comparisons - with an optional text sidebar. For an
+  interactive drag-to-reveal comparison, use es-before-after-image instead;
+  this section is the static labelled-pair variant.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_ic_images = section.blocks | where: 'type', 'image'
+  assign es_ic_has_sidebar = false
+  if section.settings.heading != blank or section.settings.description != blank
+    assign es_ic_has_sidebar = true
+  endif
+-%}
+
+{%- if es_ic_images.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-ic {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--es-space-6);
+    }
+    {%- if es_ic_has_sidebar -%}
+      @media screen and (min-width: 990px) {
+        #shopify-section-{{ section.id }} .es-ic { grid-template-columns: 320px 1fr; align-items: center; }
+      }
+    {%- endif -%}
+
+    #shopify-section-{{ section.id }} .es-ic__pair {
+      display: grid;
+      grid-template-columns: repeat({{ es_ic_images.size | at_most: 2 }}, minmax(0, 1fr));
+      gap: var(--es-space-3);
+    }
+
+    #shopify-section-{{ section.id }} .es-ic__item { position: relative; }
+    #shopify-section-{{ section.id }} .es-ic__media {
+      position: relative;
+      aspect-ratio: 1/1.3;
+      border-radius: var(--es-radius-lg);
+      overflow: hidden;
+    }
+    #shopify-section-{{ section.id }} .es-ic__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #shopify-section-{{ section.id }} .es-ic__label {
+      display: inline-block;
+      margin-top: var(--es-space-2);
+      font-size: var(--es-text-xs);
+      font-weight: 700;
+      letter-spacing: var(--es-track-caps);
+      text-transform: uppercase;
+      color: var(--es-fg-muted);
+    }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    <div class="es-ic">
+      {%- if es_ic_has_sidebar -%}
+        <div>
+          {%- render 'es-section-heading',
+              subheading: section.settings.subheading,
+              heading: section.settings.heading,
+              description: section.settings.description,
+              button_label: section.settings.button_label,
+              button_url: section.settings.button_link -%}
+        </div>
+      {%- endif -%}
+
+      <div class="es-ic__pair">
+        {%- for block in es_ic_images -%}
+          <div class="es-ic__item" {{ block.shopify_attributes }}>
+            <div class="es-ic__media">
+              {%- if block.settings.image != blank -%}
+                {%- assign es_ic_alt = block.settings.heading | default: 'Comparison image' | escape -%}
+                {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', alt: es_ic_alt }}
+              {%- else -%}
+                {{ 'lifestyle-1' | placeholder_svg_tag: '' }}
+              {%- endif -%}
+            </div>
+            {%- if block.settings.heading != blank -%}<span class="es-ic__label">{{ block.settings.heading | escape }}</span>{%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add image blocks to populate this comparison.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Image Comparison",
+  "tag": "section",
+  "class": "shopify-section--es-image-comparison",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "heading", "label": "Label", "default": "Label" }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "E-sellers Image Comparison",
+      "blocks": [
+        { "type": "image", "settings": { "heading": "Before" } },
+        { "type": "image", "settings": { "heading": "After" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

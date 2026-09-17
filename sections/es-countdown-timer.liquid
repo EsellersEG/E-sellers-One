@@ -1,0 +1,167 @@
+{%- comment -%}
+  E-sellers Countdown Timer - E-sellers One (v5.0.0)
+
+  Text + CTA panel with a live days/hours/minutes/seconds countdown to a
+  merchant-set date, optionally over a background image. The timer is a
+  self-contained script scoped to this section's id, safe with multiple
+  instances on one page.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_ct_target = section.settings.duration
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --es-ct-overlay: {{ section.settings.image_overlay_opacity | default: 30 | divided_by: 100.0 }};
+    position: relative;
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    text-align: {{ section.settings.content_alignment | default: 'center' }};
+  }
+
+  {%- if section.settings.background_image != blank -%}
+    #shopify-section-{{ section.id }} .es-ct__bg {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    #shopify-section-{{ section.id }} .es-ct__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #shopify-section-{{ section.id }} .es-ct__bg::after {
+      content: ""; position: absolute; inset: 0; background: rgba(0,0,0,var(--es-ct-overlay));
+    }
+    #shopify-section-{{ section.id }} .es-ct__content { position: relative; z-index: 1; color: #fff; }
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .es-ct__content { max-width: 640px; margin-inline: {% if section.settings.content_alignment == 'center' %}auto{% else %}0{% endif %}; }
+  #shopify-section-{{ section.id }} .es-ct__eyebrow { font-size: var(--es-text-xs); font-weight: 700; letter-spacing: var(--es-track-caps); text-transform: uppercase; opacity: .8; margin: 0 0 var(--es-space-2); }
+  #shopify-section-{{ section.id }} .es-ct__heading { margin: 0 0 var(--es-space-3); }
+
+  #shopify-section-{{ section.id }} .es-ct__timer {
+    display: flex;
+    justify-content: {% if section.settings.content_alignment == 'center' %}center{% else %}flex-start{% endif %};
+    gap: var(--es-space-4);
+    margin: var(--es-space-5) 0;
+  }
+  #shopify-section-{{ section.id }} .es-ct__unit { display: flex; flex-direction: column; align-items: center; min-width: 60px; }
+  #shopify-section-{{ section.id }} .es-ct__num {
+    font-size: {{ section.settings.number_size | default: 40 }}px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  #shopify-section-{{ section.id }} .es-ct__label { font-size: var(--es-text-xs); text-transform: uppercase; letter-spacing: var(--es-track-wide); opacity: .75; margin-top: var(--es-space-1); }
+
+  #shopify-section-{{ section.id }} .es-ct__expired { display: none; }
+  #shopify-section-{{ section.id }}.is-expired .es-ct__timer { display: none; }
+  #shopify-section-{{ section.id }}.is-expired .es-ct__expired { display: block; }
+{%- endstyle -%}
+
+<div data-es-ct data-target="{{ es_ct_target }}">
+  {%- if section.settings.background_image != blank -%}
+    <div class="es-ct__bg">
+      {{ section.settings.background_image | image_url: width: 1920 | image_tag: loading: 'lazy', widths: '768,1200,1920', alt: '' }}
+    </div>
+  {%- endif -%}
+
+  <div class="page-width">
+    <div class="es-ct__content">
+      {%- if section.settings.subheading != blank -%}<p class="es-ct__eyebrow">{{ section.settings.subheading | escape }}</p>{%- endif -%}
+      {%- if section.settings.heading != blank -%}<h2 class="es-ct__heading h2">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div>{{ section.settings.text }}</div>{%- endif -%}
+
+      <div class="es-ct__timer" data-es-ct-timer role="timer" aria-live="off">
+        <div class="es-ct__unit"><span class="es-ct__num" data-es-ct-days>00</span><span class="es-ct__label">Days</span></div>
+        <div class="es-ct__unit"><span class="es-ct__num" data-es-ct-hours>00</span><span class="es-ct__label">Hours</span></div>
+        <div class="es-ct__unit"><span class="es-ct__num" data-es-ct-minutes>00</span><span class="es-ct__label">Min</span></div>
+        <div class="es-ct__unit"><span class="es-ct__num" data-es-ct-seconds>00</span><span class="es-ct__label">Sec</span></div>
+      </div>
+      <p class="es-ct__expired">{{ 'general.countdown.expired' | t | default: "Offer has ended" }}</p>
+
+      {%- if section.settings.button_label != blank -%}
+        {%- render 'es-button', label: section.settings.button_label, url: section.settings.button_link, style: section.settings.button_style | default: 'solid' -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('shopify-section-{{ section.id }}');
+    if (!root) return;
+    var wrap = root.querySelector('[data-es-ct]');
+    if (!wrap) return;
+
+    var target = new Date(wrap.dataset.target).getTime();
+    if (isNaN(target)) return;
+
+    var els = {
+      days: wrap.querySelector('[data-es-ct-days]'),
+      hours: wrap.querySelector('[data-es-ct-hours]'),
+      minutes: wrap.querySelector('[data-es-ct-minutes]'),
+      seconds: wrap.querySelector('[data-es-ct-seconds]')
+    };
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function tick() {
+      var diff = target - Date.now();
+      if (diff <= 0) {
+        root.classList.add('is-expired');
+        clearInterval(timer);
+        return;
+      }
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      if (els.days) els.days.textContent = pad(d);
+      if (els.hours) els.hours.textContent = pad(h);
+      if (els.minutes) els.minutes.textContent = pad(m);
+      if (els.seconds) els.seconds.textContent = pad(s);
+    }
+
+    tick();
+    var timer = setInterval(tick, 1000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "E-sellers Countdown Timer",
+  "tag": "section",
+  "class": "shopify-section--es-countdown-timer",
+  "settings": [
+    { "type": "image_picker", "id": "background_image", "label": "Background image" },
+    { "type": "range", "id": "image_overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 90, "step": 5, "unit": "%", "default": 30 },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Alignment",
+      "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }],
+      "default": "center"
+    },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Limited time offer" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "duration", "label": "Countdown to (ISO date, e.g. 2026-12-31T23:59:59)", "default": "2026-12-31T23:59:59" },
+    { "type": "range", "id": "number_size", "label": "Number size", "min": 20, "max": 80, "step": 2, "unit": "px", "default": 40 },
+    { "type": "text", "id": "button_label", "label": "Button label" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button style",
+      "options": [{ "value": "solid", "label": "Solid" }, { "value": "secondary", "label": "Outline" }],
+      "default": "solid"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 }
+  ],
+  "presets": [
+    { "name": "E-sellers Countdown Timer" }
+  ]
+}
+{% endschema %}
