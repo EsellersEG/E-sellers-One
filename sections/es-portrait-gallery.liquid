@@ -1,0 +1,203 @@
+{%- comment -%}
+  ES Portrait Gallery - E-sellers One (v5.0.0)
+
+  Coverflow-style carousel: the centred card sits at full scale, neighbours
+  shrink and fade slightly, and the whole row scrolls via CSS scroll-snap with
+  arrow buttons for precise stepping. Cards are either custom image+text or
+  pulled live from a collection's products.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_pg_cards = section.blocks | where: 'type', 'card'
+  assign es_pg_collection = section.settings.collection
+-%}
+
+{%- if es_pg_cards.size > 0 or es_pg_collection != blank -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-pg__viewport {
+      position: relative;
+    }
+
+    #shopify-section-{{ section.id }} .es-pg__track {
+      display: flex;
+      gap: {{ section.settings.card_gap | default: 20 }}px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-padding-inline: 50%;
+      padding-inline: calc(50% - ({{ section.settings.card_width | default: 260 }}px / 2));
+      scrollbar-width: none;
+    }
+    #shopify-section-{{ section.id }} .es-pg__track::-webkit-scrollbar { display: none; }
+
+    #shopify-section-{{ section.id }} .es-pg__card {
+      flex: 0 0 auto;
+      width: {{ section.settings.card_width | default: 260 }}px;
+      scroll-snap-align: center;
+      opacity: .55;
+      transform: scale(.9);
+      transition: opacity var(--es-dur-base) var(--es-ease), transform var(--es-dur-base) var(--es-ease);
+    }
+    #shopify-section-{{ section.id }} .es-pg__card.is-active { opacity: 1; transform: scale(1); }
+
+    #shopify-section-{{ section.id }} .es-pg__media {
+      position: relative;
+      aspect-ratio: 3/4;
+      border-radius: var(--es-radius-lg);
+      overflow: hidden;
+    }
+    #shopify-section-{{ section.id }} .es-pg__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #shopify-section-{{ section.id }} .es-pg__card-title { margin-top: var(--es-space-2); font-weight: 650; font-size: var(--es-text-sm); text-align: center; }
+    #shopify-section-{{ section.id }} .es-pg__card-price { text-align: center; font-size: var(--es-text-xs); color: var(--es-fg-muted); }
+
+    #shopify-section-{{ section.id }} .es-pg__arrow {
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--es-bg);
+      box-shadow: var(--es-elev-2);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    #shopify-section-{{ section.id }} .es-pg__arrow--prev { left: var(--es-gutter); }
+    #shopify-section-{{ section.id }} .es-pg__arrow--next { right: var(--es-gutter); }
+    #shopify-section-{{ section.id }} .es-pg__arrow svg { width: 18px; height: 18px; }
+
+    @media screen and (max-width: 749px) {
+      #shopify-section-{{ section.id }} .es-pg__arrow { display: none; }
+    }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        alignment: 'center' -%}
+  </div>
+
+  <div class="es-pg__viewport">
+    <div class="es-pg__track" data-es-pg-track>
+      {%- if es_pg_collection != blank -%}
+        {%- for product in es_pg_collection.products limit: 12 -%}
+          <div class="es-pg__card" data-es-pg-card>
+            <a href="{{ product.url }}" class="es-pg__media">
+              {%- if product.featured_image != blank -%}
+                {%- assign es_pg_alt = product.title | escape -%}
+                {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', widths: '260,390,520', alt: es_pg_alt }}
+              {%- endif -%}
+            </a>
+            <div class="es-pg__card-title">{{ product.title }}</div>
+            <div class="es-pg__card-price">{{ product.price | money }}</div>
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for block in es_pg_cards -%}
+          <div class="es-pg__card" data-es-pg-card {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.url | default: '#' }}" class="es-pg__media">
+              {%- if block.settings.image != blank -%}
+                {%- assign es_pg_alt2 = block.settings.title | escape -%}
+                {{ block.settings.image | image_url: width: 520 | image_tag: loading: 'lazy', widths: '260,390,520', alt: es_pg_alt2 }}
+              {%- else -%}
+                {{ 'lifestyle-2' | placeholder_svg_tag: '' }}
+              {%- endif -%}
+            </a>
+            {%- if block.settings.title != blank -%}<div class="es-pg__card-title">{{ block.settings.title | escape }}</div>{%- endif -%}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_arrows -%}
+      <button type="button" class="es-pg__arrow es-pg__arrow--prev" data-es-pg-prev aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button type="button" class="es-pg__arrow es-pg__arrow--next" data-es-pg-next aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    {%- endif -%}
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+      var track = root.querySelector('[data-es-pg-track]');
+      var cards = root.querySelectorAll('[data-es-pg-card]');
+      var prev = root.querySelector('[data-es-pg-prev]');
+      var next = root.querySelector('[data-es-pg-next]');
+      if (!track || !cards.length) return;
+
+      function step(dir) {
+        var card = cards[0];
+        var width = card.getBoundingClientRect().width + (parseFloat(getComputedStyle(track).gap) || 0);
+        track.scrollBy({ left: dir * width, behavior: 'smooth' });
+      }
+      if (prev) prev.addEventListener('click', function () { step(-1); });
+      if (next) next.addEventListener('click', function () { step(1); });
+
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            entry.target.classList.toggle('is-active', entry.intersectionRatio > 0.7);
+          });
+        }, { root: track, threshold: [0, 0.7, 1] });
+        cards.forEach(function (c) { io.observe(c); });
+      } else {
+        cards[0].classList.add('is-active');
+      }
+    })();
+  </script>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Choose a collection or add card blocks to populate this gallery.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Portrait Gallery",
+  "tag": "section",
+  "class": "shopify-section--es-portrait-gallery",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection (optional)", "info": "Overrides card blocks below when set." },
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "The edit" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    { "type": "checkbox", "id": "show_arrows", "label": "Show arrow buttons", "default": true },
+    { "type": "range", "id": "card_width", "label": "Card width", "min": 160, "max": 380, "step": 10, "unit": "px", "default": 260 },
+    { "type": "range", "id": "card_gap", "label": "Gap", "min": 4, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "url", "id": "url", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "ES Portrait Gallery",
+      "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }]
+    }
+  ]
+}
+{% endschema %}

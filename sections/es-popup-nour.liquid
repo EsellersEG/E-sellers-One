@@ -1,0 +1,207 @@
+{%- comment -%}
+  ES Popup (Nour) - E-sellers One (v5.0.0)
+
+  General-purpose promo modal: image, heading, text, an optional discount code
+  chip (click to copy), and a CTA button. Alternate to es-newsletter-popup
+  (which is specifically an email-capture form) - this one is for any message,
+  most commonly "here's a code, go shop."
+
+  Collapses to a small teaser tab when dismissed rather than disappearing for
+  the session, and remembers dismissal in localStorage so it does not nag on
+  every page view.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_pn_delay = section.settings.trigger_delay | default: 4
+-%}
+
+{%- if section.settings.enable -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} .es-pn__overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.5);
+      opacity: 0; visibility: hidden;
+      transition: opacity var(--es-dur-base) var(--es-ease);
+    }
+    #shopify-section-{{ section.id }} .es-pn__overlay.is-open { opacity: 1; visibility: visible; }
+
+    #shopify-section-{{ section.id }} .es-pn__modal {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -46%);
+      z-index: 201;
+      width: min({{ section.settings.width | default: 480 }}px, calc(100vw - 32px));
+      max-height: 88vh;
+      overflow-y: auto;
+      background: var(--es-bg);
+      border-radius: var(--es-radius-lg);
+      opacity: 0; visibility: hidden;
+      transition: opacity var(--es-dur-base) var(--es-ease), transform var(--es-dur-base) var(--es-ease);
+    }
+    #shopify-section-{{ section.id }} .es-pn__modal.is-open { opacity: 1; visibility: visible; transform: translate(-50%, -50%); }
+
+    #shopify-section-{{ section.id }} .es-pn__media { position: relative; aspect-ratio: 16/9; }
+    #shopify-section-{{ section.id }} .es-pn__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+    #shopify-section-{{ section.id }} .es-pn__close {
+      position: absolute; top: var(--es-space-2); right: var(--es-space-2);
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,.9); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    #shopify-section-{{ section.id }} .es-pn__close svg { width: 16px; height: 16px; }
+
+    #shopify-section-{{ section.id }} .es-pn__body { padding: var(--es-space-6); text-align: {{ section.settings.alignment | default: 'center' }}; }
+    #shopify-section-{{ section.id }} .es-pn__heading { margin: 0 0 var(--es-space-3); }
+
+    #shopify-section-{{ section.id }} .es-pn__code {
+      display: inline-flex; align-items: center; gap: var(--es-space-2);
+      border: 1.5px dashed var(--es-rule-strong);
+      border-radius: var(--es-radius-md);
+      padding: var(--es-space-2) var(--es-space-4);
+      font-weight: 700; letter-spacing: .05em;
+      margin: var(--es-space-3) 0;
+      cursor: pointer;
+      background: none;
+    }
+
+    #shopify-section-{{ section.id }} .es-pn__teaser {
+      position: fixed;
+      right: 0; bottom: 24px;
+      z-index: 150;
+      background: var(--es-fg);
+      color: var(--es-bg);
+      padding: var(--es-space-3) var(--es-space-4);
+      border-radius: var(--es-radius-md) 0 0 var(--es-radius-md);
+      cursor: pointer;
+      transform: translateX(100%);
+      transition: transform var(--es-dur-base) var(--es-ease-out);
+      border: none;
+      font-weight: 650;
+    }
+    #shopify-section-{{ section.id }} .es-pn__teaser.is-visible { transform: translateX(0); }
+  {%- endstyle -%}
+
+  <div class="es-pn__overlay" data-es-pn-overlay></div>
+  <div class="es-pn__modal" role="dialog" aria-modal="true" aria-labelledby="EsPnHeading-{{ section.id }}" data-es-pn-modal>
+    <button type="button" class="es-pn__close" data-es-pn-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    {%- if section.settings.image != blank -%}
+      <div class="es-pn__media">
+        {%- assign es_pn_alt = section.settings.heading | escape -%}
+        {{ section.settings.image | image_url: width: 900 | image_tag: loading: 'lazy', alt: es_pn_alt }}
+      </div>
+    {%- endif -%}
+    <div class="es-pn__body">
+      {%- if section.settings.heading != blank -%}<h2 id="EsPnHeading-{{ section.id }}" class="es-pn__heading h3">{{ section.settings.heading | escape }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<div>{{ section.settings.text }}</div>{%- endif -%}
+      {%- if section.settings.discount_code != blank -%}
+        <button type="button" class="es-pn__code" data-es-pn-copy data-code="{{ section.settings.discount_code | escape }}">
+          {{ section.settings.discount_code | escape }}
+          <span data-es-pn-copy-label>Copy</span>
+        </button>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <div><a href="{{ section.settings.button_link | default: '#' }}" class="es-btn">{{ section.settings.button_label | escape }}</a></div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if section.settings.show_teaser -%}
+    <button type="button" class="es-pn__teaser" data-es-pn-teaser>{{ section.settings.teaser_text | default: 'Special offer' | escape }}</button>
+  {%- endif -%}
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+      var overlay = root.querySelector('[data-es-pn-overlay]');
+      var modal = root.querySelector('[data-es-pn-modal]');
+      var closeBtn = root.querySelector('[data-es-pn-close]');
+      var teaser = root.querySelector('[data-es-pn-teaser]');
+      var copyBtn = root.querySelector('[data-es-pn-copy]');
+      var storageKey = 'es-popup-nour-{{ section.id }}-dismissed';
+      var repeatOpen = {{ section.settings.repeat_open | default: false | json }};
+
+      function open() {
+        overlay.classList.add('is-open');
+        modal.classList.add('is-open');
+        if (teaser) teaser.classList.remove('is-visible');
+        document.body.style.overflow = 'hidden';
+      }
+      function close(remember) {
+        overlay.classList.remove('is-open');
+        modal.classList.remove('is-open');
+        document.body.style.overflow = '';
+        if (remember && !repeatOpen) {
+          try { localStorage.setItem(storageKey, '1'); } catch (e) {}
+        }
+        if (teaser) teaser.classList.add('is-visible');
+      }
+
+      overlay.addEventListener('click', function () { close(true); });
+      closeBtn.addEventListener('click', function () { close(true); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(true); });
+      if (teaser) teaser.addEventListener('click', open);
+
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          var code = copyBtn.dataset.code;
+          var label = copyBtn.querySelector('[data-es-pn-copy-label]');
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(function () {
+              if (label) { label.textContent = 'Copied!'; setTimeout(function () { label.textContent = 'Copy'; }, 2000); }
+            });
+          }
+        });
+      }
+
+      var alreadyDismissed = false;
+      try { alreadyDismissed = localStorage.getItem(storageKey) === '1'; } catch (e) {}
+
+      if (!alreadyDismissed) {
+        setTimeout(open, {{ es_pn_delay }} * 1000);
+      } else if (teaser) {
+        teaser.classList.add('is-visible');
+      }
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Popup (Nour)",
+  "tag": "section",
+  "class": "shopify-section--es-popup-nour",
+  "settings": [
+    { "type": "checkbox", "id": "enable", "label": "Enable popup", "default": true },
+    { "type": "range", "id": "trigger_delay", "label": "Show after (seconds)", "min": 0, "max": 30, "step": 1, "unit": "s", "default": 4 },
+    { "type": "checkbox", "id": "repeat_open", "label": "Show again every visit", "default": false },
+    { "type": "range", "id": "width", "label": "Modal width", "min": 320, "max": 720, "step": 20, "unit": "px", "default": 480 },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Text alignment",
+      "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }],
+      "default": "center"
+    },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Get 10% off your first order" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "discount_code", "label": "Discount code (optional)" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    {
+      "type": "header",
+      "content": "Teaser tab"
+    },
+    { "type": "checkbox", "id": "show_teaser", "label": "Show teaser tab when closed", "default": true },
+    { "type": "text", "id": "teaser_text", "label": "Teaser text", "default": "Special offer" }
+  ],
+  "presets": [
+    { "name": "ES Popup (Nour)" }
+  ]
+}
+{% endschema %}
