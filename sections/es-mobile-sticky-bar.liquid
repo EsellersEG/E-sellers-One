@@ -1,0 +1,186 @@
+{%- comment -%}
+  ES Mobile Sticky Bar - E-sellers One (v5.0.0)
+
+  Fixed bottom navigation bar shown only on mobile (hidden at the desktop
+  breakpoint via CSS). Slides out of view on scroll-down and back in on
+  scroll-up. Block types: home, products (collection link), cart (with live
+  count), and a generic link.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_msb_blocks = section.blocks
+-%}
+
+{%- if section.settings.enable_sticky_bar and es_msb_blocks.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      z-index: 50;
+      background: var(--es-bg);
+      box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+      transition: transform var(--es-dur-base) var(--es-ease-out);
+    }
+    #shopify-section-{{ section.id }}.is-hidden { transform: translateY(100%); }
+
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} { display: none; }
+    }
+
+    #shopify-section-{{ section.id }} .es-msb__row {
+      display: grid;
+      grid-template-columns: repeat({{ es_msb_blocks.size }}, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .es-msb__item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: var(--es-space-2) var(--es-space-1);
+      min-height: 56px;
+      color: var(--es-fg);
+      text-decoration: none;
+    }
+    #shopify-section-{{ section.id }} .es-msb__item + .es-msb__item { border-left: var(--es-rule-width) solid var(--es-rule); }
+    #shopify-section-{{ section.id }} .es-msb__item svg { width: 20px; height: 20px; }
+    #shopify-section-{{ section.id }} .es-msb__label {
+      font-size: var(--es-text-2xs);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #shopify-section-{{ section.id }} .es-msb__badge {
+      position: absolute;
+      top: 4px;
+      right: calc(50% - 18px);
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: var(--es-accent);
+      color: var(--es-on-accent);
+      font-size: 1rem;
+      line-height: 16px;
+      text-align: center;
+    }
+  {%- endstyle -%}
+
+  <nav class="es-msb__row" data-es-msb aria-label="Mobile navigation">
+    {%- for block in es_msb_blocks -%}
+      {%- case block.type -%}
+        {%- when 'home' -%}
+          <a href="{{ routes.root_url }}" class="es-msb__item" {{ block.shopify_attributes }}>
+            {%- render 'icon', name: 'account' -%}
+            {%- if section.settings.show_text -%}<span class="es-msb__label">{{ block.settings.text | default: 'Home' | escape }}</span>{%- endif -%}
+          </a>
+        {%- when 'products' -%}
+          {%- assign es_msb_url = block.settings.collection.url | default: routes.all_products_collection_url -%}
+          <a href="{{ es_msb_url }}" class="es-msb__item" {{ block.shopify_attributes }}>
+            {%- render 'icon', name: 'search' -%}
+            {%- if section.settings.show_text -%}<span class="es-msb__label">{{ block.settings.text | default: 'Shop' | escape }}</span>{%- endif -%}
+          </a>
+        {%- when 'cart' -%}
+          <a href="{{ routes.cart_url }}" class="es-msb__item" {{ block.shopify_attributes }}>
+            {%- render 'icon', name: 'cart' -%}
+            {%- if cart.item_count > 0 -%}<span class="es-msb__badge">{{ cart.item_count }}</span>{%- endif -%}
+            {%- if section.settings.show_text -%}<span class="es-msb__label">{{ block.settings.text | default: 'Cart' | escape }}</span>{%- endif -%}
+          </a>
+        {%- when 'link' -%}
+          <a href="{{ block.settings.url | default: '#' }}" class="es-msb__item" {{ block.shopify_attributes }}>
+            {%- if block.settings.icon != blank -%}{%- render 'icon', name: block.settings.icon -%}{%- endif -%}
+            {%- if section.settings.show_text -%}<span class="es-msb__label">{{ block.settings.text | escape }}</span>{%- endif -%}
+          </a>
+      {%- endcase -%}
+    {%- endfor -%}
+  </nav>
+
+  <script>
+    (function () {
+      var bar = document.getElementById('shopify-section-{{ section.id }}');
+      if (!bar) return;
+      var lastY = window.scrollY;
+      var ticking = false;
+
+      function onScroll() {
+        var y = window.scrollY;
+        if (y > lastY && y > 80) {
+          bar.classList.add('is-hidden');
+        } else {
+          bar.classList.remove('is-hidden');
+        }
+        lastY = y;
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+      }, { passive: true });
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Mobile Sticky Bar",
+  "tag": "section",
+  "class": "shopify-section--es-mobile-sticky-bar",
+  "settings": [
+    { "type": "checkbox", "id": "enable_sticky_bar", "label": "Enable sticky bar", "default": true },
+    { "type": "checkbox", "id": "show_text", "label": "Show labels", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "home",
+      "name": "Home",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Label", "default": "Home" }
+      ]
+    },
+    {
+      "type": "products",
+      "name": "Shop",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection (optional)" },
+        { "type": "text", "id": "text", "label": "Label", "default": "Shop" }
+      ]
+    },
+    {
+      "type": "cart",
+      "name": "Cart",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Label", "default": "Cart" }
+      ]
+    },
+    {
+      "type": "link",
+      "name": "Custom link",
+      "settings": [
+        { "type": "url", "id": "url", "label": "Link" },
+        { "type": "text", "id": "text", "label": "Label", "default": "Link" },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "account", "label": "Account" },
+            { "value": "search", "label": "Search" },
+            { "value": "star", "label": "Star" }
+          ],
+          "default": "account"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "ES Mobile Sticky Bar",
+      "blocks": [{ "type": "home" }, { "type": "products" }, { "type": "cart" }]
+    }
+  ]
+}
+{% endschema %}
