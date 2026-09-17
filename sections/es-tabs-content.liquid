@@ -1,0 +1,165 @@
+{%- comment -%}
+  ES Tabs Content - E-sellers One (v5.0.0)
+
+  Vertical tab navigation beside a content panel that swaps per tab, each
+  panel pairing an image with rich text. Distinct from es-tabs (simple
+  text-only accordion/tab content) by pairing every tab with its own image.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_tc_tabs = section.blocks | where: 'type', 'tab'
+-%}
+
+{%- if es_tc_tabs.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 60 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-tc {
+      display: flex;
+      flex-direction: column;
+      gap: var(--es-space-6);
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-tc { flex-direction: row; align-items: flex-start; gap: var(--es-space-8); }
+    }
+
+    #shopify-section-{{ section.id }} .es-tc__nav {
+      display: flex;
+      flex-direction: row;
+      gap: var(--es-space-2);
+      overflow-x: auto;
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-tc__nav { flex-direction: column; flex: 0 0 220px; gap: 0; overflow: visible; }
+    }
+
+    #shopify-section-{{ section.id }} .es-tc__tab {
+      background: none; border: none;
+      padding: var(--es-space-3) var(--es-space-4);
+      text-align: left;
+      font-size: var(--es-text-md); font-weight: 650;
+      color: var(--es-fg-muted);
+      cursor: pointer;
+      border-radius: var(--es-radius-md);
+      white-space: nowrap;
+    }
+    #shopify-section-{{ section.id }} .es-tc__tab:hover { background: var(--es-surface); color: var(--es-fg); box-shadow: none; opacity: 1; }
+    #shopify-section-{{ section.id }} .es-tc__tab.is-active { background: var(--es-fg); color: var(--es-bg); }
+
+    #shopify-section-{{ section.id }} .es-tc__panel { display: none; flex: 1; }
+    #shopify-section-{{ section.id }} .es-tc__panel.is-active { display: block; }
+
+    #shopify-section-{{ section.id }} .es-tc__pair { display: grid; grid-template-columns: 1fr; gap: var(--es-space-5); }
+    @media screen and (min-width: 990px) {
+      #shopify-section-{{ section.id }} .es-tc__pair { grid-template-columns: 1fr 1fr; align-items: center; }
+    }
+    #shopify-section-{{ section.id }} .es-tc__media { aspect-ratio: 4/3; border-radius: var(--es-radius-lg); overflow: hidden; position: relative; }
+    #shopify-section-{{ section.id }} .es-tc__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        alignment: 'center' -%}
+
+    <div id="EsTc-{{ section.id }}">
+      <div class="es-tc">
+        <div class="es-tc__nav" role="tablist">
+          {%- for block in es_tc_tabs -%}
+            <button type="button" class="es-tc__tab{% if forloop.first %} is-active{% endif %}"
+                    role="tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                    onclick="esTcSwitch{{ section.id | replace: '-', '' }}({{ forloop.index0 }})">
+              {{ block.settings.navigation_title | default: 'Tab ' | append: forloop.index | escape }}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {%- for block in es_tc_tabs -%}
+          <div class="es-tc__panel{% if forloop.first %} is-active{% endif %}" role="tabpanel" {{ block.shopify_attributes }}>
+            <div class="es-tc__pair">
+              <div class="es-tc__media">
+                {%- if block.settings.image != blank -%}
+                  {%- assign es_tc_alt = block.settings.heading | escape -%}
+                  {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '400,600,800', alt: es_tc_alt }}
+                {%- else -%}
+                  {{ 'lifestyle-2' | placeholder_svg_tag: '' }}
+                {%- endif -%}
+              </div>
+              <div>
+                {%- if block.settings.heading != blank -%}<h3 class="h3">{{ block.settings.heading | escape }}</h3>{%- endif -%}
+                {%- if block.settings.text != blank -%}<div>{{ block.settings.text }}</div>{%- endif -%}
+                {%- if block.settings.button_label != blank -%}
+                  {%- render 'es-button', label: block.settings.button_label, url: block.settings.button_link, style: 'solid' -%}
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      window['esTcSwitch{{ section.id | replace: "-", "" }}'] = function (index) {
+        var root = document.getElementById('EsTc-{{ section.id }}');
+        if (!root) return;
+        var tabs = root.querySelectorAll('.es-tc__tab');
+        var panels = root.querySelectorAll('.es-tc__panel');
+        tabs.forEach(function (t, i) {
+          var active = i === index;
+          t.classList.toggle('is-active', active);
+          t.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(function (p, i) { p.classList.toggle('is-active', i === index); });
+      };
+    })();
+  </script>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add tab blocks to populate this section.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "ES Tabs Content",
+  "tag": "section",
+  "class": "shopify-section--es-tabs-content",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "navigation_title", "label": "Tab label", "default": "Tab" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "richtext", "id": "text", "label": "Text" },
+        { "type": "text", "id": "button_label", "label": "Button label" },
+        { "type": "url", "id": "button_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "ES Tabs Content",
+      "blocks": [{ "type": "tab" }, { "type": "tab" }]
+    }
+  ]
+}
+{% endschema %}
