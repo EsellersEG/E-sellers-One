@@ -1,0 +1,150 @@
+{%- comment -%}
+  E-sellers Shop The Feed - E-sellers One (v5.0.0)
+
+  Instagram-style square grid: each block is one photo, optionally tagged
+  with a product that opens as a small popover card on click - a lightweight
+  "shoppable feed" without embedding any third-party Instagram widget.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_stf_posts = section.blocks | where: 'type', 'feed'
+-%}
+
+{%- if es_stf_posts.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-stf__grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: {{ section.settings.column_gap | default: 4 }}px;
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-stf__grid { grid-template-columns: repeat({{ section.settings.columns_desktop | default: 5 }}, minmax(0, 1fr)); }
+    }
+
+    #shopify-section-{{ section.id }} .es-stf__item { position: relative; aspect-ratio: 1/1; overflow: hidden; }
+    #shopify-section-{{ section.id }} .es-stf__item img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--es-dur-slow) var(--es-ease-out); }
+    #shopify-section-{{ section.id }} .es-stf__item:hover img { transform: scale(1.06); }
+
+    #shopify-section-{{ section.id }} .es-stf__tag {
+      position: absolute;
+      right: 8px; bottom: 8px;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      color: #121212;
+      display: flex; align-items: center; justify-content: center;
+      border: none;
+      cursor: pointer;
+    }
+    #shopify-section-{{ section.id }} .es-stf__tag svg { width: 14px; height: 14px; }
+    #shopify-section-{{ section.id }} .es-stf__popover {
+      position: absolute; left: 8px; right: 8px; bottom: 42px;
+      background: var(--es-bg);
+      border-radius: var(--es-radius-md);
+      box-shadow: var(--es-elev-3);
+      padding: var(--es-space-2);
+      opacity: 0; visibility: hidden; translate: 0 6px;
+      transition: opacity var(--es-dur-fast) var(--es-ease), translate var(--es-dur-fast) var(--es-ease), visibility var(--es-dur-fast);
+      z-index: 2;
+    }
+    #shopify-section-{{ section.id }} .es-stf__item[data-open="true"] .es-stf__popover {
+      opacity: 1; visibility: visible; translate: 0 0;
+    }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description,
+        button_label: section.settings.button_label,
+        button_url: section.settings.link,
+        alignment: 'center' -%}
+
+    <div class="es-stf__grid">
+      {%- for block in es_stf_posts -%}
+        <div class="es-stf__item" {% if block.settings.product != blank %}data-es-stf-item data-open="false"{% endif %} {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {%- assign es_stf_alt = block.settings.product.title | default: 'Feed image' | escape -%}
+            {{ block.settings.image | image_url: width: 500 | image_tag: loading: 'lazy', widths: '250,375,500', alt: es_stf_alt }}
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: '' }}
+          {%- endif -%}
+          {%- if block.settings.product != blank -%}
+            <button type="button" class="es-stf__tag" aria-label="View product">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </button>
+            <div class="es-stf__popover">{%- render 'horizontal-product', product: block.settings.product -%}</div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+      var items = root.querySelectorAll('[data-es-stf-item]');
+      function closeAll(except) { items.forEach(function (i) { if (i !== except) i.dataset.open = 'false'; }); }
+      items.forEach(function (item) {
+        var btn = item.querySelector('.es-stf__tag');
+        if (!btn) return;
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var open = item.dataset.open === 'true';
+          closeAll(item);
+          item.dataset.open = open ? 'false' : 'true';
+        });
+      });
+      document.addEventListener('click', function (e) { if (!root.contains(e.target)) closeAll(null); });
+    })();
+  </script>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add feed image blocks to populate this grid.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Shop The Feed",
+  "tag": "section",
+  "class": "shopify-section--es-shop-the-feed",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop the feed" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    { "type": "text", "id": "button_label", "label": "Link text", "default": "Follow us" },
+    { "type": "url", "id": "link", "label": "Link URL" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 3, "max": 6, "step": 1, "default": 5 },
+    { "type": "range", "id": "column_gap", "label": "Gap", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 4 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "feed",
+      "name": "Feed image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "product", "id": "product", "label": "Tagged product (optional)" }
+      ]
+    }
+  ],
+  "max_blocks": 15,
+  "presets": [
+    {
+      "name": "E-sellers Shop The Feed",
+      "blocks": [{ "type": "feed" }, { "type": "feed" }, { "type": "feed" }, { "type": "feed" }, { "type": "feed" }]
+    }
+  ]
+}
+{% endschema %}

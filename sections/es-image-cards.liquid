@@ -1,0 +1,144 @@
+{%- comment -%}
+  E-sellers Image Cards - E-sellers One (v5.0.0)
+
+  A responsive grid of clickable banner cards, each with its own image,
+  overlay, badge and text placement. Distinct from es-media-grid (asymmetric
+  spans) by keeping every card the same size - built for equal-weight
+  category/promo tiles.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_ic2_cards = section.blocks | where: 'type', 'card'
+-%}
+
+{%- if es_ic2_cards.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-ic2__grid {
+      display: grid;
+      grid-template-columns: repeat({{ section.settings.columns_mobile | default: 1 }}, minmax(0, 1fr));
+      gap: {{ section.settings.column_gap | default: 20 }}px;
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-ic2__grid { grid-template-columns: repeat({{ section.settings.columns_desktop | default: 3 }}, minmax(0, 1fr)); }
+    }
+
+    #shopify-section-{{ section.id }} .es-ic2__card {
+      position: relative;
+      display: flex;
+      aspect-ratio: {{ section.settings.image_ratio | default: '3/4' }};
+      border-radius: var(--es-radius-lg);
+      overflow: hidden;
+      color: #fff;
+    }
+    #shopify-section-{{ section.id }} .es-ic2__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--es-dur-slow) var(--es-ease-out); }
+    #shopify-section-{{ section.id }} .es-ic2__card:hover img { transform: scale(1.05); }
+    #shopify-section-{{ section.id }} .es-ic2__overlay { position: absolute; inset: 0; background: rgba(0,0,0,var(--es-ic2-overlay, .25)); }
+
+    #shopify-section-{{ section.id }} .es-ic2__badge {
+      position: absolute; top: var(--es-space-3); left: var(--es-space-3);
+      z-index: 2;
+      background: var(--es-fg); color: var(--es-bg);
+      font-size: var(--es-text-2xs); font-weight: 700; letter-spacing: var(--es-track-wide); text-transform: uppercase;
+      padding: 4px 10px; border-radius: var(--es-radius-pill);
+    }
+
+    #shopify-section-{{ section.id }} .es-ic2__content {
+      position: relative; z-index: 1;
+      margin-top: auto;
+      padding: var(--es-space-5);
+      display: flex; flex-direction: column; gap: var(--es-space-2);
+    }
+    #shopify-section-{{ section.id }} .es-ic2__heading { color: inherit; margin: 0; }
+    #shopify-section-{{ section.id }} .es-ic2__text { opacity: .9; }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        description: section.settings.description -%}
+
+    <div class="es-ic2__grid">
+      {%- for block in es_ic2_cards -%}
+        <a href="{{ block.settings.card_link | default: '#' }}" class="es-ic2__card" style="--es-ic2-overlay: {{ block.settings.image_overlay_opacity | default: 25 | divided_by: 100.0 }};" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {%- assign es_ic2_alt = block.settings.heading | escape -%}
+            {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350,500,700', alt: es_ic2_alt }}
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: '' }}
+          {%- endif -%}
+          <div class="es-ic2__overlay"></div>
+          {%- if block.settings.show_badge and block.settings.badge_text != blank -%}
+            <span class="es-ic2__badge">{{ block.settings.badge_text | escape }}</span>
+          {%- endif -%}
+          <div class="es-ic2__content">
+            {%- if block.settings.heading != blank -%}<h3 class="es-ic2__heading h4">{{ block.settings.heading | escape }}</h3>{%- endif -%}
+            {%- if block.settings.description != blank -%}<div class="es-ic2__text">{{ block.settings.description }}</div>{%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add card blocks to populate this grid.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Image Cards",
+  "tag": "section",
+  "class": "shopify-section--es-image-cards",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Card ratio",
+      "options": [
+        { "value": "1/1", "label": "Square" },
+        { "value": "3/4", "label": "Portrait" },
+        { "value": "16/9", "label": "Landscape" }
+      ],
+      "default": "3/4"
+    },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "columns_mobile", "label": "Columns (mobile)", "min": 1, "max": 3, "step": 1, "default": 1 },
+    { "type": "range", "id": "column_gap", "label": "Gap", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "card_link", "label": "Link" },
+        { "type": "range", "id": "image_overlay_opacity", "label": "Overlay opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 25 },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Category" },
+        { "type": "richtext", "id": "description", "label": "Description" },
+        { "type": "checkbox", "id": "show_badge", "label": "Show badge", "default": false },
+        { "type": "text", "id": "badge_text", "label": "Badge text", "default": "New" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "E-sellers Image Cards",
+      "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }]
+    }
+  ]
+}
+{% endschema %}

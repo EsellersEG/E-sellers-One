@@ -1,0 +1,157 @@
+{%- comment -%}
+  E-sellers Featured Countdown Timer - E-sellers One (v5.0.0)
+
+  Grid of image cards, each running its own independent countdown - for
+  "deal of the day" style grids with several simultaneous offers. A single
+  shared script drives every card's timer via a common [data-es-fct-card]
+  selector, so the section stays cheap with many cards.
+{%- endcomment -%}
+
+{%- liquid
+  assign es_fct_cards = section.blocks | where: 'type', 'card'
+-%}
+
+{%- if es_fct_cards.size > 0 -%}
+  {%- style -%}
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | default: 56 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | default: 56 }}px;
+    }
+
+    #shopify-section-{{ section.id }} .es-fct__grid {
+      display: grid;
+      grid-template-columns: repeat(var(--es-fct-cols-m, 1), minmax(0, 1fr));
+      gap: {{ section.settings.column_gap | default: 20 }}px;
+    }
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .es-fct__grid { grid-template-columns: repeat({{ section.settings.columns_desktop | default: 3 }}, minmax(0, 1fr)); }
+    }
+
+    #shopify-section-{{ section.id }} .es-fct__card {
+      position: relative;
+      border-radius: var(--es-radius-lg);
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    #shopify-section-{{ section.id }} .es-fct__card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #shopify-section-{{ section.id }} .es-fct__card::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0) 60%);
+    }
+    #shopify-section-{{ section.id }} .es-fct__body { position: relative; z-index: 1; padding: var(--es-space-4); }
+    #shopify-section-{{ section.id }} .es-fct__heading { margin: 0 0 var(--es-space-2); color: inherit; }
+    #shopify-section-{{ section.id }} .es-fct__timer { display: flex; gap: var(--es-space-3); margin: var(--es-space-2) 0; }
+    #shopify-section-{{ section.id }} .es-fct__unit { display: flex; flex-direction: column; align-items: center; }
+    #shopify-section-{{ section.id }} .es-fct__num { font-size: var(--es-text-xl); font-weight: 800; font-variant-numeric: tabular-nums; }
+    #shopify-section-{{ section.id }} .es-fct__label { font-size: var(--es-text-2xs); text-transform: uppercase; opacity: .8; }
+  {%- endstyle -%}
+
+  <div class="page-width">
+    {%- render 'es-section-heading',
+        subheading: section.settings.subheading,
+        heading: section.settings.heading,
+        alignment: 'center' -%}
+
+    <div class="es-fct__grid">
+      {%- for block in es_fct_cards -%}
+        <div class="es-fct__card" data-es-fct-card data-target="{{ block.settings.duration }}" {{ block.shopify_attributes }}>
+          {%- if block.settings.image != blank -%}
+            {%- assign es_fct_alt = block.settings.heading | escape -%}
+            {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '350,500,700', alt: es_fct_alt }}
+          {%- endif -%}
+          <div class="es-fct__body">
+            {%- if block.settings.heading != blank -%}<h3 class="es-fct__heading h4">{{ block.settings.heading | escape }}</h3>{%- endif -%}
+            <div class="es-fct__timer">
+              <div class="es-fct__unit"><span class="es-fct__num" data-days>00</span><span class="es-fct__label">D</span></div>
+              <div class="es-fct__unit"><span class="es-fct__num" data-hours>00</span><span class="es-fct__label">H</span></div>
+              <div class="es-fct__unit"><span class="es-fct__num" data-minutes>00</span><span class="es-fct__label">M</span></div>
+              <div class="es-fct__unit"><span class="es-fct__num" data-seconds>00</span><span class="es-fct__label">S</span></div>
+            </div>
+            {%- if block.settings.button_label != blank -%}
+              {%- render 'es-button', label: block.settings.button_label, url: block.settings.card_link, style: 'secondary' -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('shopify-section-{{ section.id }}');
+      if (!root) return;
+      var cards = root.querySelectorAll('[data-es-fct-card]');
+
+      function pad(n) { return String(n).padStart(2, '0'); }
+
+      cards.forEach(function (card) {
+        var target = new Date(card.dataset.target).getTime();
+        if (isNaN(target)) return;
+        var days = card.querySelector('[data-days]');
+        var hours = card.querySelector('[data-hours]');
+        var minutes = card.querySelector('[data-minutes]');
+        var seconds = card.querySelector('[data-seconds]');
+
+        function tick() {
+          var diff = target - Date.now();
+          if (diff <= 0) {
+            card.querySelector('.es-fct__timer').style.display = 'none';
+            return;
+          }
+          days.textContent = pad(Math.floor(diff / 86400000));
+          hours.textContent = pad(Math.floor((diff % 86400000) / 3600000));
+          minutes.textContent = pad(Math.floor((diff % 3600000) / 60000));
+          seconds.textContent = pad(Math.floor((diff % 60000) / 1000));
+        }
+        tick();
+        setInterval(tick, 1000);
+      });
+    })();
+  </script>
+{%- elsif request.design_mode -%}
+  <div class="page-width" style="text-align:center;padding:40px 0;opacity:.6;">Add card blocks to populate this grid.</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "E-sellers Featured Countdown Timer",
+  "tag": "section",
+  "class": "shopify-section--es-featured-countdown-timer",
+  "settings": [
+    { "type": "text", "id": "subheading", "label": "Subheading" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Today's deals" },
+    { "type": "range", "id": "columns_desktop", "label": "Columns (desktop)", "min": 1, "max": 4, "step": 1, "default": 3 },
+    { "type": "range", "id": "column_gap", "label": "Gap", "min": 0, "max": 48, "step": 2, "unit": "px", "default": 20 },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Deal card",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Flash sale" },
+        { "type": "text", "id": "duration", "label": "Countdown to (ISO date)", "default": "2026-12-31T23:59:59" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+        { "type": "url", "id": "card_link", "label": "Button link" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "E-sellers Featured Countdown Timer",
+      "blocks": [{ "type": "card" }, { "type": "card" }, { "type": "card" }]
+    }
+  ]
+}
+{% endschema %}
