@@ -237,7 +237,8 @@
     },
     "countdown": {
       "expired": "Offer has ended"
-    }
+    },
+    "view_details": "View"
   },
   "gift_card": {
     "general": {
@@ -322,7 +323,8 @@
         "from_price_html": "From {{ price }}",
         "regular_price": "Regular price",
         "sale_price": "Sale price",
-        "unit_price": "Unit price"
+        "unit_price": "Unit price",
+        "label": "Price"
       },
       "quantity": {
         "decrease": "Decrease quantity for {{ product }}",
@@ -340,7 +342,9 @@
         "size": "Size: {{ size }}"
       },
       "unavailable": "Unavailable",
-      "vendor": "Vendor"
+      "vendor": "Vendor",
+      "type": "Type",
+      "description": "Description"
     }
   },
   "search": {

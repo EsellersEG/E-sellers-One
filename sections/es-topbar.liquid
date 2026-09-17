@@ -50,9 +50,10 @@
     #shopify-section-{{ section.id }} .es-tb__socials svg { width: 15px; height: 15px; }
   {%- endstyle -%}
 
+  {%- assign es_tb_positions = 'left,center,right' | split: ',' -%}
   <div class="page-width">
     <div class="es-tb__inner">
-      {%- for pos in 'left,center,right' | split: ',' -%}
+      {%- for pos in es_tb_positions -%}
         {%- assign es_tb_zone_blocks = es_tb_blocks | where: 'settings.position', pos -%}
         {%- if es_tb_zone_blocks.size > 0 -%}
           <div class="es-tb__zone es-tb__zone--{{ pos }}">
