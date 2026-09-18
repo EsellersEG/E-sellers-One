@@ -1,0 +1,467 @@
+{%- comment -%}
+  milk_shake Shop by Hair Concern with Circle/Card Aspect Ratios, Grid/Carousel & Blocks
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }} {
+    background: {{ section.settings.background | default: '#faf7f2' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+  }
+  .section-{{ section.id }} .concern-heading {
+    color: {{ section.settings.heading_color | default: '#2b231d' }};
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+  .section-{{ section.id }} .concern-card {
+    background: {{ section.settings.card_background | default: '#ffffff' }};
+    border: 1px solid {{ section.settings.card_border_color | default: '#f0eae1' }};
+    color: {{ section.settings.text_color | default: '#5c5248' }};
+  }
+  .section-{{ section.id }} .concern-card:hover {
+    border-color: {{ section.settings.card_hover_border | default: '#d48d53' }};
+  }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }} relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Section Header Row -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
+      <div class="max-w-2xl">
+        {% if section.settings.subheading != blank %}
+          <span class="text-xs font-bold uppercase tracking-widest text-milkshake-accent block mb-2">
+            {{ section.settings.subheading }}
+          </span>
+        {% endif %}
+        <h2 class="concern-heading font-serif text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
+          {{ section.settings.heading | default: 'Targeted Solutions for Egyptian Hair Needs' }}
+        </h2>
+        {% if section.settings.description != blank %}
+          <p class="mt-2 text-xs sm:text-sm text-milkshake-muted">
+            {{ section.settings.description }}
+          </p>
+        {% endif %}
+      </div>
+
+      <!-- Carousel Navigation Controls -->
+      {% if section.settings.layout_type == 'carousel' %}
+        <div class="flex items-center gap-2 self-end">
+          <button type="button" class="p-2.5 rounded-full border border-milkshake-border bg-white text-milkshake-charcoal hover:bg-milkshake-sand transition-colors shadow-xs" data-carousel-prev="track-{{ section.id }}" aria-label="Previous">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+          </button>
+          <button type="button" class="p-2.5 rounded-full border border-milkshake-border bg-white text-milkshake-charcoal hover:bg-milkshake-sand transition-colors shadow-xs" data-carousel-next="track-{{ section.id }}" aria-label="Next">
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Items Grid / Carousel Track -->
+    <div 
+      id="track-{{ section.id }}" 
+      class="{% if section.settings.layout_type == 'carousel' %}es-carousel-track pb-4{% else %}es-collection-grid{% endif %}"
+      style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+    >
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <a href="{{ block.settings.link | default: routes.all_products_collection_url }}" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block" {{ block.shopify_attributes }}>
+            
+            <!-- Concern Image Container with Aspect Ratio Control -->
+            <div class="w-full flex justify-center mb-4">
+              <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+                {% if block.settings.image != blank %}
+                  {{ block.settings.image | image_url: width: 400 | image_tag: 
+                    class: 'w-full h-full object-cover', 
+                    alt: block.settings.title 
+                  }}
+                {% else %}
+                  <img 
+                    src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400&auto=format&fit=crop" 
+                    alt="{{ block.settings.title }}" 
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                    width="400"
+                    height="400"
+                  >
+                {% endif %}
+                {% if block.settings.badge != blank %}
+                  <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[10px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal shadow-xs">
+                    {{ block.settings.badge }}
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Title & Subtitle -->
+            <div class="w-full">
+              <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                {{ block.settings.title }}
+              </h3>
+              {% if block.settings.subtitle != blank %}
+                <p class="text-[11px] text-milkshake-muted line-clamp-2">
+                  {{ block.settings.subtitle }}
+                </p>
+              {% endif %}
+            </div>
+
+            <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+              <span>Explore Ritual</span>
+              <span class="material-symbols-outlined text-xs">arrow_forward</span>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <!-- Default Handcrafted 6 Egyptian Climate Hair Concerns -->
+        
+        <!-- 1: Dry & Dehydrated -->
+        <a href="{{ routes.collections_url }}/moisture" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block">
+          <div class="w-full flex justify-center mb-4">
+            <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+              <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?q=80&w=400&auto=format&fit=crop" alt="Dry & Dehydrated" class="w-full h-full object-cover" loading="lazy" width="400" height="400">
+              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[9px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal">Papaya</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+              Dry & Dehydrated
+            </h3>
+            <p class="text-[11px] text-milkshake-muted line-clamp-2">Moisture Plus with Hyaluronic Acid & Organic Papaya</p>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+            <span>Explore Ritual</span>
+            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </div>
+        </a>
+
+        <!-- 2: Damaged & Chemically Treated -->
+        <a href="{{ routes.collections_url }}/integrity" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block">
+          <div class="w-full flex justify-center mb-4">
+            <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+              <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=400&auto=format&fit=crop" alt="Damaged & Chemically Treated" class="w-full h-full object-cover" loading="lazy" width="400" height="400">
+              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[9px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal">Muru Muru</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+              Damaged & Treated
+            </h3>
+            <p class="text-[11px] text-milkshake-muted line-clamp-2">Integrity 41 Amino Acid Intensive Reconstruction</p>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+            <span>Explore Ritual</span>
+            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </div>
+        </a>
+
+        <!-- 3: Blonde, Silver & Bleached -->
+        <a href="{{ routes.collections_url }}/silver-shine" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block">
+          <div class="w-full flex justify-center mb-4">
+            <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+              <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=400&auto=format&fit=crop" alt="Blonde, Silver & Bleached" class="w-full h-full object-cover" loading="lazy" width="400" height="400">
+              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[9px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal">Violet</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+              Blondes & Silver
+            </h3>
+            <p class="text-[11px] text-milkshake-muted line-clamp-2">Silver Shine Anti-Yellow Violet Pigment Elixirs</p>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+            <span>Explore Ritual</span>
+            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </div>
+        </a>
+
+        <!-- 4: Frizzy & Egyptian Humidity -->
+        <a href="{{ routes.collections_url }}/anti-frizz" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block">
+          <div class="w-full flex justify-center mb-4">
+            <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+              <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=400&auto=format&fit=crop" alt="Frizzy & Humidity" class="w-full h-full object-cover" loading="lazy" width="400" height="400">
+              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[9px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal">Anti-Frizz</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+              Frizzy & Humidity
+            </h3>
+            <p class="text-[11px] text-milkshake-muted line-clamp-2">K-Respect Smoothing & Humidity-Proof Shield</p>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+            <span>Explore Ritual</span>
+            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </div>
+        </a>
+
+        <!-- 5: Curly & Coily Texture -->
+        <a href="{{ routes.collections_url }}/curl-passion" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block">
+          <div class="w-full flex justify-center mb-4">
+            <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+              <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400&auto=format&fit=crop" alt="Curly & Coily Texture" class="w-full h-full object-cover" loading="lazy" width="400" height="400">
+              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[9px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal">Pracaxi</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+              Curly & Coily
+            </h3>
+            <p class="text-[11px] text-milkshake-muted line-clamp-2">Curl Passion Bouncy Definition with Pracaxi Oil</p>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+            <span>Explore Ritual</span>
+            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </div>
+        </a>
+
+        <!-- 6: Scalp Detox & Hard Water -->
+        <a href="{{ routes.collections_url }}/deep-cleansing" class="concern-card group rounded-3xl p-5 sm:p-6 text-center flex flex-col items-center justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block">
+          <div class="w-full flex justify-center mb-4">
+            <div class="relative overflow-hidden transition-transform duration-500 group-hover:scale-105 shadow-sm {% if section.settings.image_ratio == 'es-aspect-circle' %}rounded-full w-28 h-28 sm:w-32 sm:h-32{% else %}rounded-2xl w-full {{ section.settings.image_ratio }}{% endif %}">
+              <img src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?q=80&w=400&auto=format&fit=crop" alt="Scalp Detox & Hard Water" class="w-full h-full object-cover" loading="lazy" width="400" height="400">
+              <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-xs text-[9px] font-bold px-2 py-0.5 rounded-full text-milkshake-charcoal">Detox</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <h3 class="font-serif text-sm sm:text-base font-semibold text-milkshake-charcoal mb-1 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+              Scalp & Hard Water
+            </h3>
+            <p class="text-[11px] text-milkshake-muted line-clamp-2">Deep Cleansing Fruit Acid Nile Hard-Water Detox</p>
+          </div>
+          <div class="mt-4 inline-flex items-center gap-1 text-[11px] font-bold text-milkshake-accent group-hover:underline">
+            <span>Explore Ritual</span>
+            <span class="material-symbols-outlined text-xs">arrow_forward</span>
+          </div>
+        </a>
+
+      {% endif %}
+    </div>
+
+    <!-- Carousel Progress Bar -->
+    {% if section.settings.layout_type == 'carousel' and section.settings.show_progress_bar %}
+      <div class="es-carousel-progress mt-6" data-carousel-progress="track-{{ section.id }}">
+        <div class="es-carousel-progress-bar"></div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MS Hair Concerns",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Titles"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading Badge",
+      "default": "Italian Salon Solutions"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Targeted Solutions for Egyptian Hair Needs"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Formulated to counter high humidity, hard Nile water & intense Mediterranean sun."
+    },
+    {
+      "type": "header",
+      "content": "Layout Controls"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout Mode",
+      "options": [
+        { "value": "grid", "label": "Responsive Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "Show Carousel Progress Bar",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Columns on Desktop",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on Tablet",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on Mobile",
+      "options": [
+        { "value": "1", "label": "1 Column" },
+        { "value": "2", "label": "2 Columns" },
+        { "value": "3", "label": "3 Columns" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Shape / Aspect Ratio",
+      "options": [
+        { "value": "es-aspect-circle", "label": "Circle Avatar" },
+        { "value": "es-aspect-1-1", "label": "Square (1:1)" },
+        { "value": "es-aspect-4-5", "label": "Portrait (4:5)" },
+        { "value": "es-aspect-3-4", "label": "Portrait (3:4)" },
+        { "value": "es-aspect-16-10", "label": "Landscape (16:10)" },
+        { "value": "es-aspect-natural", "label": "Natural" }
+      ],
+      "default": "es-aspect-circle"
+    },
+    {
+      "type": "range",
+      "id": "title_max_lines",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Title Max Lines",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section Background",
+      "default": "#FAF7F2"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#5C5248"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card Border Color",
+      "default": "#F0EAE1"
+    },
+    {
+      "type": "color",
+      "id": "card_hover_border",
+      "label": "Card Hover Border Color",
+      "default": "#D48D53"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 140,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Spacing",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 140,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Spacing",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "concern",
+      "name": "Hair Concern",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Concern Photo"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Ingredient / Extract Pill",
+          "default": "Papaya"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Concern Title",
+          "default": "Dry & Dehydrated"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle / Line",
+          "default": "Moisture Plus with Hyaluronic Acid"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Collection Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Hair Concerns"
+    }
+  ]
+}
+{% endschema %}

@@ -1,50 +1,47 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "name": "Header group",
   "type": "header",
   "sections": {
-    "announcement_bar": {
-      "type": "es-announcement-bar",
-      "disabled": true,
+    "es_ms_topbar": {
+      "type": "es-ms-topbar",
       "settings": {
-        "enable_sticky": false,
-        "text_size": "text-xs",
-        "navigation_mode": "arrows",
-        "scrolling_speed": 20,
-        "background": "#1a1a1a",
-        "background_gradient": "",
-        "text_color": "#ffffff"
+        "badge_text": "ITALIAN FORMULA",
+        "promo_text": "Free Delivery in Cairo & Giza on orders 2,499+ EGP",
+        "whatsapp_label": "Ask Trichologist",
+        "whatsapp_url": "https://wa.me/201000000000",
+        "background": "#FAF7F2",
+        "text_color": "#5C5248",
+        "link_color": "#2B231D",
+        "border_color": "#F0EAE1",
+        "badge_bg": "#F4EDE2",
+        "badge_text_color": "#8C5936",
+        "padding_top": 8,
+        "padding_bottom": 8
       }
     },
-    "es_header": {
-      "type": "es-header",
+    "es_ms_header": {
+      "type": "es-ms-header",
       "settings": {
-        "logo_width": 140,
-        "logo_position": "middle-left",
-        "mobile_logo_position": "center",
+        "brand_name": "milk_shake",
+        "tagline": "PROFESSIONAL HAIR CARE — ITALY",
         "menu": "main-menu",
-        "menu_type_desktop": "mega",
-        "sticky_header_type": "on-scroll-up",
-        "show_line_separator": true,
-        "full_width": true,
-        "enable_country_selector": true,
-        "enable_language_selector": true,
-        "enable_customer_avatar": true,
+        "show_search": true,
+        "search_placeholder": "Search whipped cream, leave-in, silver shine...",
+        "quiz_label": "Hair Diagnostic",
+        "quiz_link": "#hair-quiz",
+        "sticky_header": true,
+        "background": "#FFFFFF",
+        "text_color": "#2B231D",
+        "border_color": "#F0EAE1",
+        "cart_badge_bg": "#C88D66",
+        "cart_badge_text": "#FFFFFF",
         "padding_top": 16,
         "padding_bottom": 16
       }
     }
   },
   "order": [
-    "announcement_bar",
-    "es_header"
+    "es_ms_topbar",
+    "es_ms_header"
   ]
 }

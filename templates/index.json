@@ -1,520 +1,573 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "es_milkshake_topbar": {
-      "type": "es-milkshake-topbar",
+    "hero": {
+      "type": "es-ms-hero",
       "settings": {
-        "shipping_text": "FREE Shipping above 2499 EGP",
-        "delivery_text": "Express Delivery Egypt",
-        "chat_text": "Chat with Specialist",
-        "chat_link": "",
-        "currency_text": "EGP (ج.م)",
-        "lang_text": "العربية",
-        "container_width": "container",
-        "bg_color": "",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
+        "badge_text": "Direct from Varese, Italy • Certified Salon Grade",
+        "heading": "Salon-Grade Italian Haircare, Tailored for Egyptian Hair",
+        "subheading": "Transform dry, treated or sun-stressed locks with Italy's most celebrated whipped conditioners, silver toning elixirs and moisture infusions tailored for the Egyptian climate.",
+        "text_alignment": "left",
+        "btn_primary_text": "Shop Best Sellers",
+        "btn_primary_url": "/collections/all",
+        "btn_secondary_text": "Take Italian Hair Quiz",
+        "btn_secondary_url": "#hair-quiz",
+        "show_social_proof": true,
+        "social_proof_text": "from 3,200+ verified salons & clients across Cairo & Alexandria",
+        "image_position": "right",
+        "image_ratio": "es-aspect-4-5",
+        "background": "#FAF7F2",
+        "heading_color": "#2B231D",
+        "text_color": "#5C5248",
+        "btn_primary_bg": "#2B231D",
+        "btn_primary_text_color": "#FFFFFF",
+        "btn_primary_hover_bg": "#D48D53",
+        "btn_secondary_bg": "#FFFFFF",
+        "btn_secondary_text_color": "#2B231D",
+        "btn_secondary_border": "#E8DECB",
+        "padding_top": 60,
+        "padding_bottom": 60
       }
     },
-    "es_milkshake_header": {
-      "type": "es-milkshake-header",
+    "trust_badges": {
+      "type": "es-ms-trust-badges",
       "settings": {
-        "logo_image_url": "https://lh3.googleusercontent.com/aida/AEtjO1XNNPRURg6MR48HImWpxsI-9cjqNEsjGxeMnZXbXF2fqIvIuZVFGBhr7I9jJbHvnrp5uA5cz5r9jmTgCzACZIz1_av9v4MAjuzA9IQj1CfsChgxCdKRgk5G-f0EjDuOEJQXHMpVQzaJb8Iqw3hmRI1K_tCi6OQL0_IDh2AeeMBx6cQroO8vk7cF7iIenOqUrVpXOHxyY0IvvCjurFokAg0dTNZgYQ2ujfhMzD9nN-3anKFveXQTmWDYjg",
-        "logo_width_desktop": 80,
-        "logo_width_mobile": 65,
-        "show_logo_text": true,
-        "logo_text": "milk_shake",
-        "logo_font_size": "text-headline-md",
-        "logo_color": "#1f1d1b",
-        "menu": "",
-        "nav_alignment": "center",
-        "nav_active_style": "pill",
-        "nav_font_size": "sm",
-        "nav_text_transform": "uppercase",
-        "nav_text_color": "#53433e",
-        "nav_hover_color": "#1f1d1b",
-        "nav_active_bg": "#f4ede4",
-        "nav_active_text": "#2d1600",
-        "show_search": true,
-        "search_placeholder": "Search haircare...",
-        "search_width": 240,
-        "show_wishlist": true,
-        "wishlist_url": "",
-        "show_cart": true,
-        "cart_badge_bg": "#ba1a1a",
-        "cart_badge_text": "#ffffff",
-        "show_account": true,
-        "account_style": "primary_circle",
-        "enable_sticky": true,
-        "enable_blur": true,
-        "header_bg": "#fcf9f4",
-        "header_bg_opacity": 90,
-        "header_height_desktop": 80,
-        "header_height_mobile": 64,
-        "show_bottom_border": true,
-        "bottom_border_color": "#e5dfd7",
-        "shadow_style": "subtle",
-        "container_width": "container",
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
-    },
-    "es_milkshake_hero": {
-      "type": "es-milkshake-hero",
-      "settings": {
-        "layout_composition": "split",
-        "content_alignment": "left",
-        "hero_min_height": 600,
-        "hero_image_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuB0epWRVX1rL41yJKkcaaTt6sVXfxOcVVPeXW1ujD1tJYTo3i1I25H_vWC-TlZ714ldZKJQwLEO_Zr0YJs2NTHkfLiHU3MNzLrCHxtpBXhjXQYfUFLSsWPft5u_0bQ8kcTVErZ0FxsHLrtVoOX6aBVshnZZ6Odj2OPetQLmuMxwapo8zvz82o3SDNuLMZAD8AIcueU8SGcEaf4G-Sz0X1DGaiBI8A3DsRvseVhWFwZeCJXLXc6M4ZM",
-        "image_aspect_ratio": "4/5",
-        "image_border_radius": 16,
-        "image_hover_zoom": true,
-        "show_ambient_shape": true,
-        "show_floating_card": true,
-        "floating_subtitle": "Signature Line",
-        "floating_title": "Whipped Cream Leave-In",
-        "floating_badge": "12 Benefits",
-        "floating_card_bg": "#ffffff",
-        "floating_card_radius": 12,
-        "show_badge": true,
-        "badge_icon": "eco",
-        "badge_text": "Pure Italian Salon Botanicals",
-        "heading_line_1": "The Sweetness of Nature",
-        "heading_line_2": "for your hair.",
-        "heading_size": "editorial",
-        "heading_color": "",
-        "subheading": "Professional Italian Salon Care Delivered Across Egypt. Enriched with bio-organic milk proteins, active fruit extracts, and iconic gourmand fragrances formulated to master Egyptian humidity and water textures.",
-        "subheading_color": "",
-        "button_1_label": "Shop Best Sellers",
-        "button_1_link": "",
-        "button_1_style": "primary",
-        "button_2_label": "Find Your Routine",
-        "button_2_link": "",
-        "button_2_style": "outline",
-        "show_rating": true,
-        "rating_score": "4.9/5",
-        "rating_star_color": "#d4af37",
-        "rating_subtitle": "Over 14,000+ Salons & Clients across Cairo, Alex & Giza",
-        "container_width": "container",
-        "bg_color": "",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
-    },
-    "es_milkshake_trust_badges": {
-      "type": "es-milkshake-trust-badges",
-      "settings": {
-        "container_width": "container",
-        "bg_color": "",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
-    },
-    "es_milkshake_hair_concerns": {
-      "type": "es-milkshake-hair-concerns",
+        "section_heading": "Why Egyptian Salons Trust milk_shake®",
+        "layout_type": "grid",
+        "columns_desktop": 4,
+        "columns_tablet": 2,
+        "columns_mobile": "1",
+        "title_max_lines": 1,
+        "background": "#FFFFFF",
+        "card_background": "#FAF7F2",
+        "padding_top": 30,
+        "padding_bottom": 30
+      },
       "blocks": {
-        "concern_jgiXtn": {
-          "type": "concern",
+        "trust_1": {
+          "type": "trust_item",
           "settings": {
-            "collection": "",
-            "image_url": "",
-            "title": "Dry Hair",
-            "subtitle": "Moisture & More",
-            "link": "",
-            "hover_class": "hover:bg-pastel-moisture-plus/40"
+            "icon": "verified_user",
+            "title": "100% Authentic Italian Formula",
+            "text": "Imported directly from z.one concept laboratory in Varese, Italy. Guaranteed batch codes."
           }
         },
-        "concern_ah6P3X": {
-          "type": "concern",
+        "trust_2": {
+          "type": "trust_item",
           "settings": {
-            "collection": "",
-            "image_url": "",
-            "title": "Dry Hair",
-            "subtitle": "Moisture & More",
-            "link": "",
-            "hover_class": "hover:bg-pastel-moisture-plus/40"
+            "icon": "local_shipping",
+            "title": "Cairo & Alex Next-Day Delivery",
+            "text": "Express temperature-controlled dispatch across Greater Cairo, Giza & Alexandria. Sahel express all summer."
           }
         },
-        "concern_TmewfD": {
-          "type": "concern",
+        "trust_3": {
+          "type": "trust_item",
           "settings": {
-            "collection": "",
-            "image_url": "",
-            "title": "Dry Hair",
-            "subtitle": "Moisture & More",
-            "link": "",
-            "hover_class": "hover:bg-pastel-moisture-plus/40"
+            "icon": "flight_takeoff",
+            "title": "Sahel & Red Sea Ready Minis",
+            "text": "TSA-approved 50ml & 100ml sizes formulated to counter extreme sun, saltwater, and chlorine."
           }
         },
-        "concern_3Da6HJ": {
-          "type": "concern",
+        "trust_4": {
+          "type": "trust_item",
           "settings": {
-            "collection": "",
-            "image_url": "",
-            "title": "Dry Hair",
-            "subtitle": "Moisture & More",
-            "link": "",
-            "hover_class": "hover:bg-pastel-moisture-plus/40"
+            "icon": "chat",
+            "title": "Licensed Trichologist Advice",
+            "text": "Chat directly on WhatsApp with our Cairo-based haircare specialists for personalized routine advice."
           }
         }
       },
-      "block_order": [
-        "concern_jgiXtn",
-        "concern_ah6P3X",
-        "concern_TmewfD",
-        "concern_3Da6HJ"
-      ],
-      "settings": {
-        "subheading": "Prescribed Rituals",
-        "heading": "Shop by Hair Concern",
-        "description": "Targeted formulations infused with active milk whey, murumuru butter, and berry extracts for customized restorative hair therapy.",
-        "bg_color": "#fcf9f4",
-        "container_width": "container",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+      "block_order": ["trust_1", "trust_2", "trust_3", "trust_4"]
     },
-    "es_milkshake_trending": {
-      "type": "es-milkshake-trending",
+    "hair_concerns": {
+      "type": "es-ms-hair-concerns",
       "settings": {
-        "subheading": "Salon Favorites",
+        "subheading": "Italian Salon Solutions",
+        "heading": "Targeted Solutions for Egyptian Hair Needs",
+        "description": "Formulated to counter high humidity, hard Nile water & intense Mediterranean sun.",
+        "layout_type": "grid",
+        "show_progress_bar": true,
+        "columns_desktop": 6,
+        "columns_tablet": 3,
+        "columns_mobile": "2",
+        "image_ratio": "es-aspect-circle",
+        "title_max_lines": 1,
+        "background": "#FAF7F2",
+        "card_background": "#FFFFFF",
+        "padding_top": 60,
+        "padding_bottom": 60
+      },
+      "blocks": {
+        "concern_1": {
+          "type": "concern",
+          "settings": {
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus Hyaluronic Acid",
+            "link": "/collections/moisture-plus"
+          }
+        },
+        "concern_2": {
+          "type": "concern",
+          "settings": {
+            "badge": "Integrity 41",
+            "title": "Color & Bleached",
+            "subtitle": "Anti-Fade Sun Protection",
+            "link": "/collections/color-care"
+          }
+        },
+        "concern_3": {
+          "type": "concern",
+          "settings": {
+            "badge": "Violet",
+            "title": "Blondes & Silver",
+            "subtitle": "Silver Shine Anti-Brass",
+            "link": "/collections/silver-shine"
+          }
+        },
+        "concern_4": {
+          "type": "concern",
+          "settings": {
+            "badge": "Anti-Frizz",
+            "title": "Frizzy & Humidity",
+            "subtitle": "K-Respect Smoothing Shield",
+            "link": "/collections/anti-frizz"
+          }
+        },
+        "concern_5": {
+          "type": "concern",
+          "settings": {
+            "badge": "Pracaxi",
+            "title": "Curly & Coily",
+            "subtitle": "Curl Passion Bouncy Definition",
+            "link": "/collections/curl-passion"
+          }
+        },
+        "concern_6": {
+          "type": "concern",
+          "settings": {
+            "badge": "Detox",
+            "title": "Scalp & Hard Water",
+            "subtitle": "Fruit Acid Nile Detox",
+            "link": "/collections/deep-cleansing"
+          }
+        }
+      },
+      "block_order": ["concern_1", "concern_2", "concern_3", "concern_4", "concern_5", "concern_6"]
+    },
+    "trending": {
+      "type": "es-ms-trending",
+      "settings": {
+        "subheading": "Back In Stock & Salon Favorites",
         "heading": "Back in Stock & Trending Now",
-        "collection": "bestsellers",
-        "product_list": [],
-        "bg_color": "#fcf9f4",
-        "card_bg": "#ffffff",
-        "container_width": "container",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+        "content": "<p>Our most requested Italian salon formulas, freshly restocked from Milan.</p>",
+        "link_text": "View All Best Sellers",
+        "link_url": "/collections/all",
+        "layout_type": "grid",
+        "show_progress_bar": true,
+        "columns_desktop": 4,
+        "columns_tablet": 2,
+        "columns_mobile": "1",
+        "image_ratio": "es-aspect-4-5",
+        "title_max_lines": 2,
+        "background": "#FFFFFF",
+        "card_background": "#FFFFFF",
+        "padding_top": 60,
+        "padding_bottom": 60
+      },
+      "blocks": {
+        "trend_1": {
+          "type": "product_card",
+          "settings": {
+            "badge": "Top Seller",
+            "title": "Whipped Cream Leave-In Foam (200ml)",
+            "price": "890 EGP",
+            "compare_price": "1,050 EGP",
+            "link": "/products/whipped-cream"
+          }
+        },
+        "trend_2": {
+          "type": "product_card",
+          "settings": {
+            "badge": "Brass Neutralizer",
+            "title": "Silver Shine Purple Shampoo (300ml)",
+            "price": "760 EGP",
+            "compare_price": "900 EGP",
+            "link": "/products/silver-shine-shampoo"
+          }
+        },
+        "trend_3": {
+          "type": "product_card",
+          "settings": {
+            "badge": "Hyaluronic Acid",
+            "title": "Moisture Plus Hydrating Shampoo (300ml)",
+            "price": "720 EGP",
+            "compare_price": "850 EGP",
+            "link": "/products/moisture-plus-shampoo"
+          }
+        },
+        "trend_4": {
+          "type": "product_card",
+          "settings": {
+            "badge": "12-in-1 Hero",
+            "title": "Incredible Milk 12 Effects (150ml)",
+            "price": "940 EGP",
+            "compare_price": "1,100 EGP",
+            "link": "/products/incredible-milk"
+          }
+        }
+      },
+      "block_order": ["trend_1", "trend_2", "trend_3", "trend_4"]
     },
-    "es_milkshake_travel_promo": {
-      "type": "es-milkshake-travel-promo",
+    "travel_promo": {
+      "type": "es-ms-travel-promo",
       "settings": {
-        "badge_text": "Limited Egyptian Salon Gift",
-        "heading": "Buy Full Size, Get Travel Size for Free",
-        "description": "Purchase the 350 ML Leave-In Conditioner in your chosen signature scent at LE 1,150.00 and receive the matching 75 ML travel edition completely complimentary (Free LE 449.00 Value).",
-        "bg_color": "#f7efe6",
-        "card_bg": "#ffffff",
-        "container_width": "container",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+        "heading": "Limited Sahel & Summer Specials",
+        "subheading": "EXCLUSIVE DUO OFFERS",
+        "layout_type": "grid",
+        "columns_desktop": 2,
+        "columns_tablet": 2,
+        "columns_mobile": "1",
+        "image_ratio": "es-aspect-16-10",
+        "title_max_lines": 2,
+        "background": "#FAFAF7",
+        "card_bg": "#FFFFFF",
+        "padding_top": 64,
+        "padding_bottom": 64
+      },
+      "blocks": {
+        "promo_1": {
+          "type": "promo_card",
+          "settings": {
+            "badge": "BESTSELLER DUO",
+            "title": "Moisture Plus Trio Routine",
+            "subtitle": "Hyaluronic Acid & Organic Papaya Extract",
+            "fallback_image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80",
+            "included_item_1": "300ml Moisture Plus Shampoo",
+            "included_item_2": "50ml Travel Size Whipped Cream (Free)",
+            "price": "1,250 EGP",
+            "compare_at_price": "1,700 EGP",
+            "savings_label": "Save 450 EGP",
+            "button_text": "Claim Moisture Duo • 1,250 EGP"
+          }
+        },
+        "promo_2": {
+          "type": "promo_card",
+          "settings": {
+            "badge": "LIMITED EDITION",
+            "title": "Silver Shine Blonde Care",
+            "subtitle": "Blueberry Extract & Violet Pigment",
+            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=1000&q=80",
+            "included_item_1": "300ml Silver Shine Shampoo",
+            "included_item_2": "50ml Travel Silver Shine Whipped (Free)",
+            "price": "1,350 EGP",
+            "compare_at_price": "1,830 EGP",
+            "savings_label": "Save 480 EGP",
+            "button_text": "Claim Silver Shine Duo • 1,350 EGP"
+          }
+        }
+      },
+      "block_order": ["promo_1", "promo_2"]
     },
-    "es_milkshake_bundles": {
-      "type": "es-milkshake-bundles",
+    "bundles": {
+      "type": "es-ms-bundles",
       "settings": {
-        "subtitle": "Maximized Efficacy",
-        "heading": "Bundle & Save Full Routines",
-        "view_all_text": "View All Bundles",
-        "view_all_link": "",
-        "container_width": "container",
-        "bg_color": "",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+        "subheading": "CURATED ROUTINES",
+        "heading": "Custom 3-Step Italian Rituals",
+        "description": "Designed by master colorists in Udine and proven across top Egyptian salons for maximum hair recovery.",
+        "layout_type": "grid",
+        "columns_desktop": 3,
+        "columns_tablet": 2,
+        "columns_mobile": "1",
+        "image_ratio": "es-aspect-16-10",
+        "title_max_lines": 2,
+        "background": "#FDFBF7",
+        "card_bg": "#FFFFFF",
+        "padding_top": 64,
+        "padding_bottom": 64
+      },
+      "blocks": {
+        "bundle_1": {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 20%",
+            "steps_label": "Cleanse • Condition • Hydrate",
+            "title": "The Ultimate Moisture Routine",
+            "benefit": "Restores hydration balance depleted by AC & desert air",
+            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Moisture Plus Shampoo (300ml), Moisture Plus Conditioner (250ml), Whipped Cream Leave-in (200ml)",
+            "price": "2,450 EGP",
+            "compare_at_price": "3,060 EGP"
+          }
+        },
+        "bundle_2": {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 25%",
+            "steps_label": "Anti-Brass • Tone • Soften",
+            "title": "Silver Shine Blonde Care Set",
+            "benefit": "Neutralizes warm/yellow brassiness from hard Nile water",
+            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Silver Shine Shampoo (300ml), Silver Shine Conditioner (250ml), Silver Shine Whipped (200ml)",
+            "price": "2,600 EGP",
+            "compare_at_price": "3,470 EGP"
+          }
+        },
+        "bundle_3": {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 20%",
+            "steps_label": "Reconstruct • Strengthen • Seal",
+            "title": "Integrity Intensive Repair System",
+            "benefit": "Murumuru butter reconstruction for heat & chemical damage",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Integrity Shampoo (300ml), Integrity Conditioner (300ml), Intensive Treatment (200ml)",
+            "price": "2,850 EGP",
+            "compare_at_price": "3,560 EGP"
+          }
+        },
+        "bundle_4": {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 15%",
+            "steps_label": "Cleanse • Define • Anti-Frizz",
+            "title": "Curl Passion Definition Trio",
+            "benefit": "Brazilian pracaxi & babassu oils for bouncy, frizz-free curls",
+            "fallback_image_url": "https://images.unsplash.com/photo-1608248597359-251f92e3be61?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Curl Passion Shampoo (300ml), Curl Passion Conditioner (300ml), Leave-in Treatment (300ml)",
+            "price": "2,350 EGP",
+            "compare_at_price": "2,760 EGP"
+          }
+        },
+        "bundle_5": {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAHEL ESSENTIAL",
+            "steps_label": "UV Shield • Sea Salt Detox • Nourish",
+            "title": "Sun & Sahel Protection Kit",
+            "benefit": "Shields against Mediterranean salt water and intense UV",
+            "fallback_image_url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Sun & More Shampoo (250ml), Sun & More Mask (200ml), Incredible Milk 12 Effects (150ml)",
+            "price": "2,150 EGP",
+            "compare_at_price": "2,550 EGP"
+          }
+        },
+        "bundle_6": {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 15%",
+            "steps_label": "Purify • Volumize • Refresh",
+            "title": "Daily Cleanse & Volume Duo+",
+            "benefit": "Gentle daily scalp care suitable for gym & high activity",
+            "fallback_image_url": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Daily Frequent Shampoo (300ml), Daily Frequent Conditioner (300ml), Dry Shampoo (225ml)",
+            "price": "1,950 EGP",
+            "compare_at_price": "2,300 EGP"
+          }
+        }
+      },
+      "block_order": ["bundle_1", "bundle_2", "bundle_3", "bundle_4", "bundle_5", "bundle_6"]
     },
-    "es_milkshake_hair_quiz": {
-      "type": "es-milkshake-hair-quiz",
+    "hair_quiz": {
+      "type": "es-ms-hair-quiz",
       "settings": {
-        "banner_bg": "#1f1d1b",
-        "banner_gradient": "",
-        "banner_text_color": "#ffffff",
-        "banner_radius": 16,
-        "banner_padding_desktop": 48,
-        "banner_padding_mobile": 24,
-        "show_ambient_glow": true,
-        "glow_color": "#e07a5f",
-        "show_badge": true,
-        "badge_icon": "psychology_alt",
-        "badge_text": "Italian Salon Diagnosis",
-        "badge_bg": "",
-        "badge_color": "",
-        "heading": "Not sure what your hair needs?",
-        "heading_size": "normal",
-        "description": "Take our 60-second hair quiz for a customized Italian salon routine tailored to your water type (Cairo, Alexandria, Giza), styling habits, and hair porosity.",
-        "show_step_pills": true,
-        "pill_bg": "#ffffff1a",
-        "pill_radius": 8,
-        "step1_label": "Step 1",
-        "step1_title": "Hair Density",
-        "step2_label": "Step 2",
-        "step2_title": "Chemical State",
-        "step3_label": "Step 3",
-        "step3_title": "Egypt Hard Water",
-        "button_text": "Start Hair Quiz",
-        "quiz_link": "",
-        "button_bg": "#ffffff",
-        "button_text_color": "#1f1d1b",
-        "button_radius": 50,
-        "show_graphic": true,
-        "graphic_icon": "spa",
-        "graphic_title": "Custom Formula",
-        "graphic_subtitle": "In 60 Seconds",
-        "enable_graphic_rotation": true,
-        "show_floating_button": true,
-        "floating_button_text": "Diagnostic Quiz",
-        "floating_button_icon": "✨",
-        "floating_button_bg": "#1f1d1b",
-        "floating_button_text_color": "#fcf9f4",
-        "container_width": "container",
-        "bg_color": "",
-        "padding_top": 48,
-        "padding_bottom": 48,
-        "padding_top_mobile": 24,
-        "padding_bottom_mobile": 24,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+        "badge": "TAILORED FOR EGYPTIAN CLIMATE",
+        "heading": "Not Sure Which Formula Matches Your Hair?",
+        "description": "Answer 3 quick questions about your hair type, water hardness level in your city (Cairo, Alex, Giza, or Red Sea), and styling habits. Our Italian trichology algorithm will recommend your ideal routine.",
+        "button_text": "Start 60-Second Hair Diagnostic",
+        "button_url": "/pages/hair-quiz",
+        "background": "#2D2825",
+        "heading_color": "#FFFFFF",
+        "text_color": "#F2E8DC",
+        "padding_top": 64,
+        "padding_bottom": 64
+      },
+      "blocks": {
+        "quiz_1": {
+          "type": "quiz_step",
+          "settings": {
+            "title": "Climate & Water",
+            "description": "Identify whether your water source is Nile treated, Red Sea desalinated, or Sahel well water."
+          }
+        },
+        "quiz_2": {
+          "type": "quiz_step",
+          "settings": {
+            "title": "Texture & Porosity",
+            "description": "Fine, coarse, natural curls, or chemically straightened / bleached hair profile."
+          }
+        },
+        "quiz_3": {
+          "type": "quiz_step",
+          "settings": {
+            "title": "Custom Prescription",
+            "description": "Get matched with your exact 3-step routine + receive 10% off your diagnostic bundle."
+          }
+        }
+      },
+      "block_order": ["quiz_1", "quiz_2", "quiz_3"]
     },
-    "es_milkshake_travel_minis": {
-      "type": "es-milkshake-travel-minis",
+    "travel_minis": {
+      "type": "es-ms-travel-minis",
       "settings": {
-        "subtitle": "Flight Ready",
-        "heading": "Traveling? Minis on the Go",
-        "description": "TSA-approved salon formulas + complimentary Italian travel pouch",
-        "container_width": "container",
-        "bg_color": "",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+        "subheading": "BEACH BAG READY",
+        "heading": "Sahel & Weekend Minis (50ml & 100ml)",
+        "description": "High-potency formulas in TSA-approved sizes. Perfect for your gym bag, weekend trip to Alexandria, or long summer in Sahel.",
+        "layout_type": "grid",
+        "columns_desktop": 4,
+        "columns_tablet": 2,
+        "columns_mobile": "2",
+        "image_ratio": "es-aspect-4-5",
+        "title_max_lines": 2,
+        "background": "#FAFAF7",
+        "card_bg": "#FFFFFF",
+        "padding_top": 64,
+        "padding_bottom": 64
+      },
+      "blocks": {
+        "mini_1": {
+          "type": "mini_item",
+          "settings": {
+            "badge": "SAHEL BESTSELLER",
+            "title": "Whipped Cream Leave-in Foam (50ml)",
+            "description": "Signature sweet milk fragrance with antioxidant papaya extract.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=600&q=80",
+            "price": "450 EGP",
+            "is_sold_out": false
+          }
+        },
+        "mini_2": {
+          "type": "mini_item",
+          "settings": {
+            "badge": "BLONDE HERO",
+            "title": "Silver Shine Shampoo Mini (100ml)",
+            "description": "Violet toning pigment to counteract yellow tones on holiday.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=600&q=80",
+            "price": "480 EGP",
+            "is_sold_out": false
+          }
+        },
+        "mini_3": {
+          "type": "mini_item",
+          "settings": {
+            "badge": "SOLD OUT IN SAHEL",
+            "title": "Moisture Plus Conditioner Mini (100ml)",
+            "description": "Intense hydrating moisture with hyaluronic acid for sun-drenched strands.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80",
+            "price": "490 EGP",
+            "is_sold_out": true
+          }
+        },
+        "mini_4": {
+          "type": "mini_item",
+          "settings": {
+            "badge": "12-IN-1 HERO",
+            "title": "Incredible Milk 12 Effects Mini (50ml)",
+            "description": "All-in-one leave-in with UV filter and thermal protection.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=600&q=80",
+            "price": "520 EGP",
+            "is_sold_out": false
+          }
+        }
+      },
+      "block_order": ["mini_1", "mini_2", "mini_3", "mini_4"]
     },
-    "es_milkshake_social_proof": {
-      "type": "es-milkshake-social-proof",
+    "testimonials_social": {
+      "type": "es-ms-testimonials-social",
       "settings": {
-        "reviews_subtitle": "Real Egyptian Experiences",
-        "reviews_heading": "Loved in Cairo, Alexandria & Beyond",
-        "reviews_description": "See how our natural milk protein rituals transformed damaged and color-treated locks across Egypt.",
-        "insta_handle": "@milkshakegypt",
-        "insta_heading": "The Salon Atelier on Instagram",
-        "insta_link_text": "Follow Along",
-        "insta_url": "",
-        "container_width": "container",
-        "bg_color": "",
-        "bg_gradient": "",
-        "text_color": "",
-        "border_color": "rgba(0,0,0,0)",
-        "border_width": 0,
-        "border_radius": 0,
-        "padding_top": 0,
-        "padding_bottom": 0,
-        "margin_top": 0,
-        "margin_bottom": 0,
-        "padding_top_tablet": 0,
-        "padding_bottom_tablet": 0,
-        "padding_top_mobile": 0,
-        "padding_bottom_mobile": 0,
-        "margin_top_mobile": 0,
-        "margin_bottom_mobile": 0,
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
-    },
-    "es_milkshake_footer": {
-      "type": "es-milkshake-footer",
-      "settings": {
-        "show_brand_column": true,
-        "brand_name": "milk_shake",
-        "region_tag": "Egypt",
-        "brand_desc": "Discover salon-grade Italian haircare formulated with milk proteins and organic fruit extracts. Designed for tailored salon performance and daily sensory indulgence across Egypt.",
-        "show_social_icons": true,
-        "social_instagram": "",
-        "social_tiktok": "",
-        "social_web": "",
-        "social_facebook": "",
-        "social_icon_shape": "circle",
-        "social_icon_bg": "#ffffff",
-        "social_icon_color": "#1f1d1b",
-        "col1_heading": "Client Care",
-        "menu_client_care": "",
-        "col2_heading": "Boutique & Salon",
-        "boutique_address": "306 Port Said St, Cleopatra,<br>Alexandria, Egypt",
-        "phone_label": "+20 (0)3 546 8900",
-        "phone_number": "+20035468900",
-        "email_address": "care@milkshakehaireg.com",
-        "newsletter_heading": "Salon Gazette",
-        "newsletter_text": "Receive exclusive Egyptian beauty privileges, masterclass invites, and seasonal gifting.",
-        "newsletter_footnote": "Complimentary gift with your first order.",
-        "show_payment_badges": true,
-        "copyright_text": "milk_shake hair Egypt (milkshakehaireg.com). All rights reserved.",
-        "footer_bg": "#f7f3ee",
-        "footer_text_color": "#1f1d1b",
-        "footer_muted_color": "#53433e",
-        "footer_border_color": "#00000014",
-        "padding_top": 72,
-        "padding_bottom": 56,
-        "padding_top_mobile": 48,
-        "padding_bottom_mobile": 36,
-        "container_width": "container",
-        "hide_on_desktop": false,
-        "hide_on_tablet": false,
-        "hide_on_mobile": false,
-        "custom_css": ""
-      }
+        "subheading": "VERIFIED SALON PATRONS",
+        "heading": "Loved Across Cairo, Alexandria & Sahel",
+        "description": "Read real experiences from women who transformed their hair with milk_shake® formulas in the Egyptian climate.",
+        "testimonials_layout": "grid",
+        "test_cols_desktop": 3,
+        "test_cols_tablet": 2,
+        "test_cols_mobile": "1",
+        "show_social_feed": true,
+        "social_subheading": "@MILKSHAKE.EGYPT",
+        "social_heading": "As Seen in Egypt's Leading Salons",
+        "social_instagram_handle": "@milkshake.egypt",
+        "social_cols_desktop": 4,
+        "social_aspect_ratio": "es-aspect-1-1",
+        "background": "#FDFBF7",
+        "card_bg": "#FFFFFF",
+        "padding_top": 64,
+        "padding_bottom": 64
+      },
+      "blocks": {
+        "review_1": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "review_text": "The Whipped Cream is irreplaceable in Sahel! After swimming in the Mediterranean all day, my hair used to feel like straw. One palm-full of this mousse, and it's instantly silky soft with that heavenly vanilla bakery aroma.",
+            "author": "Nouran El-Gamil",
+            "location": "Hacienda Bay, North Coast",
+            "verified_badge": "Verified Buyer • Whipped Cream 200ml"
+          }
+        },
+        "review_2": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "review_text": "Cairo water completely ruined my platinum highlights within two weeks until Mohamed at the Zamalek atelier recommended Silver Shine. It keeps my blonde cool and icy without turning it purple or drying the ends.",
+            "author": "Farida Mansour",
+            "location": "Zamalek, Cairo",
+            "verified_badge": "Verified Buyer • Silver Shine Duo"
+          }
+        },
+        "review_3": {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "review_text": "I have 3B curls and finding lightweight hydration that survives the August Alexandria humidity felt impossible. Curl Passion conditioner + leave-in gave me defined ringlets with zero crunch.",
+            "author": "Laila Sherif",
+            "location": "Kafr Abdo, Alexandria",
+            "verified_badge": "Verified Buyer • Curl Passion Set"
+          }
+        },
+        "social_1": {
+          "type": "social_post",
+          "settings": {
+            "handle": "@cairo.hair.atelier",
+            "caption": "Whipped Cream Styling Session",
+            "fallback_image_url": "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80"
+          }
+        },
+        "social_2": {
+          "type": "social_post",
+          "settings": {
+            "handle": "@sahel.curls",
+            "caption": "Sahel Sun Protection",
+            "fallback_image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
+          }
+        },
+        "social_3": {
+          "type": "social_post",
+          "settings": {
+            "handle": "@zamalek.blonde.bar",
+            "caption": "Silver Shine Cool Toning",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=600&q=80"
+          }
+        },
+        "social_4": {
+          "type": "social_post",
+          "settings": {
+            "handle": "@alexandria.curls",
+            "caption": "Curl Passion Definition",
+            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80"
+          }
+        }
+      },
+      "block_order": ["review_1", "review_2", "review_3", "social_1", "social_2", "social_3", "social_4"]
     }
   },
   "order": [
-    "es_milkshake_topbar",
-    "es_milkshake_header",
-    "es_milkshake_hero",
-    "es_milkshake_trust_badges",
-    "es_milkshake_hair_concerns",
-    "es_milkshake_trending",
-    "es_milkshake_travel_promo",
-    "es_milkshake_bundles",
-    "es_milkshake_hair_quiz",
-    "es_milkshake_travel_minis",
-    "es_milkshake_social_proof",
-    "es_milkshake_footer"
+    "hero",
+    "trust_badges",
+    "hair_concerns",
+    "trending",
+    "travel_promo",
+    "bundles",
+    "hair_quiz",
+    "travel_minis",
+    "testimonials_social"
   ]
 }

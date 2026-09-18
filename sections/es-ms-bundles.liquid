@@ -1,0 +1,451 @@
+{%- comment -%}
+  milk_shake® Curated 3-Step Italian Rituals (Bundles) Section
+  Universal Section Customization Standard
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --section-bg: {{ section.settings.background | default: '#FDFBF7' }};
+    --section-text: {{ section.settings.text_color | default: '#2D2825' }};
+    --section-heading: {{ section.settings.heading_color | default: '#2D2825' }};
+    --card-bg: {{ section.settings.card_bg | default: '#FFFFFF' }};
+    --card-text: {{ section.settings.card_text | default: '#2D2825' }};
+    --card-border: {{ section.settings.card_border | default: 'rgba(217, 196, 178, 0.35)' }};
+    --btn-bg: {{ section.settings.button_bg | default: '#2D2825' }};
+    --btn-text: {{ section.settings.button_text | default: '#FFFFFF' }};
+    --badge-bg: {{ section.settings.badge_bg | default: '#EAF0E6' }};
+    --badge-text: {{ section.settings.badge_text | default: '#2E5A27' }};
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- if section.settings.background_gradient != blank -%}
+      background: {{ section.settings.background_gradient }};
+    {%- else -%}
+      background-color: var(--section-bg);
+    {%- endif -%}
+    color: var(--section-text);
+  }
+{%- endstyle -%}
+
+<div class="es-ms-section es-container-luxury">
+  {%- if section.settings.subheading != blank or section.settings.heading != blank or section.settings.description != blank -%}
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div class="max-w-2xl">
+        {%- if section.settings.subheading != blank -%}
+          <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#7A3E2D] mb-3 px-3 py-1 bg-[#F2E8DC] rounded-full">
+            {{ section.settings.subheading }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-[var(--section-heading)] font-normal tracking-tight">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="text-sm md:text-base text-[var(--section-text)] opacity-80 mt-3 font-light leading-relaxed">
+            {{ section.settings.description }}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.layout_type == 'carousel' -%}
+        <div class="hidden md:flex items-center gap-2">
+          <button type="button" class="w-10 h-10 rounded-full border border-[var(--card-border)] bg-white text-[var(--section-text)] flex items-center justify-center hover:bg-[#2D2825] hover:text-white transition-colors" data-carousel-prev aria-label="Previous">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+          </button>
+          <button type="button" class="w-10 h-10 rounded-full border border-[var(--card-border)] bg-white text-[var(--section-text)] flex items-center justify-center hover:bg-[#2D2825] hover:text-white transition-colors" data-carousel-next aria-label="Next">
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.layout_type == 'carousel' -%}
+    <div class="es-carousel-wrapper relative" data-carousel-wrapper>
+      <div 
+        class="es-carousel-track es-carousel-grid"
+        style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+        data-carousel-track
+      >
+        {%- for block in section.blocks -%}
+          <div class="es-carousel-item" {{ block.shopify_attributes }}>
+            {% render 'bundle-card-item', block: block, section: section %}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_carousel_progress -%}
+        <div class="es-progress-track">
+          <div class="es-progress-bar" data-carousel-progress></div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <div 
+      class="es-grid-responsive"
+      style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+    >
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }}>
+          {% render 'bundle-card-item', block: block, section: section %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "MS Ritual Bundles",
+  "tag": "section",
+  "class": "section-ms-bundles",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "SAVE UP TO 25% WITH COMPLETE SETS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Curated 3-Step Italian Rituals"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Formulated to work synergistically. Cleanse, condition, and protect with our signature 3-piece sets tailored for Middle Eastern hair needs."
+    },
+    {
+      "type": "header",
+      "content": "Layout Controls (Impact Standard)"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Bundles per row (Desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Bundles per row (Tablet)",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Bundles per row (Mobile)",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "es-aspect-16-10", "label": "Landscape 16:10" },
+        { "value": "es-aspect-4-5", "label": "Portrait 4:5" },
+        { "value": "es-aspect-1-1", "label": "Square 1:1" },
+        { "value": "es-aspect-natural", "label": "Natural" }
+      ],
+      "default": "es-aspect-16-10"
+    },
+    {
+      "type": "range",
+      "id": "title_max_lines",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Bundle title max lines",
+      "default": 2
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_progress",
+      "label": "Show carousel progress bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Color Palette Overrides"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#FDFBF7"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_text",
+      "label": "Card Text",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card Border",
+      "default": "rgba(217, 196, 178, 0.35)"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button Background",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Save Pill Background",
+      "default": "#EAF0E6"
+    },
+    {
+      "type": "color",
+      "id": "badge_text",
+      "label": "Save Pill Text",
+      "default": "#2E5A27"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "bundle_item",
+      "name": "Ritual Bundle",
+      "settings": [
+        {
+          "type": "product",
+          "id": "bundle_product",
+          "label": "Bundle Product (Optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Bundle Image"
+        },
+        {
+          "type": "text",
+          "id": "fallback_image_url",
+          "label": "Fallback Image URL"
+        },
+        {
+          "type": "text",
+          "id": "save_badge",
+          "label": "Savings Badge",
+          "default": "SAVE 20%"
+        },
+        {
+          "type": "text",
+          "id": "steps_label",
+          "label": "Ritual Steps Category",
+          "default": "Cleanse • Condition • Hydrate"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Bundle Title",
+          "default": "The Ultimate Moisture Routine"
+        },
+        {
+          "type": "text",
+          "id": "benefit",
+          "label": "Key Benefit (Egyptian Context)",
+          "default": "Restores hydration balance depleted by AC & desert air"
+        },
+        {
+          "type": "textarea",
+          "id": "items_included",
+          "label": "Items Included (Comma-separated)",
+          "default": "Moisture Plus Shampoo (300ml), Moisture Plus Conditioner (250ml), Whipped Cream Leave-in (200ml)"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Bundle Price",
+          "default": "2,450 EGP"
+        },
+        {
+          "type": "text",
+          "id": "compare_at_price",
+          "label": "Original Price",
+          "default": "3,060 EGP"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "Add Ritual to Bag"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Bundle URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Ritual Bundles",
+      "blocks": [
+        {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 20%",
+            "steps_label": "Cleanse • Condition • Hydrate",
+            "title": "The Ultimate Moisture Routine",
+            "benefit": "Restores hydration balance depleted by AC & desert air",
+            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Moisture Plus Shampoo (300ml), Moisture Plus Conditioner (250ml), Whipped Cream Leave-in (200ml)",
+            "price": "2,450 EGP",
+            "compare_at_price": "3,060 EGP"
+          }
+        },
+        {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 25%",
+            "steps_label": "Anti-Brass • Tone • Soften",
+            "title": "Silver Shine Blonde Care Set",
+            "benefit": "Neutralizes warm/yellow brassiness from hard Nile water",
+            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Silver Shine Shampoo (300ml), Silver Shine Conditioner (250ml), Silver Shine Whipped (200ml)",
+            "price": "2,600 EGP",
+            "compare_at_price": "3,470 EGP"
+          }
+        },
+        {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 20%",
+            "steps_label": "Reconstruct • Strengthen • Seal",
+            "title": "Integrity Intensive Repair System",
+            "benefit": "Murumuru butter reconstruction for heat & chemical damage",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Integrity Shampoo (300ml), Integrity Conditioner (300ml), Intensive Treatment (200ml)",
+            "price": "2,850 EGP",
+            "compare_at_price": "3,560 EGP"
+          }
+        },
+        {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 15%",
+            "steps_label": "Cleanse • Define • Anti-Frizz",
+            "title": "Curl Passion Definition Trio",
+            "benefit": "Brazilian pracaxi & babassu oils for bouncy, frizz-free curls",
+            "fallback_image_url": "https://images.unsplash.com/photo-1608248597359-251f92e3be61?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Curl Passion Shampoo (300ml), Curl Passion Conditioner (300ml), Leave-in Treatment (300ml)",
+            "price": "2,350 EGP",
+            "compare_at_price": "2,760 EGP"
+          }
+        },
+        {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAHEL ESSENTIAL",
+            "steps_label": "UV Shield • Sea Salt Detox • Nourish",
+            "title": "Sun & Sahel Protection Kit",
+            "benefit": "Shields against Mediterranean salt water and intense UV",
+            "fallback_image_url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Sun & More Shampoo (250ml), Sun & More Mask (200ml), Incredible Milk 12 Effects (150ml)",
+            "price": "2,150 EGP",
+            "compare_at_price": "2,550 EGP"
+          }
+        },
+        {
+          "type": "bundle_item",
+          "settings": {
+            "save_badge": "SAVE 15%",
+            "steps_label": "Purify • Volumize • Refresh",
+            "title": "Daily Cleanse & Volume Duo+",
+            "benefit": "Gentle daily scalp care suitable for gym & high activity",
+            "fallback_image_url": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+            "items_included": "Daily Frequent Shampoo (300ml), Daily Frequent Conditioner (300ml), Dry Shampoo (225ml)",
+            "price": "1,950 EGP",
+            "compare_at_price": "2,300 EGP"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

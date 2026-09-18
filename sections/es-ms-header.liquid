@@ -1,0 +1,388 @@
+{%- comment -%}
+  milk_shake Editorial Luxury Header with Pill Navigation, Search Bar & Cart Trigger
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }} {
+    background: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#2b231d' }};
+    padding-top: {{ section.settings.padding_top | default: 16 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 16 }}px;
+    {% if section.settings.show_border %}
+      border-bottom: 1px solid {{ section.settings.border_color | default: '#f0eae1' }};
+    {% endif %}
+  }
+  {% if section.settings.enable_sticky %}
+    .section-{{ section.id }}.is-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 4px 20px -2px rgba(43, 35, 29, 0.05);
+    }
+  {% endif %}
+  .section-{{ section.id }} .nav-pill:hover,
+  .section-{{ section.id }} .nav-pill.active {
+    background-color: {{ section.settings.nav_hover_bg | default: '#faf7f2' }};
+    color: {{ section.settings.nav_hover_text | default: '#d48d53' }};
+  }
+{%- endstyle -%}
+
+<header class="section-{{ section.id }} {% if section.settings.enable_sticky %}is-sticky{% endif %} transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Top Row: Mobile Menu Button, Brand Logo, Search Bar & Actions -->
+    <div class="flex items-center justify-between gap-4 lg:gap-8">
+      
+      <!-- Mobile Menu Hamburger Button -->
+      <button type="button" class="lg:hidden p-2 text-milkshake-charcoal hover:text-milkshake-accent" id="mobile-menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="es-mobile-menu">
+        <span class="material-symbols-outlined text-2xl">menu</span>
+      </button>
+
+      <!-- Brand Logo -->
+      <div class="flex flex-col items-center lg:items-start flex-shrink-0">
+        <a href="{{ routes.root_url }}" class="inline-block group">
+          {% if section.settings.logo != blank %}
+            {{ section.settings.logo | image_url: width: section.settings.logo_width | image_tag: 
+              class: 'h-auto max-h-12 w-auto object-contain', 
+              alt: shop.name 
+            }}
+          {% else %}
+            <span class="font-serif text-2xl sm:text-3xl lg:text-4xl tracking-tight text-milkshake-charcoal font-semibold italic group-hover:opacity-90 transition-opacity">
+              {{ section.settings.brand_name | default: 'milk_shake' }}<span class="text-xs sm:text-sm not-italic align-super font-normal">®</span>
+            </span>
+          {% endif %}
+        </a>
+        {% if section.settings.tagline != blank %}
+          <span class="text-[9px] tracking-[0.2em] uppercase font-semibold text-milkshake-muted mt-0.5 hidden sm:block">
+            {{ section.settings.tagline }}
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Center Search Bar (Desktop) -->
+      {% if section.settings.show_search %}
+        <div class="hidden md:flex flex-1 max-w-md mx-4">
+          <form action="{{ routes.search_url }}" method="get" role="search" class="w-full relative">
+            <input 
+              type="search" 
+              name="q" 
+              placeholder="{{ section.settings.search_placeholder | default: 'Search whipped cream, silver shine, moisture plus...' }}" 
+              class="w-full pl-10 pr-4 py-2 text-xs bg-milkshake-crema/60 border border-milkshake-border rounded-full focus:outline-none focus:border-milkshake-accent focus:bg-white transition-all text-milkshake-charcoal placeholder-milkshake-muted"
+            >
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-milkshake-muted text-sm pointer-events-none">
+              search
+            </span>
+          </form>
+        </div>
+      {% endif %}
+
+      <!-- Right Utility Actions -->
+      <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+        
+        <!-- Mobile Search Trigger -->
+        {% if section.settings.show_search %}
+          <a href="{{ routes.search_url }}" class="md:hidden p-2 text-milkshake-charcoal hover:text-milkshake-accent" aria-label="Search">
+            <span class="material-symbols-outlined text-xl">search</span>
+          </a>
+        {% endif %}
+
+        <!-- Wishlist -->
+        {% if section.settings.show_wishlist %}
+          <a href="{{ section.settings.wishlist_url | default: '#wishlist' }}" class="p-2 text-milkshake-charcoal hover:text-milkshake-accent relative hidden sm:flex items-center" aria-label="Wishlist">
+            <span class="material-symbols-outlined text-xl">favorite_border</span>
+            <span class="absolute top-1 right-1 w-4 h-4 rounded-full bg-milkshake-sand text-[10px] font-bold flex items-center justify-center text-milkshake-charcoal">
+              0
+            </span>
+          </a>
+        {% endif %}
+
+        <!-- Account -->
+        {% if shop.customer_accounts_enabled and section.settings.show_account %}
+          <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="p-2 text-milkshake-charcoal hover:text-milkshake-accent" aria-label="Account">
+            <span class="material-symbols-outlined text-xl">person</span>
+          </a>
+        {% endif %}
+
+        <!-- Cart Trigger Button -->
+        <a href="{{ routes.cart_url }}" class="es-cart-trigger p-2 text-milkshake-charcoal hover:text-milkshake-accent relative flex items-center gap-1.5" aria-label="Cart">
+          <span class="material-symbols-outlined text-2xl">local_mall</span>
+          <span class="es-cart-count w-5 h-5 rounded-full bg-milkshake-accent text-white text-[11px] font-bold flex items-center justify-center shadow-sm">
+            {{ cart.item_count | default: 2 }}
+          </span>
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Row: Desktop Navigation Pills -->
+    <nav class="hidden lg:flex items-center justify-center mt-3 pt-3 border-t border-milkshake-border/50 gap-1 overflow-x-auto no-scrollbar">
+      {% if section.settings.menu != blank %}
+        {% for link in linklists[section.settings.menu].links %}
+          <a href="{{ link.url }}" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-medium tracking-tight text-milkshake-charcoal transition-all whitespace-nowrap {% if link.active %}active{% endif %}">
+            {{ link.title }}
+          </a>
+        {% endfor %}
+      {% else %}
+        <!-- Default Handcrafted Milkshake Nav Items -->
+        <a href="{{ routes.all_products_collection_url }}" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-medium text-milkshake-charcoal hover:bg-milkshake-crema transition-all">All Products</a>
+        <a href="{{ routes.collections_url }}/best-sellers" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-semibold text-milkshake-accent hover:bg-milkshake-crema transition-all flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-milkshake-accent animate-ping"></span>
+          Best Sellers
+        </a>
+        <a href="{{ routes.collections_url }}/hair-concerns" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-medium text-milkshake-charcoal hover:bg-milkshake-crema transition-all">Hair Concerns</a>
+        <a href="{{ routes.collections_url }}/leave-in-conditioners" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-medium text-milkshake-charcoal hover:bg-milkshake-crema transition-all">Whipped Leave-Ins</a>
+        <a href="{{ routes.collections_url }}/blonde-silver" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-medium text-milkshake-charcoal hover:bg-milkshake-crema transition-all">Blondes & Silver Shine</a>
+        <a href="{{ routes.collections_url }}/bundles" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-medium text-milkshake-charcoal hover:bg-milkshake-crema transition-all">Curated Bundles (Save 20%)</a>
+        <a href="#hair-quiz" class="nav-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-milkshake-sand/60 text-milkshake-espresso hover:bg-milkshake-sand transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-xs text-milkshake-accent">auto_awesome</span>
+          Italian Hair Quiz
+        </a>
+      {% endif %}
+    </nav>
+
+  </div>
+
+  <!-- Mobile Drawer Menu Overlay -->
+  <div id="es-mobile-menu" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+    <div class="w-4/5 max-w-sm h-full bg-white p-6 flex flex-col justify-between shadow-2xl overflow-y-auto">
+      <div>
+        <div class="flex items-center justify-between pb-4 border-b border-milkshake-border">
+          <span class="font-serif text-2xl font-bold italic text-milkshake-charcoal">milk_shake®</span>
+          <button type="button" id="mobile-menu-close" class="p-2 text-milkshake-charcoal" aria-label="Close menu">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="py-4 flex flex-col gap-2">
+          {% if section.settings.menu != blank and linklists[section.settings.menu].links.size > 0 %}
+            {% for link in linklists[section.settings.menu].links %}
+              <a href="{{ link.url }}" class="py-2.5 text-sm font-medium text-milkshake-charcoal border-b border-milkshake-crema {% if link.current %}font-bold text-milkshake-accent{% endif %}">
+                {{ link.title }}
+              </a>
+            {% endfor %}
+            <a href="#hair-quiz" class="py-2.5 text-sm font-bold text-milkshake-espresso flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sm text-milkshake-accent">auto_awesome</span> Take Hair Quiz
+            </a>
+          {% else %}
+            <a href="{{ routes.all_products_collection_url }}" class="py-2.5 text-sm font-medium text-milkshake-charcoal border-b border-milkshake-crema">All Products</a>
+            <a href="{{ routes.collections_url }}/best-sellers" class="py-2.5 text-sm font-bold text-milkshake-accent border-b border-milkshake-crema flex items-center justify-between">
+              Best Sellers <span class="text-[10px] bg-milkshake-accent/10 px-2 py-0.5 rounded-full">Hot</span>
+            </a>
+            <a href="{{ routes.collections_url }}/hair-concerns" class="py-2.5 text-sm font-medium text-milkshake-charcoal border-b border-milkshake-crema">Hair Concerns</a>
+            <a href="{{ routes.collections_url }}/leave-in-conditioners" class="py-2.5 text-sm font-medium text-milkshake-charcoal border-b border-milkshake-crema">Whipped Leave-Ins</a>
+            <a href="{{ routes.collections_url }}/blonde-silver" class="py-2.5 text-sm font-medium text-milkshake-charcoal border-b border-milkshake-crema">Blondes & Silver</a>
+            <a href="{{ routes.collections_url }}/bundles" class="py-2.5 text-sm font-medium text-milkshake-charcoal border-b border-milkshake-crema">Salon Bundles</a>
+            <a href="#hair-quiz" class="py-2.5 text-sm font-bold text-milkshake-espresso flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sm text-milkshake-accent">auto_awesome</span> Take Hair Quiz
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="pt-4 border-t border-milkshake-border text-xs text-milkshake-muted">
+        <p class="font-medium text-milkshake-charcoal mb-1">Egypt Concierge</p>
+        <p>WhatsApp: +20 100 000 0000</p>
+        <p class="mt-2 text-[10px]">Direct from Varese, Italy to Cairo & Alex</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    const toggleBtn = document.getElementById('mobile-menu-toggle');
+    const closeBtn = document.getElementById('mobile-menu-close');
+    const mobileMenu = document.getElementById('es-mobile-menu');
+
+    function openMenu() {
+      if (!mobileMenu) return;
+      mobileMenu.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMenu() {
+      if (!mobileMenu) return;
+      mobileMenu.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    if (toggleBtn && mobileMenu) {
+      toggleBtn.addEventListener('click', openMenu);
+    }
+    if (closeBtn && mobileMenu) {
+      closeBtn.addEventListener('click', closeMenu);
+      mobileMenu.addEventListener('click', (e) => {
+        if (e.target === mobileMenu) closeMenu();
+      });
+    }
+
+    if (mobileMenu) {
+      mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', closeMenu);
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+        closeMenu();
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "MS Header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand & Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Custom Logo Image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 80,
+      "max": 260,
+      "step": 10,
+      "unit": "px",
+      "label": "Custom Logo Width",
+      "default": 140
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name (Text Fallback)",
+      "default": "milk_shake"
+    },
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Brand Tagline",
+      "default": "PROFESSIONAL HAIR CARE — ITALY"
+    },
+    {
+      "type": "header",
+      "content": "Navigation & Search"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation Menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show Search Input",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search Placeholder",
+      "default": "Search whipped cream, silver shine, moisture plus..."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show Wishlist Link",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "wishlist_url",
+      "label": "Wishlist Page URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show Account Icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Enable Sticky On Scroll",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors & Borders"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color",
+      "id": "nav_hover_bg",
+      "label": "Nav Pill Hover Background",
+      "default": "#FAF7F2"
+    },
+    {
+      "type": "color",
+      "id": "nav_hover_text",
+      "label": "Nav Pill Hover Text",
+      "default": "#D48D53"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_border",
+      "label": "Show Bottom Border Separator",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#F0EAE1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Header"
+    }
+  ]
+}
+{% endschema %}

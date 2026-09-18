@@ -1,0 +1,383 @@
+{%- comment -%}
+  milk_shake® Travel Minis (50ml & 100ml) Section
+  Universal Section Customization Standard (Grid/Carousel, responsive columns, aspect ratio, line clamp, full colors)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --section-bg: {{ section.settings.background | default: '#FAFAF7' }};
+    --section-text: {{ section.settings.text_color | default: '#2D2825' }};
+    --section-heading: {{ section.settings.heading_color | default: '#2D2825' }};
+    --card-bg: {{ section.settings.card_bg | default: '#FFFFFF' }};
+    --card-text: {{ section.settings.card_text | default: '#2D2825' }};
+    --card-border: {{ section.settings.card_border | default: 'rgba(217, 196, 178, 0.35)' }};
+    --btn-bg: {{ section.settings.button_bg | default: '#2D2825' }};
+    --btn-text: {{ section.settings.button_text | default: '#FFFFFF' }};
+    --badge-bg: {{ section.settings.badge_bg | default: '#F2E8DC' }};
+    --badge-text: {{ section.settings.badge_text | default: '#7A3E2D' }};
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- if section.settings.background_gradient != blank -%}
+      background: {{ section.settings.background_gradient }};
+    {%- else -%}
+      background-color: var(--section-bg);
+    {%- endif -%}
+    color: var(--section-text);
+  }
+{%- endstyle -%}
+
+<div class="es-ms-section es-container-luxury">
+  {%- if section.settings.subheading != blank or section.settings.heading != blank or section.settings.description != blank -%}
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div class="max-w-2xl">
+        {%- if section.settings.subheading != blank -%}
+          <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#7A3E2D] mb-3 px-3 py-1 bg-[#F2E8DC] rounded-full">
+            {{ section.settings.subheading }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-[var(--section-heading)] font-normal tracking-tight">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="text-sm md:text-base text-[var(--section-text)] opacity-80 mt-3 font-light leading-relaxed">
+            {{ section.settings.description }}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.layout_type == 'carousel' -%}
+        <div class="hidden md:flex items-center gap-2">
+          <button type="button" class="w-10 h-10 rounded-full border border-[var(--card-border)] bg-white text-[var(--section-text)] flex items-center justify-center hover:bg-[#2D2825] hover:text-white transition-colors" data-carousel-prev aria-label="Previous">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+          </button>
+          <button type="button" class="w-10 h-10 rounded-full border border-[var(--card-border)] bg-white text-[var(--section-text)] flex items-center justify-center hover:bg-[#2D2825] hover:text-white transition-colors" data-carousel-next aria-label="Next">
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.layout_type == 'carousel' -%}
+    <div class="es-carousel-wrapper relative" data-carousel-wrapper>
+      <div 
+        class="es-carousel-track es-carousel-grid"
+        style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+        data-carousel-track
+      >
+        {%- for block in section.blocks -%}
+          <div class="es-carousel-item" {{ block.shopify_attributes }}>
+            {% render 'mini-card-item', block: block, section: section %}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_carousel_progress -%}
+        <div class="es-progress-track">
+          <div class="es-progress-bar" data-carousel-progress></div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <div 
+      class="es-grid-responsive"
+      style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+    >
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }}>
+          {% render 'mini-card-item', block: block, section: section %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "MS Travel Minis",
+  "tag": "section",
+  "class": "section-ms-travel-minis",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "ON-THE-GO LUXURY"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Traveling? Minis on the Go"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Airport TSA compliant 50ml & 100ml editions. Perfect for Sahel weekenders, Gouna escapes, and gym bags."
+    },
+    {
+      "type": "header",
+      "content": "Layout Controls (Impact Standard)"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Minis per row (Desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Minis per row (Tablet)",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Minis per row (Mobile)",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "es-aspect-4-5", "label": "Portrait 4:5" },
+        { "value": "es-aspect-1-1", "label": "Square 1:1" },
+        { "value": "es-aspect-3-4", "label": "Portrait 3:4" },
+        { "value": "es-aspect-natural", "label": "Natural" }
+      ],
+      "default": "es-aspect-4-5"
+    },
+    {
+      "type": "range",
+      "id": "title_max_lines",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Title max lines (Line clamp)",
+      "default": 2
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_progress",
+      "label": "Show carousel progress bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#FAFAF7"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_text",
+      "label": "Card Text",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card Border",
+      "default": "rgba(217, 196, 178, 0.35)"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button Background",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge Background",
+      "default": "#F2E8DC"
+    },
+    {
+      "type": "color",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "#7A3E2D"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mini_item",
+      "name": "Travel Mini Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Mini Product (Optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product Image"
+        },
+        {
+          "type": "text",
+          "id": "fallback_image_url",
+          "label": "Fallback Image URL"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge Label",
+          "default": "SAHEL BESTSELLER"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Product Title",
+          "default": "Whipped Cream Leave-in Foam (50ml)"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Signature sweet milk fragrance with antioxidant papaya extract."
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "450 EGP"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_sold_out",
+          "label": "Sold Out (Triggers Notify Modal)",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Travel Minis",
+      "blocks": [
+        {
+          "type": "mini_item",
+          "settings": {
+            "badge": "SAHEL BESTSELLER",
+            "title": "Whipped Cream Leave-in Foam (50ml)",
+            "description": "Signature sweet milk fragrance with antioxidant papaya extract.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=600&q=80",
+            "price": "450 EGP",
+            "is_sold_out": false
+          }
+        },
+        {
+          "type": "mini_item",
+          "settings": {
+            "badge": "BLONDE HERO",
+            "title": "Silver Shine Shampoo Mini (100ml)",
+            "description": "Violet toning pigment to counteract yellow tones on holiday.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=600&q=80",
+            "price": "480 EGP",
+            "is_sold_out": false
+          }
+        },
+        {
+          "type": "mini_item",
+          "settings": {
+            "badge": "SOLD OUT IN SAHEL",
+            "title": "Incredible Milk 12 Effects Mini (50ml)",
+            "description": "All-in-one leave-in with UV filter and thermal protection.",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=600&q=80",
+            "price": "490 EGP",
+            "is_sold_out": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

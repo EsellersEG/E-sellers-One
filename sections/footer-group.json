@@ -1,58 +1,33 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "name": "Footer group",
   "type": "footer",
   "sections": {
-    "footer": {
-      "type": "es-footer",
-      "blocks": {
-        "footer_about": {
-          "type": "text",
-          "settings": {
-            "heading": "About E-sellers",
-            "subtext": "<p>E-sellers Professional is engineered for high conversion, speed, and unforgettable brand experiences.</p>"
-          }
-        },
-        "footer_links": {
-          "type": "link_list",
-          "settings": {
-            "heading": "Quick links",
-            "menu": "footer"
-          }
-        },
-        "footer_newsletter": {
-          "type": "newsletter",
-          "settings": {
-            "heading": "Stay in the loop",
-            "subtext": "Subscribe to receive special offers, free giveaways, and once-in-a-lifetime deals."
-          }
-        }
-      },
-      "block_order": [
-        "footer_about",
-        "footer_links",
-        "footer_newsletter"
-      ],
+    "es_ms_footer": {
+      "type": "es-ms-footer",
       "settings": {
-        "bg_color": "#121212",
-        "text_color": "#a1a1aa",
-        "heading_color": "#ffffff",
-        "hover_color": "#ffffff",
-        "border_color": "#27272a",
-        "padding_top": 64,
+        "brand_name": "milk_shake",
+        "brand_tagline": "NATURAL BEAUTY • MADE IN ITALY",
+        "bio": "Born in Brescia, Italy. Powered by natural milk proteins, certified organic fruit extracts, and conscious formulations for healthy, radiant hair in the Egyptian sun.",
+        "instagram_url": "https://instagram.com/milkshake.egypt",
+        "whatsapp_number": "+20 100 234 5678",
+        "col2_title": "Haircare Rituals",
+        "col3_title": "Client Concierge",
+        "col4_title": "Salon Boutiques",
+        "col5_title": "Salon Gazette",
+        "newsletter_text": "Subscribe for Egyptian climate hair tips and receive 15% off your first ritual order.",
+        "background": "#1F1B19",
+        "text_color": "#B3AAA2",
+        "heading_color": "#FFFFFF",
+        "border_color": "rgba(255, 255, 255, 0.1)",
+        "accent_color": "#C5A880",
+        "btn_bg": "#C5A880",
+        "btn_text": "#1F1B19",
+        "padding_top": 80,
         "padding_bottom": 40
       }
     }
   },
   "order": [
-    "footer"
+    "es_ms_footer"
   ]
 }

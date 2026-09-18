@@ -1,0 +1,330 @@
+{%- comment -%}
+  milk_shake Salon Heritage Trust Badges with Grid/Carousel Mode, Blocks & Color Controls
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }} {
+    background: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 32 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 32 }}px;
+    border-top: 1px solid {{ section.settings.border_color | default: '#f0eae1' }};
+    border-bottom: 1px solid {{ section.settings.border_color | default: '#f0eae1' }};
+  }
+  .section-{{ section.id }} .trust-card {
+    background: {{ section.settings.card_background | default: '#faf7f2' }};
+    border: 1px solid {{ section.settings.card_border_color | default: '#f0eae1' }};
+    color: {{ section.settings.text_color | default: '#5c5248' }};
+  }
+  .section-{{ section.id }} .trust-title {
+    color: {{ section.settings.heading_color | default: '#2b231d' }};
+  }
+  .section-{{ section.id }} .trust-icon-box {
+    background: {{ section.settings.icon_bg | default: '#ffffff' }};
+    color: {{ section.settings.icon_color | default: '#d48d53' }};
+    border: 1px solid {{ section.settings.card_border_color | default: '#f0eae1' }};
+  }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }} transition-colors duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Carousel Controls (if carousel layout) -->
+    {% if section.settings.layout_type == 'carousel' %}
+      <div class="flex items-center justify-between mb-4">
+        {% if section.settings.section_heading != blank %}
+          <h2 class="text-sm font-semibold tracking-wider uppercase text-milkshake-charcoal">{{ section.settings.section_heading }}</h2>
+        {% else %}
+          <div></div>
+        {% endif %}
+        <div class="flex items-center gap-2">
+          <button type="button" class="p-2 rounded-full border border-milkshake-border bg-white text-milkshake-charcoal hover:bg-milkshake-sand transition-colors" data-carousel-prev="track-{{ section.id }}" aria-label="Previous">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+          </button>
+          <button type="button" class="p-2 rounded-full border border-milkshake-border bg-white text-milkshake-charcoal hover:bg-milkshake-sand transition-colors" data-carousel-next="track-{{ section.id }}" aria-label="Next">
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Track Container: Grid or Carousel -->
+    <div 
+      id="track-{{ section.id }}" 
+      class="{% if section.settings.layout_type == 'carousel' %}es-carousel-track pb-2{% else %}es-collection-grid{% endif %}"
+      style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+    >
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <div class="trust-card p-5 rounded-2xl flex items-start gap-4 transition-transform duration-300 hover:-translate-y-0.5 shadow-xs" {{ block.shopify_attributes }}>
+            <div class="trust-icon-box w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-xs">
+              <span class="material-symbols-outlined text-xl">{{ block.settings.icon | default: 'verified_user' }}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="trust-title text-xs sm:text-sm font-bold tracking-tight mb-1 line-clamp-{{ section.settings.title_max_lines }}">
+                {{ block.settings.title }}
+              </h3>
+              <p class="text-[11px] sm:text-xs leading-relaxed opacity-85">
+                {{ block.settings.text }}
+              </p>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Default Handcrafted Milkshake Egyptian Trust Pillars -->
+        <div class="trust-card p-5 rounded-2xl flex items-start gap-4 transition-transform duration-300 hover:-translate-y-0.5 shadow-xs">
+          <div class="trust-icon-box w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-xl">verified_user</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="trust-title text-xs sm:text-sm font-bold tracking-tight mb-1 line-clamp-{{ section.settings.title_max_lines }}">
+              100% Authentic Italian
+            </h3>
+            <p class="text-[11px] sm:text-xs leading-relaxed opacity-85">
+              Direct importation from z.one concept lab in Varese, Italy.
+            </p>
+          </div>
+        </div>
+
+        <div class="trust-card p-5 rounded-2xl flex items-start gap-4 transition-transform duration-300 hover:-translate-y-0.5 shadow-xs">
+          <div class="trust-icon-box w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-xl">local_shipping</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="trust-title text-xs sm:text-sm font-bold tracking-tight mb-1 line-clamp-{{ section.settings.title_max_lines }}">
+              Express Egypt Delivery
+            </h3>
+            <p class="text-[11px] sm:text-xs leading-relaxed opacity-85">
+              Climate-controlled delivery across Cairo & Alex in 24-48 hrs.
+            </p>
+          </div>
+        </div>
+
+        <div class="trust-card p-5 rounded-2xl flex items-start gap-4 transition-transform duration-300 hover:-translate-y-0.5 shadow-xs">
+          <div class="trust-icon-box w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-xl">redeem</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="trust-title text-xs sm:text-sm font-bold tracking-tight mb-1 line-clamp-{{ section.settings.title_max_lines }}">
+              Free Delivery 2,499+ EGP
+            </h3>
+            <p class="text-[11px] sm:text-xs leading-relaxed opacity-85">
+              Complimentary shipping plus Italian luxury minis at checkout.
+            </p>
+          </div>
+        </div>
+
+        <div class="trust-card p-5 rounded-2xl flex items-start gap-4 transition-transform duration-300 hover:-translate-y-0.5 shadow-xs">
+          <div class="trust-icon-box w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 shadow-xs">
+            <span class="material-symbols-outlined text-xl">payments</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <h3 class="trust-title text-xs sm:text-sm font-bold tracking-tight mb-1 line-clamp-{{ section.settings.title_max_lines }}">
+              valU & Cash on Delivery
+            </h3>
+            <p class="text-[11px] sm:text-xs leading-relaxed opacity-85">
+              Split into easy installments with valU or pay cash at your door.
+            </p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Carousel Progress Bar -->
+    {% if section.settings.layout_type == 'carousel' and section.settings.show_progress_bar %}
+      <div class="es-carousel-progress mt-4" data-carousel-progress="track-{{ section.id }}">
+        <div class="es-carousel-progress-bar"></div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MS Trust Badges",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Optional Section Heading"
+    },
+    {
+      "type": "header",
+      "content": "Layout Controls"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout Mode",
+      "options": [
+        { "value": "grid", "label": "Responsive Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "Show Carousel Progress Bar",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Columns on Desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on Tablet",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on Mobile",
+      "options": [
+        { "value": "1", "label": "1 Column" },
+        { "value": "2", "label": "2 Columns" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "title_max_lines",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Title Max Lines",
+      "default": 1
+    },
+    {
+      "type": "header",
+      "content": "Colors & Spacing"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Section Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Section Border Color",
+      "default": "#F0EAE1"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card Background",
+      "default": "#FAF7F2"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card Border Color",
+      "default": "#F0EAE1"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#5C5248"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg",
+      "label": "Icon Box Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon Color",
+      "default": "#D48D53"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "trust_item",
+      "name": "Trust Pillar",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Material Icon Name",
+          "default": "verified_user"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "100% Authentic Italian"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Direct importation from z.one concept laboratory in Varese, Italy."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Optional Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Trust Badges"
+    }
+  ]
+}
+{% endschema %}

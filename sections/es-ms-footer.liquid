@@ -1,0 +1,368 @@
+{%- comment -%}
+  milk_shake® Luxury 5-Column Italian & Egyptian Boutique Footer
+  Universal Section Customization Standard
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --footer-bg: {{ section.settings.background | default: '#1F1B19' }};
+    --footer-text: {{ section.settings.text_color | default: '#B3AAA2' }};
+    --footer-heading: {{ section.settings.heading_color | default: '#FFFFFF' }};
+    --footer-border: {{ section.settings.border_color | default: 'rgba(255, 255, 255, 0.1)' }};
+    --footer-accent: {{ section.settings.accent_color | default: '#C5A880' }};
+    --input-bg: {{ section.settings.input_bg | default: 'rgba(255, 255, 255, 0.06)' }};
+    --input-border: {{ section.settings.input_border | default: 'rgba(255, 255, 255, 0.15)' }};
+    --btn-bg: {{ section.settings.btn_bg | default: '#C5A880' }};
+    --btn-text: {{ section.settings.btn_text | default: '#1F1B19' }};
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+  }
+{%- endstyle -%}
+
+<footer class="border-t border-[var(--footer-border)]">
+  <div class="es-container-luxury">
+    <!-- Top 5-Column Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-16 border-b border-[var(--footer-border)]">
+      
+      <!-- Col 1: Brand Atelier Bio (Span 4) -->
+      <div class="lg:col-span-4 space-y-5">
+        <a href="/" class="inline-block group">
+          <span class="font-serif text-3xl font-medium tracking-tight text-[var(--footer-heading)]">
+            {{ section.settings.brand_name | default: 'milk_shake' }}<span class="text-sm align-top">®</span>
+          </span>
+          <span class="block text-[10px] tracking-[0.25em] text-[var(--footer-accent)] uppercase mt-0.5">
+            {{ section.settings.brand_tagline | default: 'NATURAL BEAUTY • MADE IN ITALY' }}
+          </span>
+        </a>
+
+        <p class="text-xs text-[var(--footer-text)] leading-relaxed font-light max-w-sm">
+          {{ section.settings.bio | default: 'Born in Brescia, Italy. Powered by natural milk proteins, certified organic fruit extracts, and conscious formulations for healthy, radiant hair in the Egyptian sun.' }}
+        </p>
+
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 text-[11px] text-[var(--footer-text)] opacity-80 leading-relaxed font-light">
+          <div class="flex items-center gap-1.5 text-[var(--footer-accent)] font-medium mb-1">
+            <span class="material-symbols-outlined text-xs">verified</span>
+            <span>Official Egyptian Distributor</span>
+          </div>
+          Authorized importer for the Arab Republic of Egypt. Inspected and registered under the Egyptian Drug Authority & Cosmetics Regulation.
+        </div>
+
+        <!-- Social Icons -->
+        <div class="flex items-center gap-3 pt-2">
+          {%- if section.settings.instagram_url != blank -%}
+            <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[var(--footer-accent)] hover:text-[#1F1B19] transition-colors" aria-label="Instagram">
+              <span class="material-symbols-outlined text-base">photo_camera</span>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.whatsapp_number != blank -%}
+            <a href="https://wa.me/{{ section.settings.whatsapp_number | remove: ' ' | remove: '+' }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-300 hover:bg-emerald-500 hover:text-white transition-colors" aria-label="WhatsApp Concierge">
+              <span class="material-symbols-outlined text-base">chat</span>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.facebook_url != blank -%}
+            <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[var(--footer-accent)] hover:text-[#1F1B19] transition-colors" aria-label="Facebook">
+              <span class="material-symbols-outlined text-base">public</span>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- Col 2: Haircare Rituals (Span 2) -->
+      <div class="lg:col-span-2 space-y-4">
+        <h4 class="text-xs font-semibold tracking-widest text-[var(--footer-heading)] uppercase">
+          {{ section.settings.col2_title | default: 'Haircare Rituals' }}
+        </h4>
+        <ul class="space-y-2.5 text-xs font-light">
+          {%- if section.settings.col2_menu != blank -%}
+            {%- for link in linklists[section.settings.col2_menu].links -%}
+              <li>
+                <a href="{{ link.url }}" class="hover:text-white transition-colors">{{ link.title }}</a>
+              </li>
+            {%- endfor -%}
+          {%- else -%}
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Daily Moisture Plus</a></li>
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Silver Shine Blonde</a></li>
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Integrity Deep Repair</a></li>
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Curl Passion Definition</a></li>
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Sun & Sahel Protection</a></li>
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Travel Minis (50ml)</a></li>
+            <li><a href="{{ routes.all_products_collection_url }}" class="hover:text-white transition-colors">Curated 3-Step Bundles</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <!-- Col 3: Egyptian Concierge (Span 2) -->
+      <div class="lg:col-span-2 space-y-4">
+        <h4 class="text-xs font-semibold tracking-widest text-[var(--footer-heading)] uppercase">
+          {{ section.settings.col3_title | default: 'Client Concierge' }}
+        </h4>
+        <ul class="space-y-2.5 text-xs font-light">
+          {%- if section.settings.col3_menu != blank -%}
+            {%- for link in linklists[section.settings.col3_menu].links -%}
+              <li>
+                <a href="{{ link.url }}" class="hover:text-white transition-colors">{{ link.title }}</a>
+              </li>
+            {%- endfor -%}
+          {%- else -%}
+            <li><a href="/pages/track-order" class="hover:text-white transition-colors">Track Cairo / Giza Order</a></li>
+            <li><a href="https://wa.me/201002345678" target="_blank" class="hover:text-white transition-colors">WhatsApp Trichologist</a></li>
+            <li><a href="/pages/hair-quiz" class="hover:text-white transition-colors">Hard Water Hair Diagnostic</a></li>
+            <li><a href="/pages/delivery" class="hover:text-white transition-colors">Climate Delivery Details</a></li>
+            <li><a href="/pages/authenticity" class="hover:text-white transition-colors">Authenticity Guarantee</a></li>
+            <li><a href="/pages/valu-faq" class="hover:text-white transition-colors">valU 0% Installment FAQ</a></li>
+            <li><a href="/pages/salons" class="hover:text-white transition-colors">Salon Partnership Inquiry</a></li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      <!-- Col 4: Salon Ateliers & Boutiques (Span 2) -->
+      <div class="lg:col-span-2 space-y-4">
+        <h4 class="text-xs font-semibold tracking-widest text-[var(--footer-heading)] uppercase">
+          {{ section.settings.col4_title | default: 'Salon Boutiques' }}
+        </h4>
+        <div class="space-y-3 text-xs font-light">
+          <div>
+            <div class="font-medium text-white text-[11px]">Zamalek Flagship Atelier</div>
+            <div class="text-[10px] text-[var(--footer-text)]">14 Brazil St., Zamalek, Cairo</div>
+            <div class="text-[10px] text-[var(--footer-accent)]">Daily 10 AM – 9 PM</div>
+          </div>
+          <div>
+            <div class="font-medium text-white text-[11px]">New Cairo Experience</div>
+            <div class="text-[10px] text-[var(--footer-text)]">5A by The Waterway, Ring Road</div>
+            <div class="text-[10px] text-[var(--footer-accent)]">Daily 11 AM – 10 PM</div>
+          </div>
+          <div>
+            <div class="font-medium text-white text-[11px]">Alexandria Partner</div>
+            <div class="text-[10px] text-[var(--footer-text)]">Kafr Abdo Plaza, Alexandria</div>
+            <div class="text-[10px] text-[var(--footer-accent)]">Tue–Sun 11 AM – 8 PM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Col 5: Italian Salon Gazette Newsletter (Span 2) -->
+      <div class="lg:col-span-2 space-y-4">
+        <h4 class="text-xs font-semibold tracking-widest text-[var(--footer-heading)] uppercase">
+          {{ section.settings.col5_title | default: 'Salon Gazette' }}
+        </h4>
+        <p class="text-xs text-[var(--footer-text)] font-light leading-relaxed">
+          {{ section.settings.newsletter_text | default: 'Subscribe for Egyptian climate hair tips and receive 15% off your first ritual order.' }}
+        </p>
+
+        {%- form 'customer', class: 'space-y-2' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="relative flex items-center">
+            <input 
+              type="email" 
+              name="contact[email]" 
+              placeholder="Your email address" 
+              required
+              class="w-full px-3.5 py-2.5 rounded-full text-xs bg-[var(--input-bg)] border border-[var(--input-border)] text-white placeholder-[var(--footer-text)] focus:outline-none focus:border-[var(--footer-accent)] transition-colors pr-10"
+            >
+            <button 
+              type="submit" 
+              class="absolute right-1 w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-105"
+              style="background-color: var(--btn-bg); color: var(--btn-text);"
+              aria-label="Subscribe"
+            >
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+          {%- if form.posted_successfully? -%}
+            <p class="text-[11px] text-emerald-400 font-medium">Grazie! Check your inbox for your 15% code.</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+
+    <!-- Bottom Bar: Egyptian Payments & Legal Notice -->
+    <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-light text-[var(--footer-text)] opacity-80">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-[11px] uppercase tracking-wider text-white font-medium mr-2">Secure Egyptian Checkout:</span>
+        <span class="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-semibold text-[#C5A880]">valU 0% Installments</span>
+        <span class="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-semibold text-emerald-400">Meeza Debit</span>
+        <span class="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-semibold text-white">Cash on Delivery</span>
+        <span class="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-[10px] font-semibold text-white">Visa / Mastercard</span>
+      </div>
+
+      <div class="text-center md:text-right text-[11px]">
+        <div>© {{ 'now' | date: "%Y" }} milk_shake® Egypt. All rights reserved.</div>
+        <div class="opacity-60 text-[10px] mt-0.5">Official licensed salon brand under z.one concept™ Brescia, Italy.</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "MS Luxury Footer",
+  "tag": "section",
+  "class": "section-ms-footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand Identity"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "default": "milk_shake"
+    },
+    {
+      "type": "text",
+      "id": "brand_tagline",
+      "label": "Tagline",
+      "default": "NATURAL BEAUTY • MADE IN ITALY"
+    },
+    {
+      "type": "textarea",
+      "id": "bio",
+      "label": "Brand Bio",
+      "default": "Born in Brescia, Italy. Powered by natural milk proteins, certified organic fruit extracts, and conscious formulations for healthy, radiant hair in the Egyptian sun."
+    },
+    {
+      "type": "header",
+      "content": "Social & Contact"
+    },
+    {
+      "type": "text",
+      "id": "instagram_url",
+      "label": "Instagram URL",
+      "default": "https://instagram.com/milkshake.egypt"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp Concierge Number",
+      "default": "+20 100 234 5678"
+    },
+    {
+      "type": "text",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Menus"
+    },
+    {
+      "type": "text",
+      "id": "col2_title",
+      "label": "Column 2 Heading",
+      "default": "Haircare Rituals"
+    },
+    {
+      "type": "link_list",
+      "id": "col2_menu",
+      "label": "Column 2 Menu (Optional)"
+    },
+    {
+      "type": "text",
+      "id": "col3_title",
+      "label": "Column 3 Heading",
+      "default": "Client Concierge"
+    },
+    {
+      "type": "link_list",
+      "id": "col3_menu",
+      "label": "Column 3 Menu (Optional)"
+    },
+    {
+      "type": "text",
+      "id": "col4_title",
+      "label": "Column 4 Heading",
+      "default": "Salon Boutiques"
+    },
+    {
+      "type": "text",
+      "id": "col5_title",
+      "label": "Column 5 Heading",
+      "default": "Salon Gazette"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter Subtitle",
+      "default": "Subscribe for Egyptian climate hair tips and receive 15% off your first ritual order."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#1F1B19"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#B3AAA2"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "rgba(255, 255, 255, 0.1)"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent Color",
+      "default": "#C5A880"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button Background",
+      "default": "#C5A880"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "#1F1B19"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Luxury Footer"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,639 @@
+{%- comment -%}
+  milk_shake Back in Stock & Trending Section with Impact-level Customization Options
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }} {
+    background: {{ section.settings.background | default: '#ffffff' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    padding-top: {{ section.settings.padding_top | default: 60 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 60 }}px;
+  }
+  .section-{{ section.id }} .trending-heading {
+    color: {{ section.settings.heading_color | default: '#2b231d' }};
+    {% if section.settings.heading_gradient != blank %}
+      background: {{ section.settings.heading_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    {% endif %}
+  }
+  .section-{{ section.id }} .trending-text {
+    color: {{ section.settings.text_color | default: '#5c5248' }};
+  }
+  .section-{{ section.id }} .product-card-custom {
+    background: {{ section.settings.card_background | default: '#ffffff' }};
+    color: {{ section.settings.card_text_color | default: '#2b231d' }};
+    border: 1px solid {{ section.settings.card_border_color | default: '#f0eae1' }};
+  }
+  .section-{{ section.id }} .product-card-custom:hover {
+    border-color: {{ section.settings.card_hover_border | default: '#d48d53' }};
+  }
+  .section-{{ section.id }} .btn-quick-add {
+    background: {{ section.settings.btn_bg | default: '#2b231d' }};
+    color: {{ section.settings.btn_text | default: '#ffffff' }};
+  }
+  .section-{{ section.id }} .btn-quick-add:hover {
+    background: {{ section.settings.btn_hover_bg | default: '#d48d53' }};
+  }
+{%- endstyle -%}
+
+<section class="section-{{ section.id }} relative">
+  <div class="{% if section.settings.full_width %}w-full px-4 sm:px-6 lg:px-12{% else %}max-w-7xl mx-auto px-4 sm:px-6 lg:px-8{% endif %}">
+    
+    <!-- Header Block: Subheading, Heading, Content & View All -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
+      <div class="max-w-2xl">
+        {% if section.settings.subheading != blank %}
+          <span class="text-xs font-bold uppercase tracking-widest text-milkshake-accent block mb-2">
+            {{ section.settings.subheading }}
+          </span>
+        {% endif %}
+        <h2 class="trending-heading font-serif text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
+          {{ section.settings.heading | default: 'Back in Stock & Trending Now' }}
+        </h2>
+        {% if section.settings.content != blank %}
+          <div class="trending-text mt-2 text-xs sm:text-sm leading-relaxed">
+            {{ section.settings.content }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Action & Carousel Navigation Controls -->
+      <div class="flex items-center gap-4 self-start md:self-end">
+        {% if section.settings.link_text != blank %}
+          <a href="{{ section.settings.link_url | default: routes.all_products_collection_url }}" class="text-xs sm:text-sm font-bold tracking-tight text-milkshake-charcoal hover:text-milkshake-accent transition-colors flex items-center gap-1">
+            <span>{{ section.settings.link_text }}</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </a>
+        {% endif %}
+
+        {% if section.settings.layout_type == 'carousel' %}
+          <div class="flex items-center gap-2 border-l border-milkshake-border pl-4">
+            <button type="button" class="p-2.5 rounded-full border border-milkshake-border bg-white text-milkshake-charcoal hover:bg-milkshake-sand transition-colors shadow-xs" data-carousel-prev="track-{{ section.id }}" aria-label="Previous">
+              <span class="material-symbols-outlined text-sm">arrow_back</span>
+            </button>
+            <button type="button" class="p-2.5 rounded-full border border-milkshake-border bg-white text-milkshake-charcoal hover:bg-milkshake-sand transition-colors shadow-xs" data-carousel-next="track-{{ section.id }}" aria-label="Next">
+              <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Grid or Carousel Track -->
+    <div 
+      id="track-{{ section.id }}" 
+      class="{% if section.settings.layout_type == 'carousel' %}es-carousel-track pb-4{% else %}es-collection-grid{% endif %}"
+      style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+    >
+      {% if section.settings.collection != blank and section.settings.collection.products.size > 0 %}
+        {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+          <div class="product-card-custom group rounded-3xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
+            
+            <!-- Image Container -->
+            <div class="relative overflow-hidden rounded-2xl bg-milkshake-crema/40 mb-4 {{ section.settings.image_ratio }}">
+              {% if product.featured_image != blank %}
+                {{ product.featured_image | image_url: width: 600 | image_tag: 
+                  class: 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-105', 
+                  alt: product.title 
+                }}
+              {% else %}
+                <div class="w-full h-full flex items-center justify-center text-milkshake-muted text-xs">No image</div>
+              {% endif %}
+
+              <!-- Badges -->
+              <div class="absolute top-2.5 left-2.5 flex flex-col gap-1 z-10">
+                {% if product.compare_at_price > product.price %}
+                  <span class="px-2.5 py-1 rounded-full bg-rose-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                    Save {{ product.compare_at_price | minus: product.price | money }}
+                  </span>
+                {% else %}
+                  <span class="px-2.5 py-1 rounded-full bg-milkshake-accent text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                    Trending
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Meta & Title -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-1 mb-1.5 text-amber-500 text-xs">
+                  <span>★★★★★</span>
+                  <span class="text-[10px] text-milkshake-muted font-normal">(4.9)</span>
+                </div>
+                <h3 class="font-serif text-sm sm:text-base font-semibold mb-2 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                  <a href="{{ product.url }}">{{ product.title }}</a>
+                </h3>
+              </div>
+
+              <!-- Price & Quick Add Button -->
+              <div class="mt-4 pt-3 border-t border-milkshake-border/60 flex items-center justify-between gap-2">
+                <div>
+                  <span class="text-sm sm:text-base font-bold text-milkshake-charcoal">
+                    {{ product.price | money }}
+                  </span>
+                  {% if product.compare_at_price > product.price %}
+                    <span class="text-xs text-milkshake-muted line-through ml-1">
+                      {{ product.compare_at_price | money }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <button 
+                  type="button" 
+                  class="btn-quick-add px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all transform active:scale-95"
+                  data-quick-add="{{ product.variants.first.id }}"
+                >
+                  <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                  <span class="hidden sm:inline">Add</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+      {% elsif section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <div class="product-card-custom group rounded-3xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative" {{ block.shopify_attributes }}>
+            <!-- Image Container -->
+            <div class="relative overflow-hidden rounded-2xl bg-milkshake-crema/40 mb-4 {{ section.settings.image_ratio }}">
+              {% if block.settings.image != blank %}
+                {{ block.settings.image | image_url: width: 600 | image_tag: 
+                  class: 'w-full h-full object-cover transition-transform duration-700 group-hover:scale-105', 
+                  alt: block.settings.title 
+                }}
+              {% else %}
+                <img 
+                  src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop" 
+                  alt="{{ block.settings.title }}" 
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                  width="600"
+                  height="750"
+                >
+              {% endif %}
+
+              {% if block.settings.badge != blank %}
+                <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-milkshake-accent text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                  {{ block.settings.badge }}
+                </span>
+              {% endif %}
+            </div>
+
+            <!-- Meta & Title -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-1 mb-1.5 text-amber-500 text-xs">
+                  <span>★★★★★</span>
+                  <span class="text-[10px] text-milkshake-muted font-normal">(4.9)</span>
+                </div>
+                <h3 class="font-serif text-sm sm:text-base font-semibold mb-2 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                  <a href="{{ block.settings.link | default: routes.all_products_collection_url }}">{{ block.settings.title }}</a>
+                </h3>
+              </div>
+
+              <!-- Price & Quick Add -->
+              <div class="mt-4 pt-3 border-t border-milkshake-border/60 flex items-center justify-between gap-2">
+                <div>
+                  <span class="text-sm sm:text-base font-bold text-milkshake-charcoal">
+                    {{ block.settings.price }}
+                  </span>
+                  {% if block.settings.compare_price != blank %}
+                    <span class="text-xs text-milkshake-muted line-through ml-1">
+                      {{ block.settings.compare_price }}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <button 
+                  type="button" 
+                  class="btn-quick-add px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all transform active:scale-95"
+                  data-quick-add="default"
+                >
+                  <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                  <span class="hidden sm:inline">Add</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Default Handcrafted 4 Egyptian Milkshake Best Sellers -->
+        
+        <!-- Product 1: Whipped Cream -->
+        <div class="product-card-custom group rounded-3xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
+          <div class="relative overflow-hidden rounded-2xl bg-milkshake-crema/40 mb-4 {{ section.settings.image_ratio }}">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop" alt="Whipped Cream Leave-In" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" width="600" height="750">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-milkshake-accent text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+              Top Seller
+            </span>
+          </div>
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-1 mb-1.5 text-amber-500 text-xs">
+                <span>★★★★★</span>
+                <span class="text-[10px] text-milkshake-muted font-normal">(980+ reviews)</span>
+              </div>
+              <h3 class="font-serif text-sm sm:text-base font-semibold mb-2 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                <a href="{{ routes.root_url }}products/whipped-cream">Whipped Cream Leave-In Foam (200ml)</a>
+              </h3>
+              <p class="text-[11px] text-milkshake-muted mb-2">Original Italian Conditioning Mousse</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-milkshake-border/60 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-sm sm:text-base font-bold text-milkshake-charcoal">890 EGP</span>
+                <span class="text-xs text-milkshake-muted line-through ml-1">1,050 EGP</span>
+              </div>
+              <button type="button" class="btn-quick-add px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all transform active:scale-95" data-quick-add="mock-1">
+                <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                <span class="hidden sm:inline">Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2: Silver Shine -->
+        <div class="product-card-custom group rounded-3xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
+          <div class="relative overflow-hidden rounded-2xl bg-milkshake-crema/40 mb-4 {{ section.settings.image_ratio }}">
+            <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=600&auto=format&fit=crop" alt="Silver Shine Purple Shampoo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" width="600" height="750">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-purple-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+              Brass Neutralizer
+            </span>
+          </div>
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-1 mb-1.5 text-amber-500 text-xs">
+                <span>★★★★★</span>
+                <span class="text-[10px] text-milkshake-muted font-normal">(640+ reviews)</span>
+              </div>
+              <h3 class="font-serif text-sm sm:text-base font-semibold mb-2 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                <a href="{{ routes.root_url }}products/silver-shine-shampoo">Silver Shine Purple Shampoo (300ml)</a>
+              </h3>
+              <p class="text-[11px] text-milkshake-muted mb-2">Organic Berry Extract & Violet Pigments</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-milkshake-border/60 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-sm sm:text-base font-bold text-milkshake-charcoal">760 EGP</span>
+              </div>
+              <button type="button" class="btn-quick-add px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all transform active:scale-95" data-quick-add="mock-2">
+                <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                <span class="hidden sm:inline">Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3: Moisture Plus -->
+        <div class="product-card-custom group rounded-3xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
+          <div class="relative overflow-hidden rounded-2xl bg-milkshake-crema/40 mb-4 {{ section.settings.image_ratio }}">
+            <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?q=80&w=600&auto=format&fit=crop" alt="Moisture Plus Hydrating Shampoo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" width="600" height="750">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-amber-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+              Hyaluronic Acid
+            </span>
+          </div>
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-1 mb-1.5 text-amber-500 text-xs">
+                <span>★★★★★</span>
+                <span class="text-[10px] text-milkshake-muted font-normal">(420+ reviews)</span>
+              </div>
+              <h3 class="font-serif text-sm sm:text-base font-semibold mb-2 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                <a href="{{ routes.root_url }}products/moisture-plus-shampoo">Moisture Plus Hydrating Shampoo (300ml)</a>
+              </h3>
+              <p class="text-[11px] text-milkshake-muted mb-2">Papaya Extract Intensive Quench</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-milkshake-border/60 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-sm sm:text-base font-bold text-milkshake-charcoal">720 EGP</span>
+              </div>
+              <button type="button" class="btn-quick-add px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all transform active:scale-95" data-quick-add="mock-3">
+                <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                <span class="hidden sm:inline">Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4: Incredible Milk -->
+        <div class="product-card-custom group rounded-3xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative">
+          <div class="relative overflow-hidden rounded-2xl bg-milkshake-crema/40 mb-4 {{ section.settings.image_ratio }}">
+            <img src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=600&auto=format&fit=crop" alt="Incredible Milk 12 Effects Leave-In" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" width="600" height="750">
+            <span class="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider shadow-xs">
+              12-in-1 Hero
+            </span>
+          </div>
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center gap-1 mb-1.5 text-amber-500 text-xs">
+                <span>★★★★★</span>
+                <span class="text-[10px] text-milkshake-muted font-normal">(810+ reviews)</span>
+              </div>
+              <h3 class="font-serif text-sm sm:text-base font-semibold mb-2 group-hover:text-milkshake-accent transition-colors line-clamp-{{ section.settings.title_max_lines }}">
+                <a href="{{ routes.root_url }}products/incredible-milk">Incredible Milk 12 Effects (150ml)</a>
+              </h3>
+              <p class="text-[11px] text-milkshake-muted mb-2">UV Filter, Heat Protection & Frizz Control</p>
+            </div>
+            <div class="mt-4 pt-3 border-t border-milkshake-border/60 flex items-center justify-between gap-2">
+              <div>
+                <span class="text-sm sm:text-base font-bold text-milkshake-charcoal">940 EGP</span>
+                <span class="text-xs text-milkshake-muted line-through ml-1">1,100 EGP</span>
+              </div>
+              <button type="button" class="btn-quick-add px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-xs transition-all transform active:scale-95" data-quick-add="mock-4">
+                <span class="material-symbols-outlined text-sm">add_shopping_cart</span>
+                <span class="hidden sm:inline">Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      {% endif %}
+    </div>
+
+    <!-- Carousel Progress Bar -->
+    {% if section.settings.layout_type == 'carousel' and section.settings.show_progress_bar %}
+      <div class="es-carousel-progress mt-6" data-carousel-progress="track-{{ section.id }}">
+        <div class="es-carousel-progress-bar"></div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "MS Trending Collection",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collection Source"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 16,
+      "step": 1,
+      "label": "Products to Show",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Section Titles & Text"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Back In Stock & Salon Favorites"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Back in Stock & Trending Now"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content Description",
+      "default": "<p>Our most requested Italian salon formulas, freshly restocked from Milan.</p>"
+    },
+    {
+      "type": "text",
+      "id": "link_text",
+      "label": "Link Text",
+      "default": "View All Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "header",
+      "content": "Layout Controls"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width Container",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout Mode",
+      "options": [
+        { "value": "grid", "label": "Stack / Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "carousel"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_progress_bar",
+      "label": "Show Carousel Progress Bar",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Products Per Row (Desktop)",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Products Per Row (Tablet)",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Products Per Row (Mobile)",
+      "options": [
+        { "value": "1", "label": "1 Product" },
+        { "value": "2", "label": "2 Products" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Product Image Aspect Ratio",
+      "options": [
+        { "value": "es-aspect-4-5", "label": "Portrait (4:5)" },
+        { "value": "es-aspect-3-4", "label": "Portrait (3:4)" },
+        { "value": "es-aspect-1-1", "label": "Square (1:1)" },
+        { "value": "es-aspect-16-10", "label": "Landscape (16:10)" },
+        { "value": "es-aspect-natural", "label": "Natural" }
+      ],
+      "default": "es-aspect-4-5"
+    },
+    {
+      "type": "range",
+      "id": "title_max_lines",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Title Max Lines / Rows",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color_background",
+      "id": "heading_gradient",
+      "label": "Heading Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#5C5248"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Product Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Product Card Border Color",
+      "default": "#F0EAE1"
+    },
+    {
+      "type": "color",
+      "id": "card_hover_border",
+      "label": "Product Card Hover Border",
+      "default": "#D48D53"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Product Card Text",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Quick Add Button Background",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Quick Add Button Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "btn_hover_bg",
+      "label": "Quick Add Button Hover Background",
+      "default": "#D48D53"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 20,
+      "max": 140,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Spacing",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 20,
+      "max": 140,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Spacing",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Custom Product Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product Image"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "default": "Best Seller"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Product Title",
+          "default": "Whipped Cream Leave-In Foam (200ml)"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Current Price",
+          "default": "890 EGP"
+        },
+        {
+          "type": "text",
+          "id": "compare_price",
+          "label": "Compare Price",
+          "default": "1,050 EGP"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Product URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Trending Collection"
+    }
+  ]
+}
+{% endschema %}

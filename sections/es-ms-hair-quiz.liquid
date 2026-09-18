@@ -1,0 +1,310 @@
+{%- comment -%}
+  milk_shake® Hair Quiz & Italian Salon Diagnostic Banner
+  Universal Section Customization Standard
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --section-bg: {{ section.settings.background | default: '#2D2825' }};
+    --section-text: {{ section.settings.text_color | default: '#F2E8DC' }};
+    --section-heading: {{ section.settings.heading_color | default: '#FFFFFF' }};
+    --card-bg: {{ section.settings.card_bg | default: 'rgba(255, 255, 255, 0.07)' }};
+    --card-text: {{ section.settings.card_text | default: '#FFFFFF' }};
+    --card-border: {{ section.settings.card_border | default: 'rgba(242, 232, 220, 0.15)' }};
+    --btn-bg: {{ section.settings.button_bg | default: '#C5A880' }};
+    --btn-text: {{ section.settings.button_text_color | default: '#2D2825' }};
+    --badge-bg: {{ section.settings.badge_bg | default: 'rgba(197, 168, 128, 0.2)' }};
+    --badge-text: {{ section.settings.badge_text | default: '#E5D3B8' }};
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- if section.settings.background_gradient != blank -%}
+      background: {{ section.settings.background_gradient }};
+    {%- else -%}
+      background-color: var(--section-bg);
+    {%- endif -%}
+    color: var(--section-text);
+  }
+{%- endstyle -%}
+
+<div class="es-ms-section es-container-luxury">
+  <div class="relative rounded-3xl overflow-hidden p-8 md:p-12 lg:p-16 border border-[var(--card-border)] bg-gradient-to-br from-black/40 to-transparent">
+    <!-- Ambient glowing aura -->
+    <div class="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#C5A880]/15 blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-[#7A3E2D]/20 blur-3xl pointer-events-none"></div>
+
+    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <!-- Left Content Column -->
+      <div class="lg:col-span-7 space-y-6">
+        {%- if section.settings.badge != blank -%}
+          <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-[var(--badge-bg)] text-[var(--badge-text)] border border-[var(--badge-text)]/20">
+            <span class="material-symbols-outlined text-sm">science</span>
+            {{ section.settings.badge }}
+          </span>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-[var(--section-heading)] font-normal tracking-tight leading-tight">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.description != blank -%}
+          <p class="text-sm md:text-base text-[var(--section-text)] opacity-90 leading-relaxed font-light max-w-xl">
+            {{ section.settings.description }}
+          </p>
+        {%- endif -%}
+
+        <!-- Interactive 3 Steps -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+          {%- for block in section.blocks -%}
+            <div class="p-4 rounded-2xl bg-[var(--card-bg)] border border-[var(--card-border)] backdrop-blur-sm" {{ block.shopify_attributes }}>
+              <div class="w-8 h-8 rounded-full bg-[#C5A880] text-[#2D2825] font-bold text-xs flex items-center justify-center mb-3">
+                {{ forloop.index }}
+              </div>
+              <h4 class="text-xs md:text-sm font-semibold text-[var(--card-text)] mb-1">
+                {{ block.settings.title }}
+              </h4>
+              <p class="text-[11px] text-[var(--section-text)] opacity-75 font-light leading-relaxed">
+                {{ block.settings.description }}
+              </p>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <!-- Button Actions -->
+        <div class="pt-4 flex flex-wrap items-center gap-4">
+          <a 
+            href="{{ section.settings.button_url | default: '/pages/hair-quiz' }}" 
+            class="inline-flex items-center justify-center px-8 py-4 rounded-full text-sm font-semibold tracking-wide transition-all duration-300 hover:scale-[1.02] shadow-lg"
+            style="background-color: var(--btn-bg); color: var(--btn-text);"
+          >
+            <span>{{ section.settings.button_text | default: 'Start 60-Second Hair Diagnostic' }}</span>
+            <span class="material-symbols-outlined text-lg ml-2">arrow_forward</span>
+          </a>
+
+          <div class="flex items-center gap-2 text-xs text-[var(--section-text)] opacity-80">
+            <span class="material-symbols-outlined text-sm text-[#C5A880]">verified</span>
+            <span>Includes 10% diagnostic voucher</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Diagnostic Result Card Column -->
+      <div class="lg:col-span-5">
+        <div class="relative p-6 md:p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-2xl">
+          <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-xs font-mono uppercase tracking-wider opacity-80">Italian Diagnostic AI</span>
+            </div>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-[#C5A880]/30 text-[#E5D3B8]">98.4% Accuracy</span>
+          </div>
+
+          <div class="space-y-4 text-xs font-light">
+            <div class="p-3.5 rounded-xl bg-black/25 border border-white/5 space-y-1">
+              <span class="text-[10px] uppercase font-bold text-[#C5A880] tracking-wider block">Common Egyptian Profile #1:</span>
+              <div class="font-medium text-sm text-white">Cairo Tap Water + High Humidity Heat</div>
+              <p class="opacity-75 text-[11px]">Hard chlorine minerals trigger color oxidation and scalp dryness.</p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-black/25 border border-white/5 space-y-1">
+              <span class="text-[10px] uppercase font-bold text-emerald-300 tracking-wider block">Prescribed Ritual Routine:</span>
+              <div class="font-medium text-sm text-white">Silver Shine Detox + Incredible Milk 12</div>
+              <p class="opacity-75 text-[11px]">Infuses milk proteins to seal porosity before hot air exposure.</p>
+            </div>
+          </div>
+
+          <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs opacity-75">
+            <span>Over 14,200 Egyptian diagnostics completed</span>
+            <span class="material-symbols-outlined text-base">forum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MS Hair Diagnostic Quiz",
+  "tag": "section",
+  "class": "section-ms-hair-quiz",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "badge",
+      "label": "Badge",
+      "default": "TAILORED FOR EGYPTIAN CLIMATE"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Not Sure Which Formula Matches Your Hair?"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Answer 3 quick questions about your hair type, water hardness level in your city (Cairo, Alex, Giza, or Red Sea), and styling habits. Our Italian trichology algorithm will recommend your ideal routine."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Start 60-Second Hair Diagnostic"
+    },
+    {
+      "type": "url",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#F2E8DC"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Step Card Background",
+      "default": "rgba(255, 255, 255, 0.07)"
+    },
+    {
+      "type": "color",
+      "id": "card_text",
+      "label": "Step Card Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Border Color",
+      "default": "rgba(242, 232, 220, 0.15)"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button Background",
+      "default": "#C5A880"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge Background",
+      "default": "rgba(197, 168, 128, 0.2)"
+    },
+    {
+      "type": "color",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "#E5D3B8"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quiz_step",
+      "name": "Quiz Step",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Step Title",
+          "default": "Climate & Water"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Step Description",
+          "default": "Identify whether your source is Nile treated, Red Sea desalinated, or Sahel well water."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Hair Diagnostic Quiz",
+      "blocks": [
+        {
+          "type": "quiz_step",
+          "settings": {
+            "title": "Climate & Water",
+            "description": "Identify whether your water source is Nile treated, Red Sea desalinated, or Sahel well water."
+          }
+        },
+        {
+          "type": "quiz_step",
+          "settings": {
+            "title": "Texture & Porosity",
+            "description": "Fine, coarse, natural curls, or chemically straightened / bleached hair profile."
+          }
+        },
+        {
+          "type": "quiz_step",
+          "settings": {
+            "title": "Custom Prescription",
+            "description": "Get matched with your exact 3-step routine + receive 10% off your diagnostic bundle."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

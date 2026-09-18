@@ -1,7 +1,6 @@
 /* 
-  E-sellers One - Milkshake Luxury Italian Salon Design System Assets
-  Preserves exact 16px rem scaling, Bodoni Moda display typography, 
-  Plus Jakarta Sans UI typography, and modal/toast helpers.
+  E-sellers One - Milkshake Luxury Italian Salon Design System & Customization Engine
+  Universal Grid, Carousel, Aspect Ratios, Typography, and Responsive Customization Tokens
 */
 
 html {
@@ -16,15 +15,29 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Typography Hierarchy */
 .font-headline,
 .font-headline-xl,
 .font-headline-lg,
 .font-headline-md,
 .font-display-hero,
-.font-display-hero-mobile {
-  font-family: 'Bodoni Moda', serif !important;
+.font-display-hero-mobile,
+.font-headline-xl-mobile {
+  font-family: 'Bodoni Moda', Georgia, serif !important;
 }
 
+.font-body-sm,
+.font-body-md,
+.font-body-lg,
+.font-label-sm,
+.font-label-md,
+.font-label-lg,
+.font-price-regular,
+.font-price-sale {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Material Symbols Integration */
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined' !important;
   font-weight: normal;
@@ -41,7 +54,32 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Hide scrollbars where requested */
+/* Color Variables */
+:root {
+  --ms-primary: #040302;
+  --ms-surface: #fcf9f4;
+  --ms-surface-cream: #FDFBF7;
+  --ms-surface-container: #F5EFEB;
+  --ms-surface-container-high: #EDE5DE;
+  --ms-surface-container-highest: #e5e2dd;
+  --ms-surface-container-lowest: #ffffff;
+  --ms-on-surface: #1c1c19;
+  --ms-on-surface-variant: #4b4640;
+  --ms-outline: #7d766f;
+  --ms-border-subtle: #E8DFD5;
+  --ms-text-muted: #756F68;
+  --ms-badge-sale: #C84B31;
+  --ms-badge-soldout: #A09A93;
+  --ms-pastel-flower-vibes: #F5D6D8;
+  --ms-pastel-make-my-day: #FCE5B2;
+  --ms-pastel-moisture-plus: #CFE4DF;
+  --ms-pastel-silver-shine: #DCD6E8;
+  --ms-secondary: #7e5700;
+  --ms-secondary-container: #fdbe50;
+  --ms-on-secondary-container: #714d00;
+}
+
+/* Scrollbar Utility */
 .no-scrollbar::-webkit-scrollbar,
 ::-webkit-scrollbar {
   display: none;
@@ -51,7 +89,7 @@ body {
   scrollbar-width: none;
 }
 
-/* Modal and Interactive transitions */
+/* Modal and Interactive Transitions */
 .modal-open {
   overflow: hidden;
 }
@@ -71,11 +109,11 @@ body {
   }
 }
 
-/* Universal Grid & Carousel Layout Engine */
+/* Universal Grid Engine */
 .es-collection-grid {
   display: grid;
   grid-template-columns: repeat(var(--cols-mobile, 1), minmax(0, 1fr));
-  gap: var(--grid-gap, 1rem);
+  gap: var(--grid-gap, 1.5rem);
 }
 
 @media (min-width: 640px) {
@@ -90,12 +128,14 @@ body {
   }
 }
 
+/* Universal Carousel Engine */
 .es-carousel-track {
   display: flex;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  gap: var(--grid-gap, 1rem);
+  -webkit-overflow-scrolling: touch;
+  gap: var(--grid-gap, 1.5rem);
   -ms-overflow-style: none;
   scrollbar-width: none;
   padding-bottom: 0.5rem;
@@ -106,42 +146,207 @@ body {
 }
 
 .es-carousel-track > * {
-  flex: 0 0 calc((100% - (var(--cols-mobile, 1) - 1) * var(--grid-gap, 1rem)) / var(--cols-mobile, 1));
+  flex: 0 0 calc((100% - (var(--cols-mobile, 1) - 1) * var(--grid-gap, 1.5rem)) / var(--cols-mobile, 1));
   scroll-snap-align: start;
   min-width: 0;
 }
 
 @media (min-width: 640px) {
   .es-carousel-track > * {
-    flex: 0 0 calc((100% - (var(--cols-tablet, 2) - 1) * var(--grid-gap, 1rem)) / var(--cols-tablet, 2));
+    flex: 0 0 calc((100% - (var(--cols-tablet, 2) - 1) * var(--grid-gap, 1.5rem)) / var(--cols-tablet, 2));
   }
 }
 
 @media (min-width: 1024px) {
   .es-carousel-track > * {
-    flex: 0 0 calc((100% - (var(--cols-desktop, 4) - 1) * var(--grid-gap, 1rem)) / var(--cols-desktop, 4));
+    flex: 0 0 calc((100% - (var(--cols-desktop, 4) - 1) * var(--grid-gap, 1.5rem)) / var(--cols-desktop, 4));
   }
 }
 
-/* Aspect ratio and Image Shape Utilities */
-.es-aspect-1-1 { aspect-ratio: 1 / 1 !important; }
-.es-aspect-4-5 { aspect-ratio: 4 / 5 !important; }
-.es-aspect-16-10 { aspect-ratio: 16 / 10 !important; }
-.es-aspect-4-3 { aspect-ratio: 4 / 3 !important; }
-.es-aspect-3-4 { aspect-ratio: 3 / 4 !important; }
+/* Image Aspect Ratio & Shape Utilities */
+.es-aspect-1-1, .es-aspect-square { aspect-ratio: 1 / 1 !important; object-fit: cover !important; }
+.es-aspect-4-5, .es-aspect-portrait-tall { aspect-ratio: 4 / 5 !important; object-fit: cover !important; }
+.es-aspect-3-4, .es-aspect-portrait { aspect-ratio: 3 / 4 !important; object-fit: cover !important; }
+.es-aspect-16-9, .es-aspect-landscape { aspect-ratio: 16 / 9 !important; object-fit: cover !important; }
+.es-aspect-16-10 { aspect-ratio: 16 / 10 !important; object-fit: cover !important; }
+.es-aspect-4-3 { aspect-ratio: 4 / 3 !important; object-fit: cover !important; }
+.es-aspect-natural { aspect-ratio: auto !important; height: auto !important; object-fit: contain !important; }
 
+.es-aspect-circle,
 .es-shape-circle {
   border-radius: 9999px !important;
   aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  overflow: hidden !important;
 }
 
 .es-shape-rounded {
   border-radius: 1rem !important;
   aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  overflow: hidden !important;
 }
 
 .es-shape-portrait {
   border-radius: 0.75rem !important;
   aspect-ratio: 4 / 5 !important;
+  object-fit: cover !important;
+  overflow: hidden !important;
+}
+
+/* Carousel Progress Bar */
+.es-carousel-progress-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.es-carousel-progress-bar {
+  width: 100%;
+  max-width: 220px;
+  height: 3px;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.es-carousel-progress-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: currentColor;
+  border-radius: 9999px;
+  width: 30%;
+  transition: transform 0.1s linear, width 0.2s ease;
+  will-change: transform;
+}
+
+/* Line Clamp Utilities for Row Restrictions */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animation utilities */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 20s linear infinite;
+}
+
+/* ==========================================================================
+   Mobile & Tablet Responsive Enhancements (Universal Standard)
+   ========================================================================== */
+
+/* Touch Target Minimums (WCAG 2.2 AA) */
+@media (max-width: 1023px) {
+  button,
+  a.btn,
+  .btn-quick-add,
+  .es-quick-add-btn,
+  [data-carousel-prev],
+  [data-carousel-next],
+  [data-mobile-menu-open],
+  [data-mobile-menu-close],
+  [data-notify-close] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Prevent text zoom on input focus in iOS Safari */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Ultra-compact Mobile Screens (<= 380px, e.g. iPhone SE, Galaxy A) */
+@media (max-width: 380px) {
+  .es-collection-grid {
+    gap: 1rem;
+  }
+
+  .product-card-custom,
+  .es-card-luxury {
+    padding: 0.875rem !important;
+  }
+
+  .btn-quick-add,
+  .es-quick-add-btn {
+    padding-left: 0.625rem !important;
+    padding-right: 0.625rem !important;
+    font-size: 11px !important;
+  }
+
+  /* Ensure card price and action wrap gracefully */
+  .product-card-custom .flex-1 .mt-4,
+  .es-card-luxury .mt-auto {
+    flex-wrap: wrap;
+    gap: 0.5rem !important;
+  }
+}
+
+/* Tablet Optimizations (640px to 1023px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .es-collection-grid {
+    gap: 1.25rem;
+  }
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .es-carousel-track {
+    scroll-behavior: auto !important;
+  }
 }
 

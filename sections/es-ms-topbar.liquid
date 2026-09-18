@@ -1,0 +1,223 @@
+{%- comment -%}
+  milk_shake Luxury Top Bar with Announcement, Concierge Link & Localization
+{%- endcomment -%}
+
+{%- style -%}
+  .section-{{ section.id }} {
+    background: {{ section.settings.background | default: '#faf7f2' }};
+    {% if section.settings.background_gradient != blank %}
+      background: {{ section.settings.background_gradient }};
+    {% endif %}
+    color: {{ section.settings.text_color | default: '#5c5248' }};
+    padding-top: {{ section.settings.padding_top | default: 8 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | default: 8 }}px;
+    border-bottom: 1px solid {{ section.settings.border_color | default: '#f0eae1' }};
+  }
+  .section-{{ section.id }} a {
+    color: {{ section.settings.link_color | default: '#2b231d' }};
+  }
+  .section-{{ section.id }} .badge-code {
+    background: {{ section.settings.badge_bg | default: '#f4ede2' }};
+    color: {{ section.settings.badge_text | default: '#8c5936' }};
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }} text-xs font-sans transition-colors duration-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-2">
+    
+    <!-- Announcement Center/Left -->
+    <div class="flex items-center gap-2 text-center md:text-left overflow-hidden">
+      {% if section.settings.announcement_icon != blank %}
+        <span class="material-symbols-outlined text-sm text-milkshake-accent animate-pulse">{{ section.settings.announcement_icon }}</span>
+      {% endif %}
+      <p class="truncate font-medium tracking-tight">
+        {{ section.settings.announcement_text | default: 'Complimentary Italian Travel Minis on all Egyptian orders over 2,499 EGP' }}
+        {% if section.settings.promo_code != blank %}
+          <span class="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider badge-code">
+            Code: {{ section.settings.promo_code }}
+          </span>
+        {% endif %}
+      </p>
+    </div>
+
+    <!-- Right Concierge & Country/Language -->
+    <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0 text-[11px]">
+      {% if section.settings.show_concierge and section.settings.concierge_text != blank %}
+        <a href="{{ section.settings.concierge_link | default: '#trichologist' }}" class="flex items-center gap-1 hover:underline transition-opacity">
+          <span class="material-symbols-outlined text-xs">support_agent</span>
+          <span>{{ section.settings.concierge_text }}</span>
+        </a>
+      {% endif %}
+
+      {% if section.settings.show_currency %}
+        <div class="flex items-center gap-1 border-l border-milkshake-border pl-3 sm:pl-4">
+          <span class="material-symbols-outlined text-xs">payments</span>
+          <span class="font-medium">{{ section.settings.currency_label | default: 'Egypt (EGP £)' }}</span>
+        </div>
+      {% endif %}
+
+      {% if section.settings.show_language %}
+        <div class="flex items-center gap-1 border-l border-milkshake-border pl-3 sm:pl-4">
+          <a href="{{ section.settings.language_switch_url | default: '#' }}" class="font-medium hover:text-milkshake-accent transition-colors">
+            {{ section.settings.language_label | default: 'العربية' }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "MS Top Bar",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Announcement Content"
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement Text",
+      "default": "Complimentary Italian Travel Minis on all Egyptian orders over 2,499 EGP"
+    },
+    {
+      "type": "text",
+      "id": "announcement_icon",
+      "label": "Material Icon Name",
+      "default": "auto_awesome"
+    },
+    {
+      "type": "text",
+      "id": "promo_code",
+      "label": "Promo Code Pill",
+      "default": "MILKSHAKE24"
+    },
+    {
+      "type": "header",
+      "content": "Concierge / Trichologist Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_concierge",
+      "label": "Show Trichologist Chat",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "concierge_text",
+      "label": "Concierge Text",
+      "default": "Speak with a Trichologist"
+    },
+    {
+      "type": "url",
+      "id": "concierge_link",
+      "label": "Concierge URL"
+    },
+    {
+      "type": "header",
+      "content": "Localization & Language"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency",
+      "label": "Show Currency Selector / Indicator",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "currency_label",
+      "label": "Currency Label",
+      "default": "Egypt (EGP £)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language",
+      "label": "Show Language Switcher",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "language_label",
+      "label": "Language Label",
+      "default": "العربية"
+    },
+    {
+      "type": "url",
+      "id": "language_switch_url",
+      "label": "Language Switcher URL"
+    },
+    {
+      "type": "header",
+      "content": "Colors & Style"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color",
+      "default": "#FAF7F2"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#5C5248"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link Color",
+      "default": "#2B231D"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#F0EAE1"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge Background",
+      "default": "#F4EDE2"
+    },
+    {
+      "type": "color",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "#8C5936"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Top Padding",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Bottom Padding",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Top Bar"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,425 @@
+{%- comment -%}
+  milk_shake® Travel Promo Duo Section
+  Universal Section Customization Standard (Grid/Carousel, responsive columns, aspect ratio, line clamp, full colors)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --section-bg: {{ section.settings.background | default: '#FAFAF7' }};
+    --section-text: {{ section.settings.text_color | default: '#2D2825' }};
+    --section-heading: {{ section.settings.heading_color | default: '#2D2825' }};
+    --card-bg: {{ section.settings.card_bg | default: '#FFFFFF' }};
+    --card-text: {{ section.settings.card_text | default: '#2D2825' }};
+    --card-border: {{ section.settings.card_border | default: 'rgba(217, 196, 178, 0.35)' }};
+    --btn-bg: {{ section.settings.button_bg | default: '#2D2825' }};
+    --btn-text: {{ section.settings.button_text | default: '#FFFFFF' }};
+    --badge-bg: {{ section.settings.badge_bg | default: '#F2E8DC' }};
+    --badge-text: {{ section.settings.badge_text | default: '#7A3E2D' }};
+    --free-badge-bg: {{ section.settings.free_badge_bg | default: '#EAF0E6' }};
+    --free-badge-text: {{ section.settings.free_badge_text | default: '#2E5A27' }};
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- if section.settings.background_gradient != blank -%}
+      background: {{ section.settings.background_gradient }};
+    {%- else -%}
+      background-color: var(--section-bg);
+    {%- endif -%}
+    color: var(--section-text);
+  }
+{%- endstyle -%}
+
+<div class="es-ms-section es-container-luxury">
+  {%- if section.settings.subheading != blank or section.settings.heading != blank or section.settings.description != blank -%}
+    <div class="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
+      {%- if section.settings.subheading != blank -%}
+        <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#7A3E2D] mb-3 px-3 py-1 bg-[#F2E8DC] rounded-full">
+          {{ section.settings.subheading }}
+        </span>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-[var(--section-heading)] font-normal tracking-tight mb-4">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+      {%- if section.settings.description != blank -%}
+        <p class="text-sm md:text-base text-[var(--section-text)] opacity-80 leading-relaxed font-light">
+          {{ section.settings.description }}
+        </p>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if section.settings.layout_type == 'carousel' -%}
+    <div class="es-carousel-wrapper relative" data-carousel-wrapper>
+      <div 
+        class="es-carousel-track es-carousel-grid"
+        style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+        data-carousel-track
+      >
+        {%- for block in section.blocks -%}
+          <div class="es-carousel-item" {{ block.shopify_attributes }}>
+            {% render 'promo-card-item', block: block, section: section %}
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if section.settings.show_carousel_arrows and section.blocks.size > 2 -%}
+        <button type="button" class="es-carousel-btn es-carousel-prev" data-carousel-prev aria-label="Previous">
+          <span class="material-symbols-outlined text-lg">arrow_back</span>
+        </button>
+        <button type="button" class="es-carousel-btn es-carousel-next" data-carousel-next aria-label="Next">
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </button>
+      {%- endif -%}
+
+      {%- if section.settings.show_carousel_progress -%}
+        <div class="es-progress-track">
+          <div class="es-progress-bar" data-carousel-progress></div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <div 
+      class="es-grid-responsive"
+      style="--cols-desktop: {{ section.settings.columns_desktop }}; --cols-tablet: {{ section.settings.columns_tablet }}; --cols-mobile: {{ section.settings.columns_mobile }};"
+    >
+      {%- for block in section.blocks -%}
+        <div {{ block.shopify_attributes }}>
+          {% render 'promo-card-item', block: block, section: section %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "MS Travel Promo Duo",
+  "tag": "section",
+  "class": "section-ms-travel-promo",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "EXCLUSIVE SALON PRIVILEGE"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Buy Full Size, Get Travel Mini Free"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Experience the complete ritual. For a limited time, purchase any 300ml daily hero and receive the matching 50ml Sahel travel miniature complimentary. Applied automatically at checkout."
+    },
+    {
+      "type": "header",
+      "content": "Layout Controls (Impact Standard)"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Cards per row (Desktop)",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Cards per row (Tablet)",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Cards per row (Mobile)",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        { "value": "es-aspect-16-10", "label": "Landscape 16:10" },
+        { "value": "es-aspect-4-5", "label": "Portrait 4:5" },
+        { "value": "es-aspect-1-1", "label": "Square 1:1" },
+        { "value": "es-aspect-natural", "label": "Natural" }
+      ],
+      "default": "es-aspect-16-10"
+    },
+    {
+      "type": "range",
+      "id": "title_max_lines",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Card title max lines (Line clamp)",
+      "default": 2
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_arrows",
+      "label": "Show carousel arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_progress",
+      "label": "Show carousel progress bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Color Palette Overrides"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#FAFAF7"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_text",
+      "label": "Card Text",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Card Border",
+      "default": "rgba(217, 196, 178, 0.35)"
+    },
+    {
+      "type": "color",
+      "id": "btn_bg",
+      "label": "Button Background",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "btn_text",
+      "label": "Button Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg",
+      "label": "Badge Background",
+      "default": "#F2E8DC"
+    },
+    {
+      "type": "color",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "#7A3E2D"
+    },
+    {
+      "type": "color",
+      "id": "free_badge_bg",
+      "label": "Free Pill Background",
+      "default": "#EAF0E6"
+    },
+    {
+      "type": "color",
+      "id": "free_badge_text",
+      "label": "Free Pill Text",
+      "default": "#2E5A27"
+    },
+    {
+      "type": "header",
+      "content": "Section Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promo_card",
+      "name": "Promo Duo Card",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Main Product (Optional)"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Card Image"
+        },
+        {
+          "type": "text",
+          "id": "fallback_image_url",
+          "label": "Fallback Image URL"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Card Badge",
+          "default": "BESTSELLER DUO"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Moisture Plus Trio Routine"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle / Extracts",
+          "default": "Hyaluronic Acid & Organic Papaya Extract"
+        },
+        {
+          "type": "text",
+          "id": "included_item_1",
+          "label": "Included Item 1",
+          "default": "300ml Moisture Plus Shampoo"
+        },
+        {
+          "type": "text",
+          "id": "included_item_2",
+          "label": "Included Item 2 (Free)",
+          "default": "50ml Travel Size Whipped Cream (Free)"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price",
+          "default": "1,250 EGP"
+        },
+        {
+          "type": "text",
+          "id": "compare_at_price",
+          "label": "Value / Original Price",
+          "default": "1,700 EGP"
+        },
+        {
+          "type": "text",
+          "id": "savings_label",
+          "label": "Savings Tag",
+          "default": "Save 450 EGP"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "Claim Moisture Duo • 1,250 EGP"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Travel Promo Duo",
+      "blocks": [
+        {
+          "type": "promo_card",
+          "settings": {
+            "badge": "BESTSELLER DUO",
+            "title": "Moisture Plus Trio Routine",
+            "subtitle": "Hyaluronic Acid & Organic Papaya Extract",
+            "fallback_image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80",
+            "included_item_1": "300ml Moisture Plus Shampoo",
+            "included_item_2": "50ml Travel Size Whipped Cream (Free)",
+            "price": "1,250 EGP",
+            "compare_at_price": "1,700 EGP",
+            "savings_label": "Save 450 EGP",
+            "button_text": "Claim Moisture Duo • 1,250 EGP"
+          }
+        },
+        {
+          "type": "promo_card",
+          "settings": {
+            "badge": "LIMITED EDITION",
+            "title": "Silver Shine Blonde Care",
+            "subtitle": "Blueberry Extract & Violet Pigment",
+            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=1000&q=80",
+            "included_item_1": "300ml Silver Shine Shampoo",
+            "included_item_2": "50ml Travel Silver Shine Whipped (Free)",
+            "price": "1,350 EGP",
+            "compare_at_price": "1,830 EGP",
+            "savings_label": "Save 480 EGP",
+            "button_text": "Claim Silver Shine Duo • 1,350 EGP"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

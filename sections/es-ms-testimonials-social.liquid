@@ -1,0 +1,503 @@
+{%- comment -%}
+  milk_shake® Testimonials & Social Atelier Section
+  Universal Section Customization Standard (Grid/Carousel, responsive columns, aspect ratio, line clamp, full colors)
+{%- endcomment -%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --section-bg: {{ section.settings.background | default: '#FDFBF7' }};
+    --section-text: {{ section.settings.text_color | default: '#2D2825' }};
+    --section-heading: {{ section.settings.heading_color | default: '#2D2825' }};
+    --card-bg: {{ section.settings.card_bg | default: '#FFFFFF' }};
+    --card-text: {{ section.settings.card_text | default: '#2D2825' }};
+    --card-border: {{ section.settings.card_border | default: 'rgba(217, 196, 178, 0.35)' }};
+    --star-color: {{ section.settings.star_color | default: '#D4AF37' }};
+
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    {%- if section.settings.background_gradient != blank -%}
+      background: {{ section.settings.background_gradient }};
+    {%- else -%}
+      background-color: var(--section-bg);
+    {%- endif -%}
+    color: var(--section-text);
+  }
+{%- endstyle -%}
+
+<div class="es-ms-section es-container-luxury">
+  <!-- SECTION 1: VERIFIED CLIENT REVIEWS -->
+  {%- if section.settings.show_testimonials -%}
+    <div class="mb-20">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        {%- if section.settings.subheading != blank -%}
+          <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#7A3E2D] mb-3 px-3 py-1 bg-[#F2E8DC] rounded-full">
+            {{ section.settings.subheading }}
+          </span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-serif text-[var(--section-heading)] font-normal tracking-tight mb-4">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="text-sm md:text-base text-[var(--section-text)] opacity-80 leading-relaxed font-light">
+            {{ section.settings.description }}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.testimonials_layout == 'carousel' -%}
+        <div class="es-carousel-wrapper relative" data-carousel-wrapper>
+          <div 
+            class="es-carousel-track es-carousel-grid"
+            style="--cols-desktop: {{ section.settings.test_cols_desktop }}; --cols-tablet: {{ section.settings.test_cols_tablet }}; --cols-mobile: {{ section.settings.test_cols_mobile }};"
+            data-carousel-track
+          >
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'testimonial' -%}
+                <div class="es-carousel-item" {{ block.shopify_attributes }}>
+                  {% render 'testimonial-card-item', block: block, section: section %}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if section.settings.show_carousel_progress -%}
+            <div class="es-progress-track">
+              <div class="es-progress-bar" data-carousel-progress></div>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        <div 
+          class="es-grid-responsive"
+          style="--cols-desktop: {{ section.settings.test_cols_desktop }}; --cols-tablet: {{ section.settings.test_cols_tablet }}; --cols-mobile: {{ section.settings.test_cols_mobile }};"
+        >
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'testimonial' -%}
+              <div {{ block.shopify_attributes }}>
+                {% render 'testimonial-card-item', block: block, section: section %}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <!-- SECTION 2: INSTAGRAM ATELIER FEED -->
+  {%- if section.settings.show_social_feed -%}
+    <div class="pt-8 border-t border-[var(--card-border)]">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          {%- if section.settings.social_subheading != blank -%}
+            <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#7A3E2D] mb-2">
+              {{ section.settings.social_subheading }}
+            </span>
+          {%- endif -%}
+          {%- if section.settings.social_heading != blank -%}
+            <h3 class="text-2xl md:text-3xl font-serif text-[var(--section-heading)] font-normal">
+              {{ section.settings.social_heading }}
+            </h3>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.social_instagram_handle != blank -%}
+          <a 
+            href="https://instagram.com/{{ section.settings.social_instagram_handle | remove: '@' }}" 
+            target="_blank" 
+            rel="noopener" 
+            class="inline-flex items-center text-xs font-semibold uppercase tracking-wider text-[#7A3E2D] hover:underline"
+          >
+            <span>Follow {{ section.settings.social_instagram_handle }}</span>
+            <span class="material-symbols-outlined text-sm ml-1">open_in_new</span>
+          </a>
+        {%- endif -%}
+      </div>
+
+      <div 
+        class="es-grid-responsive"
+        style="--cols-desktop: {{ section.settings.social_cols_desktop }}; --cols-tablet: 2; --cols-mobile: 2;"
+      >
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'social_post' -%}
+            <div class="group relative overflow-hidden rounded-2xl border border-[var(--card-border)] {{ section.settings.social_aspect_ratio }}" {{ block.shopify_attributes }}>
+              {%- assign post_img = block.settings.image -%}
+              {%- assign post_url = block.settings.fallback_image_url -%}
+              {%- if post_img != blank -%}
+                {%- assign post_url = post_img | image_url: width: 600 -%}
+              {%- endif -%}
+
+              {%- if post_url != blank -%}
+                <img 
+                  src="{{ post_url }}" 
+                  alt="{{ block.settings.handle | escape }}" 
+                  loading="lazy" 
+                  width="600"
+                  height="600"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                >
+              {%- else -%}
+                <div class="w-full h-full bg-[#EFE8DF] flex items-center justify-center text-[#A89F91]">
+                  <span class="material-symbols-outlined text-3xl">photo_camera</span>
+                </div>
+              {%- endif -%}
+
+              <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4 text-white">
+                <span class="text-xs font-medium">{{ block.settings.handle | default: '@milkshake.egypt' }}</span>
+                {%- if block.settings.caption != blank -%}
+                  <span class="text-[11px] opacity-80 line-clamp-1 font-light">{{ block.settings.caption }}</span>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "MS Testimonials & Social",
+  "tag": "section",
+  "class": "section-ms-testimonials-social",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Testimonials Header"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_testimonials",
+      "label": "Show Testimonials Section",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "VERIFIED SALON PATRONS"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Loved Across Cairo, Alexandria & Sahel"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Read real experiences from women who transformed their hair with milk_shake® formulas in the Egyptian climate."
+    },
+    {
+      "type": "header",
+      "content": "Testimonials Layout (Impact Standard)"
+    },
+    {
+      "type": "select",
+      "id": "testimonials_layout",
+      "label": "Layout style",
+      "options": [
+        { "value": "grid", "label": "Grid" },
+        { "value": "carousel", "label": "Carousel / Slider" }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "test_cols_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Cards per row (Desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "test_cols_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Cards per row (Tablet)",
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "test_cols_mobile",
+      "label": "Cards per row (Mobile)",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_progress",
+      "label": "Show Carousel Progress Bar",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Social Atelier / Instagram Feed"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_feed",
+      "label": "Show Social Atelier Feed",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "social_subheading",
+      "label": "Social Subheading",
+      "default": "@MILKSHAKE.EGYPT"
+    },
+    {
+      "type": "text",
+      "id": "social_heading",
+      "label": "Social Heading",
+      "default": "As Seen in Egypt's Leading Salons"
+    },
+    {
+      "type": "text",
+      "id": "social_instagram_handle",
+      "label": "Instagram Handle",
+      "default": "@milkshake.egypt"
+    },
+    {
+      "type": "range",
+      "id": "social_cols_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Social Photos per row (Desktop)",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "social_aspect_ratio",
+      "label": "Social Image Aspect Ratio",
+      "options": [
+        { "value": "es-aspect-1-1", "label": "Square 1:1" },
+        { "value": "es-aspect-4-5", "label": "Portrait 4:5" }
+      ],
+      "default": "es-aspect-1-1"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#FDFBF7"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background Gradient"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Testimonial Card Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_text",
+      "label": "Card Text Color",
+      "default": "#2D2825"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Border Color",
+      "default": "rgba(217, 196, 178, 0.35)"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star Rating Color",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Top",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding Bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Client Review",
+      "settings": [
+        {
+          "type": "range",
+          "id": "stars",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Star Rating",
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Quote",
+          "default": "The Whipped Cream is irreplaceable in Sahel! After swimming in the Mediterranean all day, my hair used to feel like straw. One palm-full of this mousse, and it's instantly silky soft with that heavenly vanilla bakery aroma."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Client Name",
+          "default": "Nouran El-Gamil"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "City / Location",
+          "default": "Hacienda Bay, North Coast"
+        },
+        {
+          "type": "text",
+          "id": "verified_badge",
+          "label": "Verified Purchase Tag",
+          "default": "Verified Buyer • Whipped Cream 200ml"
+        }
+      ]
+    },
+    {
+      "type": "social_post",
+      "name": "Social Photo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Photo"
+        },
+        {
+          "type": "text",
+          "id": "fallback_image_url",
+          "label": "Fallback Image URL"
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Instagram Handle",
+          "default": "@cairo.hair.atelier"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption",
+          "default": "Zamalek Atelier Salon Ritual"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS Testimonials & Social",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "review_text": "The Whipped Cream is irreplaceable in Sahel! After swimming in the Mediterranean all day, my hair used to feel like straw. One palm-full of this mousse, and it's instantly silky soft with that heavenly vanilla bakery aroma.",
+            "author": "Nouran El-Gamil",
+            "location": "Hacienda Bay, North Coast",
+            "verified_badge": "Verified Buyer • Whipped Cream 200ml"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "review_text": "Cairo water completely ruined my platinum highlights within two weeks until Mohamed at the Zamalek atelier recommended Silver Shine. It keeps my blonde cool and icy without turning it purple or drying the ends.",
+            "author": "Farida Mansour",
+            "location": "Zamalek, Cairo",
+            "verified_badge": "Verified Buyer • Silver Shine Duo"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "stars": 5,
+            "review_text": "I have 3B curls and finding lightweight hydration that survives the August Alexandria humidity felt impossible. Curl Passion conditioner + leave-in gave me defined ringlets with zero crunch.",
+            "author": "Laila Sherif",
+            "location": "Kafr Abdo, Alexandria",
+            "verified_badge": "Verified Buyer • Curl Passion Set"
+          }
+        },
+        {
+          "type": "social_post",
+          "settings": {
+            "handle": "@cairo.hair.atelier",
+            "caption": "Whipped Cream Styling Session",
+            "fallback_image_url": "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80"
+          }
+        },
+        {
+          "type": "social_post",
+          "settings": {
+            "handle": "@sahel.curls",
+            "caption": "Sahel Sun Protection",
+            "fallback_image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
+          }
+        },
+        {
+          "type": "social_post",
+          "settings": {
+            "handle": "@zamalek.blonde.bar",
+            "caption": "Silver Shine Cool Toning",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=600&q=80"
+          }
+        },
+        {
+          "type": "social_post",
+          "settings": {
+            "handle": "@alexandria.curls",
+            "caption": "Curl Passion Definition",
+            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

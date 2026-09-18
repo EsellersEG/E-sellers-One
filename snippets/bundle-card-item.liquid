@@ -1,0 +1,103 @@
+{%- comment -%}
+  Bundle Card Item Snippet
+  Accepts: block, section
+{%- endcomment -%}
+
+{%- liquid
+  assign b = block.settings
+  assign bundle_image = b.image
+  assign image_url = b.fallback_image_url
+  if bundle_image != blank
+    assign image_url = bundle_image | image_url: width: 800
+  endif
+
+  assign clamp_class = 'line-clamp-' | append: section.settings.title_max_lines
+-%}
+
+<div class="es-card-luxury flex flex-col h-full bg-[var(--card-bg)] text-[var(--card-text)] border border-[var(--card-border)] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+  <!-- Top Visual -->
+  <div class="relative overflow-hidden {{ section.settings.image_ratio }}">
+    {%- if image_url != blank -%}
+      <img 
+        src="{{ image_url }}" 
+        alt="{{ b.title | escape }}" 
+        loading="lazy" 
+        width="600"
+        height="750"
+        class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+      >
+    {%- else -%}
+      <div class="w-full h-full bg-[#EFE8DF] flex items-center justify-center text-[#A89F91]">
+        <span class="material-symbols-outlined text-5xl">auto_fix_high</span>
+      </div>
+    {%- endif -%}
+
+    {%- if b.save_badge != blank -%}
+      <div class="absolute top-3 left-3 z-10">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-[var(--badge-bg)] text-[var(--badge-text)] shadow-sm">
+          {{ b.save_badge }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    {%- if b.steps_label != blank -%}
+      <div class="absolute bottom-3 left-3 right-3 z-10">
+        <span class="inline-block w-full text-center px-2 py-1 rounded-md text-[10px] uppercase font-semibold tracking-wider bg-black/60 text-white backdrop-blur-sm">
+          {{ b.steps_label }}
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <!-- Body Content -->
+  <div class="p-5 md:p-6 flex flex-col flex-grow">
+    <h3 class="text-lg md:text-xl font-serif font-medium text-[var(--card-text)] mb-2 {{ clamp_class }}">
+      {{ b.title }}
+    </h3>
+
+    {%- if b.benefit != blank -%}
+      <p class="text-xs text-[#7A3E2D] font-medium mb-4 flex items-start gap-1.5">
+        <span class="material-symbols-outlined text-sm shrink-0 text-[#7A3E2D]">nature</span>
+        <span>{{ b.benefit }}</span>
+      </p>
+    {%- endif -%}
+
+    {%- if b.items_included != blank -%}
+      <div class="bg-[#FAF8F5] rounded-xl p-3 mb-5 border border-black/5 text-[11px] text-[var(--card-text)] opacity-90 leading-relaxed font-light">
+        <span class="font-semibold text-[var(--card-text)] block mb-1">Set Includes:</span>
+        {{ b.items_included }}
+      </div>
+    {%- endif -%}
+
+    <!-- Price and Add Button -->
+    <div class="mt-auto pt-4 border-t border-[var(--card-border)] flex items-center justify-between gap-3">
+      <div>
+        <div class="text-lg font-bold font-serif text-[var(--card-text)]">{{ b.price }}</div>
+        {%- if b.compare_at_price != blank -%}
+          <div class="text-[11px] text-[var(--card-text)] opacity-50 line-through">{{ b.compare_at_price }}</div>
+        {%- endif -%}
+      </div>
+
+      {%- if b.bundle_product != blank and b.bundle_product.available -%}
+        <button 
+          type="button" 
+          class="es-quick-add-btn inline-flex items-center px-4 py-2.5 rounded-full text-xs font-medium transition-all"
+          style="background-color: var(--btn-bg); color: var(--btn-text);"
+          data-product-id="{{ b.bundle_product.selected_or_first_available_variant.id }}"
+        >
+          <span>{{ b.button_text | default: 'Add Ritual' }}</span>
+          <span class="material-symbols-outlined text-sm ml-1.5">add_shopping_cart</span>
+        </button>
+      {%- else -%}
+        <a 
+          href="{{ b.button_url | default: routes.all_products_collection_url }}" 
+          class="inline-flex items-center px-4 py-2.5 rounded-full text-xs font-medium transition-all hover:opacity-90 shadow-sm"
+          style="background-color: var(--btn-bg); color: var(--btn-text);"
+        >
+          <span>{{ b.button_text | default: 'View Ritual' }}</span>
+          <span class="material-symbols-outlined text-sm ml-1.5">arrow_forward</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

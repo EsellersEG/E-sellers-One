@@ -1,0 +1,104 @@
+{%- comment -%}
+  Promo Card Item Snippet
+  Accepts: block, section
+{%- endcomment -%}
+
+{%- liquid
+  assign b = block.settings
+  assign card_image = b.custom_image
+  assign image_url = b.fallback_image_url
+  if card_image != blank
+    assign image_url = card_image | image_url: width: 1000
+  endif
+
+  assign clamp_class = 'line-clamp-' | append: section.settings.title_max_lines
+-%}
+
+<div class="es-card-luxury overflow-hidden flex flex-col h-full bg-[var(--card-bg)] text-[var(--card-text)] border border-[var(--card-border)] rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+  <!-- Image Banner -->
+  <div class="relative overflow-hidden {{ section.settings.image_ratio }}">
+    {%- if image_url != blank -%}
+      <img 
+        src="{{ image_url }}" 
+        alt="{{ b.title | escape }}" 
+        loading="lazy" 
+        width="600"
+        height="600"
+        class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+      >
+    {%- else -%}
+      <div class="w-full h-full bg-[#EFE8DF] flex items-center justify-center text-[#A89F91]">
+        <span class="material-symbols-outlined text-5xl">spa</span>
+      </div>
+    {%- endif -%}
+
+    {%- if b.badge != blank -%}
+      <div class="absolute top-4 left-4 z-10">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[var(--badge-bg)] text-[var(--badge-text)] shadow-sm">
+          {{ b.badge }}
+        </span>
+      </div>
+    {%- endif -%}
+
+    {%- if b.savings_label != blank -%}
+      <div class="absolute top-4 right-4 z-10">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-[var(--free-badge-bg)] text-[var(--free-badge-text)] shadow-sm">
+          {{ b.savings_label }}
+        </span>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <!-- Content Body -->
+  <div class="p-6 md:p-8 flex flex-col flex-grow">
+    <div class="mb-4">
+      <h3 class="text-xl md:text-2xl font-serif font-medium text-[var(--card-text)] mb-2 {{ clamp_class }}">
+        {{ b.title }}
+      </h3>
+      {%- if b.subtitle != blank -%}
+        <p class="text-xs md:text-sm text-[var(--card-text)] opacity-70 font-light">
+          {{ b.subtitle }}
+        </p>
+      {%- endif -%}
+    </div>
+
+    <!-- Included Breakdown -->
+    <div class="bg-[#F8F6F2] rounded-xl p-4 mb-6 space-y-2.5">
+      <div class="text-[11px] font-semibold tracking-wider text-[#7A3E2D] uppercase mb-1">Ritual Inclusions:</div>
+      {%- if b.included_item_1 != blank -%}
+        <div class="flex items-center text-xs md:text-sm text-[var(--card-text)]">
+          <span class="material-symbols-outlined text-base text-[#7A3E2D] mr-2">check_circle</span>
+          <span>{{ b.included_item_1 }}</span>
+        </div>
+      {%- endif -%}
+      {%- if b.included_item_2 != blank -%}
+        <div class="flex items-center text-xs md:text-sm font-medium text-[var(--free-badge-text)]">
+          <span class="material-symbols-outlined text-base text-[var(--free-badge-text)] mr-2">redeem</span>
+          <span>{{ b.included_item_2 }}</span>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <!-- Pricing & Action -->
+    <div class="mt-auto pt-4 border-t border-[var(--card-border)] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-xl font-bold font-serif text-[var(--card-text)]">{{ b.price }}</span>
+          {%- if b.compare_at_price != blank -%}
+            <span class="text-xs text-[var(--card-text)] opacity-50 line-through">{{ b.compare_at_price }}</span>
+          {%- endif -%}
+        </div>
+        <div class="text-[11px] text-[#7A3E2D] font-medium">Miniature gift included</div>
+      </div>
+
+      <a 
+        href="{{ b.button_url | default: routes.all_products_collection_url }}" 
+        class="inline-flex items-center justify-center px-5 py-3 rounded-full text-xs md:text-sm font-medium transition-all duration-300 hover:opacity-90 shadow-sm"
+        style="background-color: var(--btn-bg); color: var(--btn-text);"
+      >
+        <span>{{ b.button_text | default: 'Claim Duo' }}</span>
+        <span class="material-symbols-outlined text-base ml-2">shopping_bag</span>
+      </a>
+    </div>
+  </div>
+</div>

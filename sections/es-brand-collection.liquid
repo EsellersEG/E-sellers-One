@@ -248,7 +248,7 @@
   <div class="es-bc__layout"
        data-section-id="{{ section.id }}"
        data-collection-handle="{{ target_collection.handle | default: 'all' }}"
-       data-collection-url="{{ target_collection.url | default: '/collections/all' }}">
+       data-collection-url="{{ target_collection.url | default: routes.all_products_collection_url }}">
     {%- if show_filters -%}
       <aside class="es-bc__filters" id="es-bc-facets-{{ section.id }}" data-collection-handle="{{ target_collection.handle | default: 'all' }}">
         {%- render 'facet-filters',
@@ -344,7 +344,7 @@
         <div class="es-bc__empty">
           <p>{{ 'collection.general.no_matches' | t | default: 'No products match these filters yet.' }}</p>
           {%- if show_filters -%}
-            <a href="{{ target_collection.url | default: '/collections/all' }}" data-facet-clear class="es-bc__intro-link">Clear all filters</a>
+            <a href="{{ target_collection.url | default: routes.all_products_collection_url }}" data-facet-clear class="es-bc__intro-link">Clear all filters</a>
           {%- endif -%}
         </div>
 
@@ -369,7 +369,7 @@
   if (!layoutEl) return;
 
   var handle = layoutEl.dataset.collectionHandle || 'all';
-  var collectionBaseUrl = layoutEl.dataset.collectionUrl || ('/collections/' + handle);
+  var collectionBaseUrl = layoutEl.dataset.collectionUrl || ('{{ routes.collections_url }}/' + handle);
 
   // Cache initial promo blocks to reinsert after AJAX product updates
   var promoBlocks = Array.from(section.querySelectorAll('.es-bc__promo')).map(function(el) {

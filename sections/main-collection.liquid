@@ -127,7 +127,7 @@
   <div class="main-collection__layout"
        data-section-id="{{ section.id }}"
        data-collection-handle="{{ collection.handle | default: 'all' }}"
-       data-collection-url="{{ collection.url | default: '/collections/all' }}">
+       data-collection-url="{{ collection.url | default: routes.all_products_collection_url }}">
     {%- if section.settings.enable_filtering -%}
       <aside class="main-collection__facets es-bc__filters" id="main-collection-facets-{{ section.id }}" data-collection-handle="{{ collection.handle | default: 'all' }}">
         {%- assign facet_layout = section.settings.filter_layout | default: 'sidebar' -%}
@@ -176,7 +176,7 @@
   if (!layoutEl) return;
 
   var handle = layoutEl.dataset.collectionHandle || 'all';
-  var collectionBaseUrl = layoutEl.dataset.collectionUrl || ('/collections/' + handle);
+  var collectionBaseUrl = layoutEl.dataset.collectionUrl || ('{{ routes.collections_url }}/' + handle);
 
   function getDetailsState() {
     var state = {};
