@@ -1,29 +1,62 @@
 {% render 'es-section-style', section: section %}
-<section class="relative w-full overflow-hidden bg-surface-cream pb-space-3xl pt-space-xl section-{{ section.id }}-settings">
-  <div class="max-w-[1440px] mx-auto px-margin">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
-      <!-- Left Editorial Column -->
-      <div class="lg:col-span-6 flex flex-col z-10">
-        {%- if section.settings.badge_text != blank -%}
-          <div class="inline-flex items-center gap-space-xs self-start px-space-md py-space-xs rounded-full bg-pastel-make-my-day/60 text-primary mb-space-md">
+
+{%- liquid
+  assign composition = section.settings.layout_composition | default: 'split'
+  assign align = section.settings.content_alignment | default: 'left'
+  assign img_ratio = section.settings.image_aspect_ratio | default: '4/5'
+  assign img_radius = section.settings.image_border_radius | default: 16
+  assign heading_size = section.settings.heading_size | default: 'editorial'
+-%}
+
+{%- style -%}
+  #es-hero-{{ section.id }} {
+    min-height: {{ section.settings.hero_min_height | default: 600 }}px;
+  }
+  #es-hero-{{ section.id }} .es-hero-card {
+    border-radius: {{ img_radius }}px;
+    {%- if img_ratio == '1/1' -%}
+      aspect-ratio: 1 / 1;
+    {%- elsif img_ratio == '3/4' -%}
+      aspect-ratio: 3 / 4;
+    {%- elsif img_ratio == '16/10' -%}
+      aspect-ratio: 16 / 10;
+    {%- else -%}
+      aspect-ratio: 4 / 5;
+    {%- endif -%}
+  }
+  #es-hero-{{ section.id }} .es-floating-tag {
+    background-color: {{ section.settings.floating_card_bg | default: '#ffffff' }}E6;
+    border-radius: {{ section.settings.floating_card_radius | default: 12 }}px;
+  }
+{%- endstyle -%}
+
+<section class="relative w-full overflow-hidden bg-surface-cream pb-space-3xl pt-space-xl section-{{ section.id }}-settings" id="es-hero-{{ section.id }}">
+  <div class="{% if section.settings.container_width == 'full' %}w-full px-4 sm:px-6 lg:px-8{% elsif section.settings.container_width == 'narrow' %}max-w-[1000px] mx-auto px-margin{% else %}max-w-[1440px] mx-auto px-margin{% endif %}">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center {% if composition == 'stacked_center' %}text-center{% endif %}">
+      
+      <!-- Editorial Text Column -->
+      <div class="{% if composition == 'stacked_center' %}lg:col-span-10 lg:col-start-2 flex flex-col items-center{% elsif composition == 'split_reverse' %}lg:col-span-6 lg:order-2 flex flex-col z-10{% else %}lg:col-span-6 flex flex-col z-10{% endif %} {% if align == 'center' %}items-center text-center{% endif %}">
+        {%- if section.settings.show_badge and section.settings.badge_text != blank -%}
+          <div class="inline-flex items-center gap-space-xs {% if align == 'center' or composition == 'stacked_center' %}self-center{% else %}self-start{% endif %} px-space-md py-space-xs rounded-full bg-pastel-make-my-day/60 text-primary mb-space-md">
             <span class="material-symbols-outlined text-[16px] text-secondary">{{ section.settings.badge_icon | default: 'eco' }}</span>
             <span class="font-label-sm text-label-sm tracking-widest uppercase">{{ section.settings.badge_text }}</span>
           </div>
         {%- endif -%}
 
-        <h1 class="font-display-hero text-display-hero tracking-tight text-primary uppercase mb-space-md leading-[1.08]">
+        <h1 class="font-display-hero text-primary uppercase mb-space-md leading-[1.08] {% if heading_size == 'large' %}text-[3.5rem] lg:text-[5.5rem]{% elsif heading_size == 'compact' %}text-[2.25rem] lg:text-[3.5rem]{% else %}text-display-hero{% endif %}" style="{% if section.settings.heading_color != blank %}color: {{ section.settings.heading_color }};{% endif %}">
           {{ section.settings.heading_line_1 | default: 'The Sweetness of Nature' }}
           <span class="italic font-normal block lowercase text-outline">{{ section.settings.heading_line_2 | default: 'for your hair.' }}</span>
         </h1>
 
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-space-xl">
+        <p class="font-body-lg text-body-lg text-on-surface-variant {% if composition == 'stacked_center' %}max-w-2xl{% else %}max-w-xl{% endif %} mb-space-xl" style="{% if section.settings.subheading_color != blank %}color: {{ section.settings.subheading_color }};{% endif %}">
           {{ section.settings.subheading | default: 'Professional Italian Salon Care Delivered Across Egypt. Enriched with bio-organic milk proteins, active fruit extracts, and iconic gourmand fragrances formulated to master Egyptian humidity and water textures.' }}
         </p>
 
-        <div class="flex flex-wrap items-center gap-space-md mb-space-xl">
+        <div class="flex flex-wrap items-center gap-space-md mb-space-xl {% if align == 'center' or composition == 'stacked_center' %}justify-center{% endif %}">
           {%- if section.settings.button_1_label != blank -%}
+            {%- assign b1_style = section.settings.button_1_style | default: 'primary' -%}
             <a
-              class="h-14 px-space-xl rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase flex items-center justify-center hover:bg-neutral-800 transition-all shadow-md"
+              class="h-14 px-space-xl rounded-full font-label-lg text-label-lg tracking-wider uppercase flex items-center justify-center transition-all shadow-md {% if b1_style == 'primary' %}bg-primary text-on-primary hover:bg-neutral-800{% elsif b1_style == 'secondary' %}bg-secondary text-white hover:bg-secondary/90{% else %}bg-transparent border border-primary text-primary hover:bg-primary hover:text-on-primary{% endif %}"
               href="{{ section.settings.button_1_link | default: '#bestsellers' }}"
             >
               {{ section.settings.button_1_label }}
@@ -31,8 +64,9 @@
           {%- endif -%}
 
           {%- if section.settings.button_2_label != blank -%}
+            {%- assign b2_style = section.settings.button_2_style | default: 'outline' -%}
             <a
-              class="h-14 px-space-xl rounded-full bg-transparent text-primary font-label-lg text-label-lg tracking-wider uppercase flex items-center justify-center hover:bg-surface-container-high transition-all shadow-sm"
+              class="h-14 px-space-xl rounded-full font-label-lg text-label-lg tracking-wider uppercase flex items-center justify-center transition-all shadow-sm {% if b2_style == 'primary' %}bg-primary text-on-primary hover:bg-neutral-800{% elsif b2_style == 'secondary' %}bg-secondary text-white hover:bg-secondary/90{% else %}bg-transparent text-primary hover:bg-surface-container-high{% endif %}"
               href="{{ section.settings.button_2_link | default: '#hair-quiz' }}"
             >
               {{ section.settings.button_2_label }}
@@ -40,34 +74,36 @@
           {%- endif -%}
         </div>
 
-        <!-- Micro Metas -->
-        <div class="flex items-center gap-space-lg pt-space-md">
-          <div class="flex items-center gap-space-xs">
-            <div class="flex text-[#D4AF37]">
-              {%- for i in (1..5) -%}
-                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-              {%- endfor -%}
+        <!-- Micro Metas / Social Proof Rating -->
+        {%- if section.settings.show_rating -%}
+          <div class="flex items-center gap-space-lg pt-space-md {% if align == 'center' or composition == 'stacked_center' %}justify-center{% endif %}">
+            <div class="flex items-center gap-space-xs">
+              <div class="flex" style="color: {{ section.settings.rating_star_color | default: '#D4AF37' }};">
+                {%- for i in (1..5) -%}
+                  <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                {%- endfor -%}
+              </div>
+              <span class="font-headline-sm text-headline-sm text-primary">{{ section.settings.rating_score | default: '4.9/5' }}</span>
             </div>
-            <span class="font-headline-sm text-headline-sm text-primary">{{ section.settings.rating_score | default: '4.9/5' }}</span>
+            <div class="h-4 w-px bg-surface-container-highest"></div>
+            <span class="font-body-sm text-body-sm text-text-muted">{{ section.settings.rating_subtitle | default: 'Over 14,000+ Salons & Clients across Cairo, Alex & Giza' }}</span>
           </div>
-          <div class="h-4 w-px bg-surface-container-highest"></div>
-          <span class="font-body-sm text-body-sm text-text-muted">{{ section.settings.rating_subtitle | default: 'Over 14,000+ Salons & Clients across Cairo, Alex & Giza' }}</span>
-        </div>
+        {%- endif -%}
       </div>
 
-      <!-- Right Visual Showcase / Asymmetric Composition -->
-      <div class="lg:col-span-6 relative flex items-center justify-center">
-        <div class="relative w-full max-w-[540px] aspect-[4/5] rounded-xl overflow-hidden shadow-xl bg-surface-container-high">
+      <!-- Visual Showcase Column -->
+      <div class="{% if composition == 'stacked_center' %}lg:col-span-10 lg:col-start-2 mt-space-xl flex items-center justify-center relative{% elsif composition == 'split_reverse' %}lg:col-span-6 lg:order-1 relative flex items-center justify-center{% else %}lg:col-span-6 relative flex items-center justify-center{% endif %}">
+        <div class="relative w-full {% if composition == 'stacked_center' %}max-w-[720px]{% else %}max-w-[540px]{% endif %} es-hero-card overflow-hidden shadow-xl bg-surface-container-high group">
           {%- if section.settings.hero_image != blank -%}
             <img
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover {% if section.settings.image_hover_zoom %}transition-transform duration-700 group-hover:scale-105{% endif %}"
               alt="{{ section.settings.hero_image.alt | default: 'milk_shake Hero Showcase' }}"
-              src="{{ section.settings.hero_image | image_url: width: 1080 }}"
+              src="{{ section.settings.hero_image | image_url: width: 1200 }}"
               loading="eager"
             />
           {%- else -%}
             <img
-              class="w-full h-full object-cover"
+              class="w-full h-full object-cover {% if section.settings.image_hover_zoom %}transition-transform duration-700 group-hover:scale-105{% endif %}"
               alt="High-end editorial studio product photograph of milk shake Italian haircare line"
               src="{{ section.settings.hero_image_url | default: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB0epWRVX1rL41yJKkcaaTt6sVXfxOcVVPeXW1ujD1tJYTo3i1I25H_vWC-TlZ714ldZKJQwLEO_Zr0YJs2NTHkfLiHU3MNzLrCHxtpBXhjXQYfUFLSsWPft5u_0bQ8kcTVErZ0FxsHLrtVoOX6aBVshnZZ6Odj2OPetQLmuMxwapo8zvz82o3SDNuLMZAD8AIcueU8SGcEaf4G-Sz0X1DGaiBI8A3DsRvseVhWFwZeCJXLXc6M4ZM' }}"
               loading="eager"
@@ -75,22 +111,27 @@
           {%- endif -%}
 
           <!-- Floating Frosted Glass Tag -->
-          <div class="absolute bottom-6 left-6 right-6 p-space-md rounded-lg bg-surface/90 backdrop-blur-md shadow-md flex items-center justify-between">
-            <div class="flex flex-col">
-              <span class="font-label-sm text-label-sm text-text-muted uppercase">{{ section.settings.floating_subtitle | default: 'Signature Line' }}</span>
-              <span class="font-headline-sm text-headline-sm text-primary">{{ section.settings.floating_title | default: 'Whipped Cream Leave-In' }}</span>
+          {%- if section.settings.show_floating_card -%}
+            <div class="absolute bottom-6 left-6 right-6 p-space-md es-floating-tag backdrop-blur-md shadow-md flex items-center justify-between">
+              <div class="flex flex-col">
+                <span class="font-label-sm text-label-sm text-text-muted uppercase">{{ section.settings.floating_subtitle | default: 'Signature Line' }}</span>
+                <span class="font-headline-sm text-headline-sm text-primary">{{ section.settings.floating_title | default: 'Whipped Cream Leave-In' }}</span>
+              </div>
+              <span class="px-space-md py-1 rounded-full bg-pastel-flower-vibes font-label-md text-label-md text-primary">
+                {{ section.settings.floating_badge | default: '12 Benefits' }}
+              </span>
             </div>
-            <span class="px-space-md py-1 rounded-full bg-pastel-flower-vibes font-label-md text-label-md text-primary">
-              {{ section.settings.floating_badge | default: '12 Benefits' }}
-            </span>
-          </div>
+          {%- endif -%}
         </div>
 
         <!-- Decorative Ambient Ring SVG -->
-        <svg class="absolute -top-12 -right-12 w-64 h-64 text-pastel-make-my-day/40 pointer-events-none -z-0" fill="currentColor" viewBox="0 0 200 200">
-          <circle cx="100" cy="100" r="80"></circle>
-        </svg>
+        {%- if section.settings.show_ambient_shape -%}
+          <svg class="absolute -top-12 -right-12 w-64 h-64 text-pastel-make-my-day/40 pointer-events-none -z-0" fill="currentColor" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80"></circle>
+          </svg>
+        {%- endif -%}
       </div>
+
     </div>
   </div>
 </section>
@@ -102,68 +143,58 @@
   "class": "es-milkshake-hero-wrapper",
   "settings": [
     {
-      "type": "text",
-      "id": "badge_icon",
-      "label": "Badge Icon Name",
-      "default": "eco"
+      "type": "header",
+      "content": "Layout and Composition"
     },
     {
-      "type": "text",
-      "id": "badge_text",
-      "label": "Botanical Badge Text",
-      "default": "Pure Italian Salon Botanicals"
+      "type": "select",
+      "id": "layout_composition",
+      "label": "Layout composition",
+      "options": [
+        {
+          "value": "split",
+          "label": "Visual Right, Content Left (Standard)"
+        },
+        {
+          "value": "split_reverse",
+          "label": "Visual Left, Content Right (Reversed)"
+        },
+        {
+          "value": "stacked_center",
+          "label": "Centered Stacked"
+        }
+      ],
+      "default": "split"
     },
     {
-      "type": "text",
-      "id": "heading_line_1",
-      "label": "Headline Line 1",
-      "default": "The Sweetness of Nature"
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left aligned"
+        },
+        {
+          "value": "center",
+          "label": "Center aligned"
+        }
+      ],
+      "default": "left"
     },
     {
-      "type": "text",
-      "id": "heading_line_2",
-      "label": "Headline Line 2 (Italic)",
-      "default": "for your hair."
+      "type": "range",
+      "id": "hero_min_height",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum section height",
+      "default": 600
     },
     {
-      "type": "textarea",
-      "id": "subheading",
-      "label": "Hero Subtitle Description",
-      "default": "Professional Italian Salon Care Delivered Across Egypt. Enriched with bio-organic milk proteins, active fruit extracts, and iconic gourmand fragrances formulated to master Egyptian humidity and water textures."
-    },
-    {
-      "type": "text",
-      "id": "button_1_label",
-      "label": "Primary Button Label",
-      "default": "Shop Best Sellers"
-    },
-    {
-      "type": "url",
-      "id": "button_1_link",
-      "label": "Primary Button Link"
-    },
-    {
-      "type": "text",
-      "id": "button_2_label",
-      "label": "Secondary Button Label",
-      "default": "Find Your Routine"
-    },
-    {
-      "type": "url",
-      "id": "button_2_link",
-      "label": "Secondary Button Link"
-    },
-    {
-      "type": "text",
-      "id": "rating_score",
-      "label": "Rating Score",
-      "default": "4.9/5"
-    },
-    {
-      "type": "text",
-      "id": "rating_subtitle",
-      "label": "Rating Subtitle",
-      "default": "Over 14,000+ Salons & Clients across Cairo, Alex & Giza"
+      "type": "header",
+      "content": "Hero Media & Visuals"
     },
     {
       "type": "image_picker",
@@ -175,6 +206,62 @@
       "id": "hero_image_url",
       "label": "Hero Image URL (Fallback)",
       "default": "https://lh3.googleusercontent.com/aida-public/AB6AXuB0epWRVX1rL41yJKkcaaTt6sVXfxOcVVPeXW1ujD1tJYTo3i1I25H_vWC-TlZ714ldZKJQwLEO_Zr0YJs2NTHkfLiHU3MNzLrCHxtpBXhjXQYfUFLSsWPft5u_0bQ8kcTVErZ0FxsHLrtVoOX6aBVshnZZ6Odj2OPetQLmuMxwapo8zvz82o3SDNuLMZAD8AIcueU8SGcEaf4G-Sz0X1DGaiBI8A3DsRvseVhWFwZeCJXLXc6M4ZM"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Classic Portrait (3:4)"
+        },
+        {
+          "value": "16/10",
+          "label": "Wide (16:10)"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Image corner radius",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "image_hover_zoom",
+      "label": "Enable subtle image hover zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ambient_shape",
+      "label": "Show ambient decorative background shape",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Floating Product Badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_floating_card",
+      "label": "Show floating card",
+      "default": true
     },
     {
       "type": "text",
@@ -193,6 +280,186 @@
       "id": "floating_badge",
       "label": "Floating Card Badge",
       "default": "12 Benefits"
+    },
+    {
+      "type": "color",
+      "id": "floating_card_bg",
+      "label": "Floating Card Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "floating_card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Floating Card Corner Radius",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Editorial Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show eyebrow badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_icon",
+      "label": "Eyebrow Badge Icon Name",
+      "default": "eco"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Eyebrow Badge Text",
+      "default": "Pure Italian Salon Botanicals"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Headline Line 1",
+      "default": "The Sweetness of Nature"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Headline Line 2 (Italic)",
+      "default": "for your hair."
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size scale",
+      "options": [
+        {
+          "value": "compact",
+          "label": "Compact (Smaller)"
+        },
+        {
+          "value": "editorial",
+          "label": "Editorial (Default)"
+        },
+        {
+          "value": "large",
+          "label": "Hero Impact (Extra Large)"
+        }
+      ],
+      "default": "editorial"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Hero Subtitle Description",
+      "default": "Professional Italian Salon Care Delivered Across Egypt. Enriched with bio-organic milk proteins, active fruit extracts, and iconic gourmand fragrances formulated to master Egyptian humidity and water textures."
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subheading Color"
+    },
+    {
+      "type": "header",
+      "content": "Action Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Primary Button Label",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "select",
+      "id": "button_1_style",
+      "label": "Primary Button Style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Solid Dark"
+        },
+        {
+          "value": "secondary",
+          "label": "Accent Color"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secondary Button Label",
+      "default": "Find Your Routine"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "select",
+      "id": "button_2_style",
+      "label": "Secondary Button Style",
+      "options": [
+        {
+          "value": "outline",
+          "label": "Outline / Ghost"
+        },
+        {
+          "value": "primary",
+          "label": "Solid Dark"
+        },
+        {
+          "value": "secondary",
+          "label": "Accent Color"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "header",
+      "content": "Social Proof & Rating"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show Rating Stars & Badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_score",
+      "label": "Rating Score",
+      "default": "4.9/5"
+    },
+    {
+      "type": "color",
+      "id": "rating_star_color",
+      "label": "Star Rating Color",
+      "default": "#D4AF37"
+    },
+    {
+      "type": "text",
+      "id": "rating_subtitle",
+      "label": "Rating Subtitle",
+      "default": "Over 14,000+ Salons & Clients across Cairo, Alex & Giza"
     },
     {
       "type": "header",

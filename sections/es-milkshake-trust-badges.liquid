@@ -1,63 +1,143 @@
 {% render 'es-section-style', section: section %}
-<section class="mt-space-2xl max-w-[1440px] mx-auto px-margin section-{{ section.id }}-settings">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md p-space-lg rounded-xl bg-surface-container-lowest shadow-sm border border-border-subtle/50">
-    {%- if section.blocks.size > 0 -%}
-      {%- for block in section.blocks -%}
-        <div class="flex items-center gap-space-md" {{ block.shopify_attributes }}>
-          <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-primary text-[24px]">
-              {{ block.settings.icon | default: 'verified' }}
-            </span>
+
+{%- liquid
+  case section.settings.icon_size
+    when 'sm'
+      assign icon_box_size = 'w-9 h-9 min-w-[36px]'
+      assign icon_font_size = 'text-[20px]'
+    when 'lg'
+      assign icon_box_size = 'w-14 h-14 min-w-[56px]'
+      assign icon_font_size = 'text-[28px]'
+    else
+      assign icon_box_size = 'w-12 h-12 min-w-[48px]'
+      assign icon_font_size = 'text-[24px]'
+  endcase
+
+  case section.settings.icon_shape
+    when 'rounded'
+      assign icon_shape_class = 'rounded-xl'
+    when 'none'
+      assign icon_shape_class = 'bg-transparent'
+    else
+      assign icon_shape_class = 'rounded-full'
+  endcase
+
+  case section.settings.box_shadow
+    when 'none'
+      assign box_shadow_class = 'shadow-none'
+    when 'md'
+      assign box_shadow_class = 'shadow-md'
+    when 'lg'
+      assign box_shadow_class = 'shadow-lg'
+    else
+      assign box_shadow_class = 'shadow-sm'
+  endcase
+
+  assign is_centered = false
+  if section.settings.item_alignment == 'center'
+    assign is_centered = true
+  endif
+-%}
+
+{%- style -%}
+  #es-milkshake-trust-badges-{{ section.id }} {
+    --cols-desktop: {{ section.settings.columns_desktop | default: 4 }};
+    --cols-tablet: {{ section.settings.columns_tablet | default: 2 }};
+    --cols-mobile: {{ section.settings.columns_mobile | default: 1 }};
+    --grid-gap: {{ section.settings.grid_gap | default: 16 }}px;
+  }
+  .es-trust-box-{{ section.id }} {
+    background-color: {{ section.settings.box_bg | default: '#ffffff' }};
+    border-radius: {{ section.settings.box_radius | default: 12 }}px;
+    padding: {{ section.settings.box_padding | default: 24 }}px;
+    border-width: {{ section.settings.box_border_width | default: 1 }}px;
+    border-color: {{ section.settings.box_border_color | default: 'rgba(229, 226, 220, 0.5)' }};
+    border-style: solid;
+  }
+  .es-badge-icon-{{ section.id }} {
+    {% unless section.settings.icon_shape == 'none' %}
+      background-color: {{ section.settings.icon_bg | default: '#f6f4ee' }};
+    {% endunless %}
+    color: {{ section.settings.icon_color | default: '#1f1d1b' }};
+  }
+{%- endstyle -%}
+
+<section class="mt-space-2xl max-w-[1440px] mx-auto px-margin section-{{ section.id }}-settings" id="es-milkshake-trust-badges-{{ section.id }}">
+  <div class="es-trust-box-{{ section.id }} {{ box_shadow_class }}">
+    <div class="es-collection-grid">
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}" class="flex {% if is_centered %}flex-col items-center text-center{% else %}items-center text-left{% endif %} gap-space-md group" {{ block.shopify_attributes }}>
+          {%- else -%}
+            <div class="flex {% if is_centered %}flex-col items-center text-center{% else %}items-center text-left{% endif %} gap-space-md" {{ block.shopify_attributes }}>
+          {%- endif -%}
+
+            <div class="{{ icon_box_size }} {{ icon_shape_class }} es-badge-icon-{{ section.id }} flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
+              {%- if block.settings.custom_image != blank -%}
+                <img src="{{ block.settings.custom_image | image_url: width: 100 }}" alt="{{ block.settings.title }}" class="w-2/3 h-2/3 object-contain" loading="lazy">
+              {%- else -%}
+                <span class="material-symbols-outlined {{ icon_font_size }}">
+                  {{ block.settings.icon | default: 'verified' }}
+                </span>
+              {%- endif -%}
+            </div>
+
+            <div class="flex flex-col">
+              <span class="font-label-lg text-label-lg text-primary uppercase">
+                {{ block.settings.title }}
+              </span>
+              <span class="font-body-sm text-body-sm text-text-muted">
+                {{ block.settings.subtitle }}
+              </span>
+            </div>
+
+          {%- if block.settings.link != blank -%}
+            </a>
+          {%- else -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <!-- Default Badges Fallback -->
+        <div class="flex {% if is_centered %}flex-col items-center text-center{% else %}items-center text-left{% endif %} gap-space-md">
+          <div class="{{ icon_box_size }} {{ icon_shape_class }} es-badge-icon-{{ section.id }} flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined {{ icon_font_size }}">verified</span>
           </div>
           <div class="flex flex-col">
-            <span class="font-label-lg text-label-lg text-primary uppercase">
-              {{ block.settings.title }}
-            </span>
-            <span class="font-body-sm text-body-sm text-text-muted">
-              {{ block.settings.subtitle }}
-            </span>
+            <span class="font-label-lg text-label-lg text-primary uppercase">100% Authentic</span>
+            <span class="font-body-sm text-body-sm text-text-muted">Imported from Varese, Italy</span>
           </div>
         </div>
-      {%- endfor -%}
-    {%- else -%}
-      <!-- Default Badges Fallback -->
-      <div class="flex items-center gap-space-md">
-        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-primary text-[24px]">verified</span>
+        <div class="flex {% if is_centered %}flex-col items-center text-center{% else %}items-center text-left{% endif %} gap-space-md">
+          <div class="{{ icon_box_size }} {{ icon_shape_class }} es-badge-icon-{{ section.id }} flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined {{ icon_font_size }}">local_shipping</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-label-lg text-label-lg text-primary uppercase">Fast Express Egypt</span>
+            <span class="font-body-sm text-body-sm text-text-muted">2-4 Days nationwide dispatch</span>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <span class="font-label-lg text-label-lg text-primary uppercase">100% Authentic</span>
-          <span class="font-body-sm text-body-sm text-text-muted">Imported from Varese, Italy</span>
+        <div class="flex {% if is_centered %}flex-col items-center text-center{% else %}items-center text-left{% endif %} gap-space-md">
+          <div class="{{ icon_box_size }} {{ icon_shape_class }} es-badge-icon-{{ section.id }} flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined {{ icon_font_size }}">redeem</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-label-lg text-label-lg text-primary uppercase">Free Delivery</span>
+            <span class="font-body-sm text-body-sm text-text-muted">On all orders above 2,499 EGP</span>
+          </div>
         </div>
-      </div>
-      <div class="flex items-center gap-space-md">
-        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-primary text-[24px]">local_shipping</span>
+        <div class="flex {% if is_centered %}flex-col items-center text-center{% else %}items-center text-left{% endif %} gap-space-md">
+          <div class="{{ icon_box_size }} {{ icon_shape_class }} es-badge-icon-{{ section.id }} flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined {{ icon_font_size }}">payments</span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-label-lg text-label-lg text-primary uppercase">Flexible Payment</span>
+            <span class="font-body-sm text-body-sm text-text-muted">Cash on Delivery &amp; valU installments</span>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <span class="font-label-lg text-label-lg text-primary uppercase">Fast Express Egypt</span>
-          <span class="font-body-sm text-body-sm text-text-muted">2-4 Days nationwide dispatch</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-space-md">
-        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-primary text-[24px]">redeem</span>
-        </div>
-        <div class="flex flex-col">
-          <span class="font-label-lg text-label-lg text-primary uppercase">Free Delivery</span>
-          <span class="font-body-sm text-body-sm text-text-muted">On all orders above 2,499 EGP</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-space-md">
-        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
-          <span class="material-symbols-outlined text-primary text-[24px]">payments</span>
-        </div>
-        <div class="flex flex-col">
-          <span class="font-label-lg text-label-lg text-primary uppercase">Flexible Payment</span>
-          <span class="font-body-sm text-body-sm text-text-muted">Cash on Delivery &amp; valU installments</span>
-        </div>
-      </div>
-    {%- endif -%}
+      {%- endif -%}
+    </div>
   </div>
 </section>
 
@@ -67,6 +147,189 @@
   "tag": "section",
   "class": "es-milkshake-trust-badges-wrapper",
   "settings": [
+    {
+      "type": "header",
+      "content": "Layout & Grid Settings"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on tablet",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Columns on mobile",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "item_alignment",
+      "label": "Item alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Horizontal (Icon Left)"
+        },
+        {
+          "value": "center",
+          "label": "Vertical (Icon Centered)"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Box Container Styling"
+    },
+    {
+      "type": "color",
+      "id": "box_bg",
+      "label": "Box background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "box_radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Box corner radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "box_padding",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Box padding",
+      "default": 24
+    },
+    {
+      "type": "color",
+      "id": "box_border_color",
+      "label": "Box border color",
+      "default": "#e5e2dc"
+    },
+    {
+      "type": "range",
+      "id": "box_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Box border width",
+      "default": 1
+    },
+    {
+      "type": "select",
+      "id": "box_shadow",
+      "label": "Box shadow",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Large"
+        }
+      ],
+      "default": "sm"
+    },
+    {
+      "type": "header",
+      "content": "Icon Styling"
+    },
+    {
+      "type": "select",
+      "id": "icon_size",
+      "label": "Icon size",
+      "options": [
+        {
+          "value": "sm",
+          "label": "Small (36px)"
+        },
+        {
+          "value": "md",
+          "label": "Medium (48px)"
+        },
+        {
+          "value": "lg",
+          "label": "Large (56px)"
+        }
+      ],
+      "default": "md"
+    },
+    {
+      "type": "select",
+      "id": "icon_shape",
+      "label": "Icon background shape",
+      "options": [
+        {
+          "value": "circle",
+          "label": "Circle"
+        },
+        {
+          "value": "rounded",
+          "label": "Rounded Square"
+        },
+        {
+          "value": "none",
+          "label": "None (Transparent)"
+        }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "color",
+      "id": "icon_bg",
+      "label": "Icon background color",
+      "default": "#f6f4ee"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon color",
+      "default": "#1f1d1b"
+    },
     {
       "type": "header",
       "content": "Layout and Container"
@@ -98,12 +361,12 @@
     {
       "type": "color",
       "id": "bg_color",
-      "label": "Background color"
+      "label": "Section background color"
     },
     {
       "type": "color_background",
       "id": "bg_gradient",
-      "label": "Background gradient"
+      "label": "Section background gradient"
     },
     {
       "type": "color",
@@ -293,6 +556,11 @@
           "default": "verified"
         },
         {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Icon Image (Optional)"
+        },
+        {
           "type": "text",
           "id": "title",
           "label": "Badge Title",
@@ -303,6 +571,11 @@
           "id": "subtitle",
           "label": "Badge Subtitle",
           "default": "Imported from Varese, Italy"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (Optional)"
         }
       ]
     }

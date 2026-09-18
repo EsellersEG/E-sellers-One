@@ -1,4 +1,46 @@
 {% render 'es-section-style', section: section %}
+
+{%- liquid
+  assign is_carousel = false
+  if section.settings.layout_type == 'carousel'
+    assign is_carousel = true
+  endif
+
+  case section.settings.image_ratio
+    when '4/5'
+      assign aspect_ratio_class = 'es-aspect-4-5'
+    when '3/4'
+      assign aspect_ratio_class = 'es-aspect-3-4'
+    else
+      assign aspect_ratio_class = 'es-aspect-1-1'
+  endcase
+
+  case section.settings.card_shadow
+    when 'none'
+      assign shadow_class = 'shadow-none'
+    when 'md'
+      assign shadow_class = 'shadow-md'
+    when 'lg'
+      assign shadow_class = 'shadow-lg'
+    else
+      assign shadow_class = 'shadow-sm'
+  endcase
+-%}
+
+{%- style -%}
+  #es-milkshake-travel-minis-{{ section.id }} {
+    --cols-desktop: {{ section.settings.columns_desktop | default: 3 }};
+    --cols-tablet: {{ section.settings.columns_tablet | default: 2 }};
+    --cols-mobile: {{ section.settings.columns_mobile | default: 1 }};
+    --grid-gap: {{ section.settings.grid_gap | default: 24 }}px;
+  }
+  .es-travel-mini-card-{{ section.id }} {
+    background-color: {{ section.settings.card_bg | default: '#ffffff' }};
+    border-radius: {{ section.settings.card_radius | default: 12 }}px;
+    padding: {{ section.settings.card_padding | default: 16 }}px;
+  }
+{%- endstyle -%}
+
 <section class="w-full py-space-3xl bg-surface-cream section-{{ section.id }}-settings" id="es-milkshake-travel-minis-{{ section.id }}">
   <div class="max-w-[1440px] mx-auto px-margin">
     <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-space-2xl">
@@ -14,27 +56,54 @@
           </h2>
         {% endif %}
       </div>
-      {% if section.settings.description != blank %}
-        <span class="font-body-sm text-body-sm text-text-muted mt-space-sm sm:mt-0">
-          {{ section.settings.description }}
-        </span>
-      {% endif %}
+
+      <div class="flex items-center gap-4 mt-space-sm sm:mt-0">
+        {% if section.settings.description != blank %}
+          <span class="font-body-sm text-body-sm text-text-muted hidden md:inline-block">
+            {{ section.settings.description }}
+          </span>
+        {% endif %}
+
+        {%- if is_carousel and section.settings.show_arrows -%}
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="w-10 h-10 rounded-full border border-outline-variant/40 flex items-center justify-center text-primary hover:bg-surface-container-highest transition-colors"
+              data-carousel-prev="MinisTrack-{{ section.id }}"
+              aria-label="Previous Minis"
+            >
+              <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+            </button>
+            <button
+              type="button"
+              class="w-10 h-10 rounded-full border border-outline-variant/40 flex items-center justify-center text-primary hover:bg-surface-container-highest transition-colors"
+              data-carousel-next="MinisTrack-{{ section.id }}"
+              aria-label="Next Minis"
+            >
+              <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+    <div
+      id="MinisTrack-{{ section.id }}"
+      class="{% if is_carousel %}es-carousel-track{% else %}es-collection-grid{% endif %}"
+    >
       {% if section.blocks.size > 0 %}
         {% for block in section.blocks %}
-          <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm" {{ block.shopify_attributes }}>
-            <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+          <div class="flex flex-col es-travel-mini-card-{{ section.id }} {{ shadow_class }}" {{ block.shopify_attributes }}>
+            <div class="relative w-full {{ aspect_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
               {% if block.settings.badge_text != blank %}
                 <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider z-10">
                   {{ block.settings.badge_text }}
                 </span>
               {% endif %}
               {% if block.settings.image != blank %}
-                <img class="w-full h-full object-cover {% if block.settings.is_sold_out %}grayscale-[30%]{% endif %}" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
+                <img class="w-full h-full object-cover {% if block.settings.is_sold_out and section.settings.soldout_grayscale %}grayscale-[30%]{% endif %}" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
               {% elsif block.settings.image_url != blank %}
-                <img class="w-full h-full object-cover {% if block.settings.is_sold_out %}grayscale-[30%]{% endif %}" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
+                <img class="w-full h-full object-cover {% if block.settings.is_sold_out and section.settings.soldout_grayscale %}grayscale-[30%]{% endif %}" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
               {% else %}
                 <div class="w-full h-full flex items-center justify-center text-text-muted">No Image</div>
               {% endif %}
@@ -82,12 +151,12 @@
         {% endfor %}
       {% else %}
         <!-- Fallback 1: Moisture & More Mini -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
-          <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+        <div class="flex flex-col es-travel-mini-card-{{ section.id }} {{ shadow_class }}">
+          <div class="relative w-full {{ aspect_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
             <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
               Sold Out
             </span>
-            <img class="w-full h-full object-cover grayscale-[30%]" alt="milk_shake moisture and more mini set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtSdhgQ2SWVg21XDwG5AUU2L-BFAdEdpxVYetX0S8HhY_NHSvBulhzDVnQN3Uc23KW_zOrTvNVtMBjJcFYq5RuLMLc0ZEad_8-0o9FXGUepIV4NSDyvVYOonAPoNkuMFrQEBDgaVHTkL5_coC23LEglCrySXvL7kRxGdQ82eD10A2uWnBEXA4xm_cy1i3ZIAA1BtyhkUVukvMkVGUqAgk02vdq9CU_SO9HWdDSSDCEBJJiHpDEeLA" loading="lazy"/>
+            <img class="w-full h-full object-cover {% if section.settings.soldout_grayscale %}grayscale-[30%]{% endif %}" alt="milk_shake moisture and more mini set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtSdhgQ2SWVg21XDwG5AUU2L-BFAdEdpxVYetX0S8HhY_NHSvBulhzDVnQN3Uc23KW_zOrTvNVtMBjJcFYq5RuLMLc0ZEad_8-0o9FXGUepIV4NSDyvVYOonAPoNkuMFrQEBDgaVHTkL5_coC23LEglCrySXvL7kRxGdQ82eD10A2uWnBEXA4xm_cy1i3ZIAA1BtyhkUVukvMkVGUqAgk02vdq9CU_SO9HWdDSSDCEBJJiHpDEeLA" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             milk_shake® Travel
@@ -107,12 +176,12 @@
         </div>
 
         <!-- Fallback 2: Make My Day Mini -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
-          <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+        <div class="flex flex-col es-travel-mini-card-{{ section.id }} {{ shadow_class }}">
+          <div class="relative w-full {{ aspect_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
             <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
               Sold Out
             </span>
-            <img class="w-full h-full object-cover grayscale-[30%]" alt="milk_shake make my day mini bundle set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuCz8iktVEBMRS--vBf2EUmZm8rypuDu3B1r0cOoZNX-UXCXRwrIOW5GRsxtrVI1hEh2BkyufGZiBDtyIIMcFGHA-8ZNmQlHUAs3HXfQl2XObu9QG2Bnnc9fqBJ9OccH5XbPVm9ArU8vg_7lBeZPnTBzZNyRGlH7D7-TkuGt_LsJfz23BC_GhT-yDyblbkpv1FyOfJTEqVzLcea1KczPWn3k9g0x47DMfs7WUNNdaeSaVIrK2AY9A" loading="lazy"/>
+            <img class="w-full h-full object-cover {% if section.settings.soldout_grayscale %}grayscale-[30%]{% endif %}" alt="milk_shake make my day mini bundle set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuCz8iktVEBMRS--vBf2EUmZm8rypuDu3B1r0cOoZNX-UXCXRwrIOW5GRsxtrVI1hEh2BkyufGZiBDtyIIMcFGHA-8ZNmQlHUAs3HXfQl2XObu9QG2Bnnc9fqBJ9OccH5XbPVm9ArU8vg_7lBeZPnTBzZNyRGlH7D7-TkuGt_LsJfz23BC_GhT-yDyblbkpv1FyOfJTEqVzLcea1KczPWn3k9g0x47DMfs7WUNNdaeSaVIrK2AY9A" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             milk_shake® Travel
@@ -132,12 +201,12 @@
         </div>
 
         <!-- Fallback 3: Silver Shine Mini -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
-          <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+        <div class="flex flex-col es-travel-mini-card-{{ section.id }} {{ shadow_class }}">
+          <div class="relative w-full {{ aspect_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
             <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
               Sold Out
             </span>
-            <img class="w-full h-full object-cover grayscale-[30%]" alt="milk_shake silver shine travel mini bottles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq9DcmQDprQEGouvSyIpis-9SwEuP5JpvVDmKBEAL_ctb_FU572c8EWUb9UMaupF9z6gqUyrgsVPlN02QxTQE-O9iuBGhWpa37QDPwSz9tTAs-fgtUXiV98TLw47CpjbeYScUeyTIZ3fMz8D4T-npKkEoxqA5O43J6MxJiF7C7iuKMErK0RyhaYFs-jAwhfweRCL_o1F0Q7N1yAprLdTrW8aohYyyAjSv1PMy6TQt4IPXixd3PfTw" loading="lazy"/>
+            <img class="w-full h-full object-cover {% if section.settings.soldout_grayscale %}grayscale-[30%]{% endif %}" alt="milk_shake silver shine travel mini bottles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq9DcmQDprQEGouvSyIpis-9SwEuP5JpvVDmKBEAL_ctb_FU572c8EWUb9UMaupF9z6gqUyrgsVPlN02QxTQE-O9iuBGhWpa37QDPwSz9tTAs-fgtUXiV98TLw47CpjbeYScUeyTIZ3fMz8D4T-npKkEoxqA5O43J6MxJiF7C7iuKMErK0RyhaYFs-jAwhfweRCL_o1F0Q7N1yAprLdTrW8aohYyyAjSv1PMy6TQt4IPXixd3PfTw" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             milk_shake® Travel
@@ -221,6 +290,149 @@
       "id": "description",
       "label": "Description Note",
       "default": "TSA-approved salon formulas + complimentary Italian travel pouch"
+    },
+    {
+      "type": "header",
+      "content": "Layout & Grid Settings"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout Type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "carousel",
+          "label": "Carousel"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Columns on tablet",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Columns on mobile",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid / Slide gap",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show carousel arrows",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Card & Image Styling"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Aspect Ratio",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "3/4",
+          "label": "Tall (3:4)"
+        }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "checkbox",
+      "id": "soldout_grayscale",
+      "label": "Grayscale sold-out images",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "card_shadow",
+      "label": "Card shadow",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "sm",
+          "label": "Small"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Large"
+        }
+      ],
+      "default": "sm"
     },
     {
       "type": "header",

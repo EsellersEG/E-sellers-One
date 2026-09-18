@@ -1,39 +1,111 @@
 {% render 'es-section-style', section: section %}
-<section class="w-full py-space-3xl bg-surface section-{{ section.id }}-settings" id="es-milkshake-travel-promo-{{ section.id }}">
-  <div class="max-w-[1440px] mx-auto px-margin">
-    <div class="relative rounded-xl overflow-hidden bg-surface-container p-space-xl lg:p-space-2xl">
-      <div class="max-w-xl mb-space-2xl">
-        {% if section.settings.badge_text != blank %}
-          <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm tracking-widest uppercase mb-space-sm">
-            {{ section.settings.badge_text }}
+
+{%- liquid
+  assign is_carousel = false
+  if section.settings.layout_type == 'carousel'
+    assign is_carousel = true
+  endif
+  assign img_ratio = section.settings.image_aspect_ratio | default: '4/5'
+-%}
+
+{%- style -%}
+  #es-promo-{{ section.id }} {
+    --cols-desktop: {{ section.settings.columns_desktop | default: 2 }};
+    --cols-tablet: {{ section.settings.columns_tablet | default: 1 }};
+    --cols-mobile: {{ section.settings.columns_mobile | default: 1 }};
+    --grid-gap: {{ section.settings.grid_gap | default: 24 }}px;
+  }
+  #es-promo-{{ section.id }} .es-promo-container {
+    background-color: {{ section.settings.promo_box_bg | default: '#f7efe6' }};
+    border-radius: {{ section.settings.promo_box_radius | default: 16 }}px;
+    padding: {{ section.settings.promo_box_padding | default: 32 }}px;
+  }
+  #es-promo-{{ section.id }} .es-promo-card {
+    background-color: {{ section.settings.card_bg | default: '#ffffff' }};
+    border-radius: {{ section.settings.card_radius | default: 12 }}px;
+    padding: {{ section.settings.card_padding | default: 24 }}px;
+  }
+  #es-promo-{{ section.id }} .es-promo-media {
+    border-radius: {{ section.settings.image_radius | default: 8 }}px;
+    {%- if img_ratio == '1/1' -%}
+      aspect-ratio: 1 / 1;
+    {%- elsif img_ratio == '3/4' -%}
+      aspect-ratio: 3 / 4;
+    {%- elsif img_ratio == '16/10' -%}
+      aspect-ratio: 16 / 10;
+    {%- else -%}
+      aspect-ratio: 4 / 5;
+    {%- endif -%}
+  }
+  #es-promo-{{ section.id }} .es-promo-btn {
+    border-radius: {{ section.settings.button_border_radius | default: 30 }}px;
+  }
+{%- endstyle -%}
+
+<section class="w-full py-space-3xl bg-surface section-{{ section.id }}-settings" id="es-promo-{{ section.id }}">
+  <div class="{% if section.settings.container_width == 'full' %}w-full px-4 sm:px-6 lg:px-8{% elsif section.settings.container_width == 'narrow' %}max-w-[1000px] mx-auto px-margin{% else %}max-w-[1440px] mx-auto px-margin{% endif %}">
+    <div class="relative overflow-hidden es-promo-container">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-2xl gap-space-md">
+        <div class="max-w-xl">
+          {% if section.settings.badge_text != blank %}
+            <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm tracking-widest uppercase mb-space-sm">
+              {{ section.settings.badge_text }}
+            </div>
+          {% endif %}
+          {% if section.settings.heading != blank %}
+            <h2 class="font-headline-xl text-headline-xl text-primary mb-space-sm">
+              {{ section.settings.heading }}
+            </h2>
+          {% endif %}
+          {% if section.settings.description != blank %}
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              {{ section.settings.description }}
+            </p>
+          {% endif %}
+        </div>
+
+        {%- if is_carousel and section.settings.show_arrows -%}
+          <div class="flex items-center gap-space-sm self-start md:self-end">
+            <button
+              type="button"
+              class="w-10 h-10 rounded-full border border-outline-variant bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors shadow-sm"
+              data-carousel-prev="PromoTrack-{{ section.id }}"
+              aria-label="Previous promo"
+            >
+              <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+            </button>
+            <button
+              type="button"
+              class="w-10 h-10 rounded-full border border-outline-variant bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors shadow-sm"
+              data-carousel-next="PromoTrack-{{ section.id }}"
+              aria-label="Next promo"
+            >
+              <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+            </button>
           </div>
-        {% endif %}
-        {% if section.settings.heading != blank %}
-          <h2 class="font-headline-xl text-headline-xl text-primary mb-space-sm">
-            {{ section.settings.heading }}
-          </h2>
-        {% endif %}
-        {% if section.settings.description != blank %}
-          <p class="font-body-md text-body-md text-on-surface-variant">
-            {{ section.settings.description }}
-          </p>
-        {% endif %}
+        {%- endif -%}
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xl">
+      <!-- Items Grid / Carousel -->
+      <div
+        id="PromoTrack-{{ section.id }}"
+        class="{% if is_carousel %}es-carousel-track{% else %}es-collection-grid{% endif %}"
+      >
         {% if section.blocks.size > 0 %}
           {% for block in section.blocks %}
-            <div class="flex flex-col sm:flex-row gap-space-lg p-space-lg rounded-lg bg-surface-container-lowest shadow-sm" {{ block.shopify_attributes }}>
-              <div class="w-full sm:w-1/2 aspect-[4/5] rounded {{ block.settings.bg_color_class | default: 'bg-pastel-flower-vibes/30' }} overflow-hidden relative p-4 flex items-center justify-center">
+            <div class="es-promo-card flex flex-col sm:flex-row gap-space-lg {% if is_carousel %}shrink-0{% endif %} {% if section.settings.card_shadow == 'lg' %}shadow-lg{% elsif section.settings.card_shadow == 'md' %}shadow-md{% elsif section.settings.card_shadow == 'none' %}shadow-none{% else %}shadow-sm{% endif %}" {{ block.shopify_attributes }}>
+              <div class="w-full sm:w-1/2 es-promo-media {{ block.settings.bg_color_class | default: 'bg-pastel-flower-vibes/30' }} overflow-hidden relative p-4 flex items-center justify-center">
                 {% if block.settings.image != blank %}
-                  <img class="h-full w-auto object-contain" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
+                  <img class="h-full w-auto object-contain transition-transform duration-500 hover:scale-105" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
                 {% elsif block.settings.image_url != blank %}
-                  <img class="h-full w-auto object-contain" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
+                  <img class="h-full w-auto object-contain transition-transform duration-500 hover:scale-105" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
                 {% else %}
-                  <img class="h-full w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_wyg26K3iQXg4163y_DNDnYZAq6OX-H-j7q8RvYI2w_vPnaGhVDzhOsgYEDkiqSZNZa4aw92LXkOCu-K7TGeYJv5ZcWJGt0WdofrJs_zCP_zrEb_HCSNEf1NBc36imb4MAJ_P-g3CWA-sBjcE8FjREhzlvUyKl5HjITzNhNlBoHvicNOykdWB74fxEips8gEBXzBtI2XR6ANeGY-5rbl-hQdDjAgvrHQ0UcZhJ3B7kEsxrwe2UU" alt="{{ block.settings.title }}" loading="lazy">
+                  <img class="h-full w-auto object-contain transition-transform duration-500 hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_wyg26K3iQXg4163y_DNDnYZAq6OX-H-j7q8RvYI2w_vPnaGhVDzhOsgYEDkiqSZNZa4aw92LXkOCu-K7TGeYJv5ZcWJGt0WdofrJs_zCP_zrEb_HCSNEf1NBc36imb4MAJ_P-g3CWA-sBjcE8FjREhzlvUyKl5HjITzNhNlBoHvicNOykdWB74fxEips8gEBXzBtI2XR6ANeGY-5rbl-hQdDjAgvrHQ0UcZhJ3B7kEsxrwe2UU" alt="{{ block.settings.title }}" loading="lazy">
                 {% endif %}
                 {% if block.settings.edition_tag != blank %}
-                  <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary">
+                  <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary font-medium">
                     {{ block.settings.edition_tag }}
                   </span>
                 {% endif %}
@@ -67,7 +139,8 @@
                     <span class="font-body-sm text-body-sm text-text-muted">Total Bundle:</span>
                     <span class="font-headline-sm text-headline-sm text-primary">{{ block.settings.total_price | default: 'LE 1,150.00' }}</span>
                   </div>
-                  <a href="{{ block.settings.button_link | default: '/collections/all' }}" class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
+                  {%- assign btn_style = section.settings.button_style | default: 'primary' -%}
+                  <a href="{{ block.settings.button_link | default: '/collections/all' }}" class="w-full h-12 es-promo-btn font-label-lg text-label-lg tracking-wider uppercase transition-colors shadow-sm inline-flex items-center justify-center {% if btn_style == 'primary' %}bg-primary text-on-primary hover:bg-neutral-800{% elsif btn_style == 'secondary' %}bg-secondary text-white hover:bg-secondary/90{% else %}border border-primary text-primary hover:bg-primary hover:text-on-primary{% endif %}">
                     {{ block.settings.button_text | default: 'Get The Travel Size Free' }}
                   </a>
                 </div>
@@ -75,11 +148,11 @@
             </div>
           {% endfor %}
         {% else %}
-          <!-- Offer Card 1: Flower Vibes Fallback -->
-          <div class="flex flex-col sm:flex-row gap-space-lg p-space-lg rounded-lg bg-surface-container-lowest shadow-sm">
-            <div class="w-full sm:w-1/2 aspect-[4/5] rounded bg-pastel-flower-vibes/30 overflow-hidden relative p-4 flex items-center justify-center">
+          <!-- Fallback Card 1 -->
+          <div class="es-promo-card flex flex-col sm:flex-row gap-space-lg shadow-sm">
+            <div class="w-full sm:w-1/2 es-promo-media bg-pastel-flower-vibes/30 overflow-hidden relative p-4 flex items-center justify-center">
               <img class="h-full w-auto object-contain" alt="milk_shake leave in conditioner flower 350ml full bottle paired side by side with a 75ml mini travel bottle on delicate pink petals" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_wyg26K3iQXg4163y_DNDnYZAq6OX-H-j7q8RvYI2w_vPnaGhVDzhOsgYEDkiqSZNZa4aw92LXkOCu-K7TGeYJv5ZcWJGt0WdofrJs_zCP_zrEb_HCSNEf1NBc36imb4MAJ_P-g3CWA-sBjcE8FjREhzlvUyKl5HjITzNhNlBoHvicNOykdWB74fxEips8gEBXzBtI2XR6ANeGY-5rbl-hQdDjAgvrHQ0UcZhJ3B7kEsxrwe2UU" loading="lazy"/>
-              <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary">
+              <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary font-medium">
                 Flower Edition
               </span>
             </div>
@@ -106,18 +179,18 @@
                   <span class="font-body-sm text-body-sm text-text-muted">Total Bundle:</span>
                   <span class="font-headline-sm text-headline-sm text-primary">LE 1,150.00</span>
                 </div>
-                <a href="/collections/all" class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
+                <a href="/collections/all" class="w-full h-12 es-promo-btn bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
                   Get The Travel Size Free
                 </a>
               </div>
             </div>
           </div>
 
-          <!-- Offer Card 2: Vanilla Original Fallback -->
-          <div class="flex flex-col sm:flex-row gap-space-lg p-space-lg rounded-lg bg-surface-container-lowest shadow-sm">
-            <div class="w-full sm:w-1/2 aspect-[4/5] rounded bg-pastel-make-my-day/30 overflow-hidden relative p-4 flex items-center justify-center">
+          <!-- Fallback Card 2 -->
+          <div class="es-promo-card flex flex-col sm:flex-row gap-space-lg shadow-sm">
+            <div class="w-full sm:w-1/2 es-promo-media bg-pastel-make-my-day/30 overflow-hidden relative p-4 flex items-center justify-center">
               <img class="h-full w-auto object-contain" alt="milk_shake leave in conditioner vanilla 350ml bottle alongside its 75ml travel mini bottle on creamy warm custard background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrEU51I4TF9u_z_pespuakB9y1O_IPof07r9zvBm5eDRo-Red6gNodLu0963l35zbO5JCIZiYAm5RhXlhIZWSQTDDEOC0fQylBJTLGhNd0WaD16-CmO4RVMdNZrXGYKKCSY0nfxkWtPJb0vJVCgD2Ding20uAld7oh3a-O_7PA8yQmM3ohhyUuYi4Wp_8fysD3vit3zPzcUwSXsiZvFyhJSFls6B5mgx9XkY1RBLPcLB-skdlx78s" loading="lazy"/>
-              <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary">
+              <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary font-medium">
                 Vanilla Gourmand
               </span>
             </div>
@@ -144,7 +217,7 @@
                   <span class="font-body-sm text-body-sm text-text-muted">Total Bundle:</span>
                   <span class="font-headline-sm text-headline-sm text-primary">LE 1,150.00</span>
                 </div>
-                <a href="/collections/all" class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
+                <a href="/collections/all" class="w-full h-12 es-promo-btn bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
                   Get The Travel Size Free
                 </a>
               </div>
@@ -179,16 +252,219 @@
       "default": "Purchase the 350 ML Leave-In Conditioner in your chosen signature scent at LE 1,150.00 and receive the matching 75 ML travel edition completely complimentary (Free LE 449.00 Value)."
     },
     {
+      "type": "header",
+      "content": "Layout Controls"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout type",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Grid"
+        },
+        {
+          "value": "carousel",
+          "label": "Carousel / Slider"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Desktop columns",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Tablet columns",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Mobile columns",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show navigation arrows (Carousel mode)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Container & Box Styling"
+    },
+    {
       "type": "color",
-      "id": "bg_color",
-      "label": "Section Background",
+      "id": "promo_box_bg",
+      "label": "Container Box Background",
       "default": "#f7efe6"
+    },
+    {
+      "type": "range",
+      "id": "promo_box_radius",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Container Box Corner Radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "promo_box_padding",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "label": "Container Box Inner Padding",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Card Styling"
     },
     {
       "type": "color",
       "id": "card_bg",
       "label": "Card Background",
       "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card Corner Radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 12,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Card Inner Padding",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "card_shadow",
+      "label": "Card Shadow",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "sm",
+          "label": "Subtle (Small)"
+        },
+        {
+          "value": "md",
+          "label": "Medium"
+        },
+        {
+          "value": "lg",
+          "label": "Elevated (Large)"
+        }
+      ],
+      "default": "sm"
+    },
+    {
+      "type": "header",
+      "content": "Card Image & Button"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Classic Portrait (3:4)"
+        },
+        {
+          "value": "16/10",
+          "label": "Landscape (16:10)"
+        }
+      ],
+      "default": "4/5"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Image Corner Radius",
+      "default": 8
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Button Style",
+      "options": [
+        {
+          "value": "primary",
+          "label": "Solid Dark"
+        },
+        {
+          "value": "secondary",
+          "label": "Accent Color"
+        },
+        {
+          "value": "outline",
+          "label": "Outline"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button Corner Radius",
+      "default": 30
     },
     {
       "type": "header",
@@ -217,6 +493,11 @@
     {
       "type": "header",
       "content": "Colors and Background"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background color"
     },
     {
       "type": "color_background",

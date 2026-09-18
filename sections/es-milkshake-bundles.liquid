@@ -1,4 +1,33 @@
 {% render 'es-section-style', section: section %}
+
+{%- assign is_carousel = false -%}
+{%- if section.settings.layout_type == 'carousel' -%}
+  {%- assign is_carousel = true -%}
+{%- endif -%}
+
+{%- assign img_ratio_class = 'es-aspect-16-10' -%}
+{%- if section.settings.image_ratio == '4/3' -%}
+  {%- assign img_ratio_class = 'es-aspect-4-3' -%}
+{%- elsif section.settings.image_ratio == '1/1' -%}
+  {%- assign img_ratio_class = 'es-aspect-1-1' -%}
+{%- elsif section.settings.image_ratio == '4/5' -%}
+  {%- assign img_ratio_class = 'es-aspect-4-5' -%}
+{%- endif -%}
+
+{%- style -%}
+  #es-milkshake-bundles-{{ section.id }} {
+    --cols-desktop: {{ section.settings.columns_desktop | default: 3 }};
+    --cols-tablet: {{ section.settings.columns_tablet | default: 2 }};
+    --cols-mobile: {{ section.settings.columns_mobile | default: 1 }};
+    --grid-gap: {{ section.settings.grid_gap | default: 24 }}px;
+  }
+  .bundle-card-{{ section.id }} {
+    background-color: {{ section.settings.card_bg | default: '#ffffff' }};
+    border-radius: {{ section.settings.card_radius | default: 16 }}px;
+    padding: {{ section.settings.card_padding | default: 24 }}px;
+  }
+{%- endstyle -%}
+
 <section class="w-full py-space-3xl bg-surface-cream section-{{ section.id }}-settings" id="es-milkshake-bundles-{{ section.id }}">
   <div class="max-w-[1440px] mx-auto px-margin">
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-space-2xl">
@@ -14,28 +43,40 @@
           </h2>
         {% endif %}
       </div>
-      {% if section.settings.view_all_text != blank %}
-        <a class="font-label-lg text-label-lg uppercase tracking-wider text-primary hover:text-secondary flex items-center gap-1 transition-colors mt-space-sm md:mt-0" href="{{ section.settings.view_all_link | default: '/collections/all' }}">
-          {{ section.settings.view_all_text }}
-          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </a>
-      {% endif %}
+      <div class="flex items-center gap-space-md mt-space-sm md:mt-0">
+        {% if section.settings.view_all_text != blank %}
+          <a class="font-label-lg text-label-lg uppercase tracking-wider text-primary hover:text-secondary flex items-center gap-1 transition-colors" href="{{ section.settings.view_all_link | default: '/collections/all' }}">
+            {{ section.settings.view_all_text }}
+            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </a>
+        {% endif %}
+        {%- if is_carousel and section.settings.show_arrows -%}
+          <div class="flex items-center gap-space-xs ml-space-sm">
+            <button type="button" data-carousel-prev="BundlesTrack-{{ section.id }}" aria-label="Previous" class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm cursor-pointer border border-neutral-200">
+              <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+            </button>
+            <button type="button" data-carousel-next="BundlesTrack-{{ section.id }}" aria-label="Next" class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm cursor-pointer border border-neutral-200">
+              <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+            </button>
+          </div>
+        {%- endif -%}
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+    <div id="BundlesTrack-{{ section.id }}" class="{% if is_carousel %}es-carousel-track{% else %}es-collection-grid{% endif %}">
       {% if section.blocks.size > 0 %}
         {% for block in section.blocks %}
-          <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow" {{ block.shopify_attributes }}>
-            <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden {{ block.settings.bg_class | default: 'bg-surface-container' }} mb-space-md">
-              {% if block.settings.badge_text != blank %}
+          <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow" {{ block.shopify_attributes }}>
+            <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden {{ block.settings.bg_class | default: 'bg-surface-container' }} mb-space-md">
+              {% if section.settings.show_badge and block.settings.badge_text != blank %}
                 <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full {{ block.settings.badge_class | default: 'bg-badge-sale text-on-error' }} font-label-sm text-label-sm uppercase tracking-wider font-bold z-10">
                   {{ block.settings.badge_text }}
                 </span>
               {% endif %}
               {% if block.settings.image != blank %}
-                <img class="w-full h-full object-cover" src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
+                <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" src="{{ block.settings.image | image_url: width: 800 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
               {% elsif block.settings.image_url != blank %}
-                <img class="w-full h-full object-cover" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
+                <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
               {% else %}
                 <div class="w-full h-full flex items-center justify-center text-text-muted">No Image</div>
               {% endif %}
@@ -67,7 +108,7 @@
               {% if block.settings.product != blank %}
                 <form method="post" action="/cart/add">
                   <input type="hidden" name="id" value="{{ block.settings.product.selected_or_first_available_variant.id }}" />
-                  <button type="submit" class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+                  <button type="submit" class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
                     {{ block.settings.button_text | default: 'Add Routine' }}
                   </button>
                 </form>
@@ -81,12 +122,14 @@
         {% endfor %}
       {% else %}
         <!-- Bundle 1: Super Moisture (Save 54%) Fallback -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow">
-          <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm uppercase tracking-wider font-bold">
-              Save 54%
-            </span>
-            <img class="w-full h-full object-cover" alt="Curated milk_shake super moisture bundle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAMSItpxjuqzFjHaQ6MCgeIy_gm1NOqd70wc96T8BLa3ehS0Yk_H0ECplR8F6OZsbRUSVKlY0wPDstCVvT9SuHYAAMXnAjelr8A8RaFg_PmGvxzB8U3p-disLLllFHUmJuAo_whuVlV9KIgNrm4Ijt-dWtzlSRnd-y9vYr4MMQsZpbXlGYHasDP0ydnd-llzcpWMrf_gXBSCZ6lv6H79laW0IXY8jh6A140JTJuJcY1rBB6lPQdjI" loading="lazy"/>
+        <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            {% if section.settings.show_badge %}
+              <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm uppercase tracking-wider font-bold z-10">
+                Save 54%
+              </span>
+            {% endif %}
+            <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" alt="Curated milk_shake super moisture bundle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAMSItpxjuqzFjHaQ6MCgeIy_gm1NOqd70wc96T8BLa3ehS0Yk_H0ECplR8F6OZsbRUSVKlY0wPDstCVvT9SuHYAAMXnAjelr8A8RaFg_PmGvxzB8U3p-disLLllFHUmJuAo_whuVlV9KIgNrm4Ijt-dWtzlSRnd-y9vYr4MMQsZpbXlGYHasDP0ydnd-llzcpWMrf_gXBSCZ6lv6H79laW0IXY8jh6A140JTJuJcY1rBB6lPQdjI" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             Intense Hydration
@@ -102,19 +145,21 @@
               <span class="font-headline-sm text-headline-sm text-primary">LE 1,999.00</span>
               <span class="font-body-sm text-body-sm line-through text-text-muted ml-2">LE 4,350.00</span>
             </div>
-            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
               Add Routine
             </button>
           </div>
         </div>
 
         <!-- Bundle 2: Silver Shine Duo (Save 20%) Fallback -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow">
-          <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-pastel-silver-shine/30 mb-space-md">
-            <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
-              Save 20%
-            </span>
-            <img class="w-full h-full object-cover" alt="milk_shake Silver Shine Shampoo and Whipped Cream Duo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_DuxFcR5GC0O8aSnXJn6e7uCyO-7oLMS_PkuVTrqB7SdAL7mvZvi1rL8q37uRF3b4jToHAGboVFdsT26iLKu0ak_-2EHihu58ZorIdKb2U-3mfNIwswsyOEl3_BVuCC533814Frx17RjemVlRKrHSe8YNFLinu-QvuMK2LvspHNL8Oa5_9lYIkljTCFaiEEWLiXOGYEiHvyrgJEUJBj0VPHZatUo0QVTSpVbMmtlM2h_LDOvwg78" loading="lazy"/>
+        <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-pastel-silver-shine/30 mb-space-md">
+            {% if section.settings.show_badge %}
+              <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider z-10">
+                Save 20%
+              </span>
+            {% endif %}
+            <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" alt="milk_shake Silver Shine Shampoo and Whipped Cream Duo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_DuxFcR5GC0O8aSnXJn6e7uCyO-7oLMS_PkuVTrqB7SdAL7mvZvi1rL8q37uRF3b4jToHAGboVFdsT26iLKu0ak_-2EHihu58ZorIdKb2U-3mfNIwswsyOEl3_BVuCC533814Frx17RjemVlRKrHSe8YNFLinu-QvuMK2LvspHNL8Oa5_9lYIkljTCFaiEEWLiXOGYEiHvyrgJEUJBj0VPHZatUo0QVTSpVbMmtlM2h_LDOvwg78" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             Blonde &amp; Highlights
@@ -130,19 +175,21 @@
               <span class="font-headline-sm text-headline-sm text-primary">LE 2,080.00</span>
               <span class="font-body-sm text-body-sm line-through text-text-muted ml-2">LE 2,600.00</span>
             </div>
-            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
               Add Routine
             </button>
           </div>
         </div>
 
         <!-- Bundle 3: Everyday Beauty Routine (Save 20%) Fallback -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow">
-          <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-pastel-make-my-day/30 mb-space-md">
-            <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
-              Save 20%
-            </span>
-            <img class="w-full h-full object-cover" alt="milk_shake Make My Day shampoo and creamy whipped conditioner foam duo set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOWGKX7CmRK9qFMOKYSF5hGaisOL__21TdHCRtEQMsmGSTF1gFrDwiyyClSATO9FdJlR6VrBdjxziQEFRUf9fWicJXJUC-wz5iGPt1y_pn_gRX8VRB2lPBAjOhsSOd8gmcsDO-GxPbIKNi7DqDUNXyCvQWqPBh0PY5TFmhhFv1nXwAw1S938to9KuwVA_OqDC9kj32fe-112FAFR7UAz5lNWk-OzktLdWplsAbU-MnWxhmPQyTzU" loading="lazy"/>
+        <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-pastel-make-my-day/30 mb-space-md">
+            {% if section.settings.show_badge %}
+              <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider z-10">
+                Save 20%
+              </span>
+            {% endif %}
+            <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" alt="milk_shake Make My Day shampoo and creamy whipped conditioner foam duo set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlOWGKX7CmRK9qFMOKYSF5hGaisOL__21TdHCRtEQMsmGSTF1gFrDwiyyClSATO9FdJlR6VrBdjxziQEFRUf9fWicJXJUC-wz5iGPt1y_pn_gRX8VRB2lPBAjOhsSOd8gmcsDO-GxPbIKNi7DqDUNXyCvQWqPBh0PY5TFmhhFv1nXwAw1S938to9KuwVA_OqDC9kj32fe-112FAFR7UAz5lNWk-OzktLdWplsAbU-MnWxhmPQyTzU" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             Daily Vitality
@@ -158,16 +205,16 @@
               <span class="font-headline-sm text-headline-sm text-primary">LE 1,760.00</span>
               <span class="font-body-sm text-body-sm line-through text-text-muted ml-2">LE 2,200.00</span>
             </div>
-            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
               Add Routine
             </button>
           </div>
         </div>
 
         <!-- Bundle 4: Perfect Day Routine Duo Fallback -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow">
-          <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <img class="w-full h-full object-cover" alt="milk_shake Perfect Day Routine duo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLAj8jeFx5iDazT-58V5yxRp_yuAgq37Ud7-VqtKf-PSkLhy7zA3-0KgqA5pkuIQiK6UQpiCsUWM7lfmxS4u9KS19grjR2DPpgu6dPMAZJZ0wRDOhihELltlPimoNbR-nWBwNEhq3iu1DcgHiTS9VZoLD6UsPdHyhdxn6bWdpkyUSsL3cHPbHyxcSdZ2veA9T6MTLKfKiYevX1pRkfL4VYFYw1rF32xp5bntmvslMAlaNnDsA8D_E" loading="lazy"/>
+        <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" alt="milk_shake Perfect Day Routine duo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLAj8jeFx5iDazT-58V5yxRp_yuAgq37Ud7-VqtKf-PSkLhy7zA3-0KgqA5pkuIQiK6UQpiCsUWM7lfmxS4u9KS19grjR2DPpgu6dPMAZJZ0wRDOhihELltlPimoNbR-nWBwNEhq3iu1DcgHiTS9VZoLD6UsPdHyhdxn6bWdpkyUSsL3cHPbHyxcSdZ2veA9T6MTLKfKiYevX1pRkfL4VYFYw1rF32xp5bntmvslMAlaNnDsA8D_E" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             Light Nourishment
@@ -180,19 +227,21 @@
           </p>
           <div class="mt-auto pt-space-md flex items-center justify-between">
             <span class="font-headline-sm text-headline-sm text-primary">LE 799.00</span>
-            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
               Add Routine
             </button>
           </div>
         </div>
 
         <!-- Bundle 5: Ultimate Hydration Gift Set Fallback -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow">
-          <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-pastel-moisture-plus/30 mb-space-md">
-            <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase tracking-wider">
-              Gift Box
-            </span>
-            <img class="w-full h-full object-cover" alt="milk_shake moisture and more ultimate gift set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvZV_AthWBV90Ikgif5RznFrloziwIyVO6mnvs9olPICDJsOaJ2q51900bWc-e5k71T3yTtpkf1_8gfo862Jx8cnT-VckzpkXxUoAb9HbEU_k_Xlk236Rj8uZaJTEADjYVF9awQfXJmLDaHOXKM6wrHJa_KCUoflwS64mQg81Uo8wqhKdVnju0ccsxIL9Smya8hW7gMKyHihijQvOvHpvu9VX-HbFcsYsNk5OFrtd7SqM45qg44wM" loading="lazy"/>
+        <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-pastel-moisture-plus/30 mb-space-md">
+            {% if section.settings.show_badge %}
+              <span class="absolute top-3 left-3 px-space-sm py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase tracking-wider z-10">
+                Gift Box
+              </span>
+            {% endif %}
+            <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" alt="milk_shake moisture and more ultimate gift set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvZV_AthWBV90Ikgif5RznFrloziwIyVO6mnvs9olPICDJsOaJ2q51900bWc-e5k71T3yTtpkf1_8gfo862Jx8cnT-VckzpkXxUoAb9HbEU_k_Xlk236Rj8uZaJTEADjYVF9awQfXJmLDaHOXKM6wrHJa_KCUoflwS64mQg81Uo8wqhKdVnju0ccsxIL9Smya8hW7gMKyHihijQvOvHpvu9VX-HbFcsYsNk5OFrtd7SqM45qg44wM" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             Gourmand Gift Set
@@ -205,16 +254,16 @@
           </p>
           <div class="mt-auto pt-space-md flex items-center justify-between">
             <span class="font-headline-sm text-headline-sm text-primary">LE 1,250.00</span>
-            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
               Add Routine
             </button>
           </div>
         </div>
 
         <!-- Bundle 6: Frizz-Free Integrity Fallback -->
-        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm hover:shadow-md transition-shadow">
-          <div class="relative w-full aspect-[16/10] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <img class="w-full h-full object-cover" alt="milk_shake Integrity Frizz-Free haircare bundle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdEDEPzwEpcxtUb19o4XkaUjAfS3Hi5cHueTsTRdtR8DhbZ8Pheu4-BQ4IUc_oBPF0BPs9P7L3fgkYWUJoUlhK5R3waJLSz4D_kDKuj1IaJLwjc7pA42qzlbMBpz3gClMHSGWTUp844eIjTyN5zjT84F4wg5kahEOs6ONJnCyD6M3HXTfuaEr60TJe5Zaf7OUS2bs2QC2Kuj1RTh3WN78EJiBgyhcmBmosk0Ogbj3Vg7W_Zesl3oQ" loading="lazy"/>
+        <div class="group flex flex-col bundle-card-{{ section.id }} shadow-sm hover:shadow-md transition-shadow">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            <img class="w-full h-full object-cover {% if section.settings.hover_zoom %}group-hover:scale-105 transition-transform duration-500{% endif %}" alt="milk_shake Integrity Frizz-Free haircare bundle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdEDEPzwEpcxtUb19o4XkaUjAfS3Hi5cHueTsTRdtR8DhbZ8Pheu4-BQ4IUc_oBPF0BPs9P7L3fgkYWUJoUlhK5R3waJLSz4D_kDKuj1IaJLwjc7pA42qzlbMBpz3gClMHSGWTUp844eIjTyN5zjT84F4wg5kahEOs6ONJnCyD6M3HXTfuaEr60TJe5Zaf7OUS2bs2QC2Kuj1RTh3WN78EJiBgyhcmBmosk0Ogbj3Vg7W_Zesl3oQ" loading="lazy"/>
           </div>
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
             Anti-Frizz &amp; Smoothing
@@ -227,7 +276,7 @@
           </p>
           <div class="mt-auto pt-space-md flex items-center justify-between">
             <span class="font-headline-sm text-headline-sm text-primary">LE 1,350.00</span>
-            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            <button class="h-11 px-space-lg rounded-full bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer">
               Add Routine
             </button>
           </div>
@@ -263,6 +312,136 @@
       "type": "url",
       "id": "view_all_link",
       "label": "View All Link"
+    },
+    {
+      "type": "header",
+      "content": "Layout & Carousel Mode"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout Mode",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Standard Grid"
+        },
+        {
+          "value": "carousel",
+          "label": "Carousel / Slider"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Desktop columns",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Tablet columns",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Mobile columns",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Grid / Carousel gap",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show carousel arrows",
+      "default": true,
+      "info": "Active when Carousel mode is selected"
+    },
+    {
+      "type": "header",
+      "content": "Bundle Card Styling"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "16/10",
+          "label": "Landscape (16:10)"
+        },
+        {
+          "value": "4/3",
+          "label": "Classic (4:3)"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        }
+      ],
+      "default": "16/10"
+    },
+    {
+      "type": "checkbox",
+      "id": "hover_zoom",
+      "label": "Enable image hover zoom",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show discount badge",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "label": "Card inner padding",
+      "default": 24
     },
     {
       "type": "header",

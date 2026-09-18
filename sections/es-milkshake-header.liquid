@@ -1,14 +1,89 @@
 {% render 'es-section-style', section: section %}
-<header class="bg-surface-cream/90 backdrop-blur-xl sticky top-0 z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] section-{{ section.id }}-settings">
-  <div class="h-20 max-w-[1440px] mx-auto px-margin flex items-center justify-between gap-space-lg">
+
+<style>
+  #Header-{{ section.id }} {
+    --hdr-bg: {{ section.settings.header_bg | default: '#fcf9f4' }};
+    --hdr-bg-opacity: {{ section.settings.header_bg_opacity | default: 90 }}%;
+    --hdr-h-desktop: {{ section.settings.header_height_desktop | default: 80 }}px;
+    --hdr-h-mobile: {{ section.settings.header_height_mobile | default: 64 }}px;
+    --hdr-logo-w-desktop: {{ section.settings.logo_width_desktop | default: 80 }}px;
+    --hdr-logo-w-mobile: {{ section.settings.logo_width_mobile | default: 64 }}px;
+    --hdr-logo-color: {{ section.settings.logo_color | default: '#1f1d1b' }};
+    --hdr-nav-text: {{ section.settings.nav_text_color | default: '#53433e' }};
+    --hdr-nav-hover: {{ section.settings.nav_hover_color | default: '#1f1d1b' }};
+    --hdr-nav-active-bg: {{ section.settings.nav_active_bg | default: '#f4ede4' }};
+    --hdr-nav-active-text: {{ section.settings.nav_active_text | default: '#2d1600' }};
+    --hdr-cart-badge-bg: {{ section.settings.cart_badge_bg | default: '#ba1a1a' }};
+    --hdr-cart-badge-text: {{ section.settings.cart_badge_text | default: '#ffffff' }};
+    --hdr-search-width: {{ section.settings.search_width | default: 240 }}px;
+    background-color: color-mix(in srgb, var(--hdr-bg) var(--hdr-bg-opacity), transparent);
+    {% if section.settings.show_bottom_border %}
+      border-bottom: 1px solid {{ section.settings.bottom_border_color | default: 'rgba(0,0,0,0.06)' }};
+    {% else %}
+      border-bottom: none;
+    {% endif %}
+  }
+
+  #Header-{{ section.id }} .hdr-inner {
+    height: var(--hdr-h-desktop);
+  }
+  @media (max-width: 768px) {
+    #Header-{{ section.id }} .hdr-inner {
+      height: var(--hdr-h-mobile);
+    }
+  }
+
+  #Header-{{ section.id }} .hdr-logo-img {
+    width: var(--hdr-logo-w-desktop);
+    height: auto;
+  }
+  @media (max-width: 768px) {
+    #Header-{{ section.id }} .hdr-logo-img {
+      width: var(--hdr-logo-w-mobile);
+    }
+  }
+
+  #Header-{{ section.id }} nav a {
+    color: var(--hdr-nav-text);
+  }
+  #Header-{{ section.id }} nav a:hover {
+    color: var(--hdr-nav-hover);
+  }
+
+  {% if section.settings.nav_active_style == 'pill' %}
+    #Header-{{ section.id }} nav a.is-active {
+      background-color: var(--hdr-nav-active-bg);
+      color: var(--hdr-nav-active-text);
+      border-radius: 9999px;
+      padding: 0.35rem 1rem;
+      font-weight: 600;
+    }
+  {% elsif section.settings.nav_active_style == 'underline' %}
+    #Header-{{ section.id }} nav a.is-active {
+      color: var(--hdr-nav-active-text);
+      font-weight: 600;
+      border-bottom: 2px solid var(--hdr-nav-hover);
+      padding-bottom: 4px;
+    }
+  {% else %}
+    #Header-{{ section.id }} nav a.is-active {
+      color: var(--hdr-nav-active-text);
+      font-weight: 700;
+    }
+  {% endif %}
+</style>
+
+<header id="Header-{{ section.id }}" class="{% if section.settings.enable_sticky %}sticky top-0 z-40{% endif %} {% if section.settings.enable_blur %}backdrop-blur-xl{% endif %} {% if section.settings.shadow_style == 'subtle' %}shadow-[0_1px_8px_rgba(0,0,0,0.04)]{% elsif section.settings.shadow_style == 'medium' %}shadow-md{% elsif section.settings.shadow_style == 'floating' %}shadow-lg rounded-b-2xl{% endif %} section-{{ section.id }}-settings transition-all">
+  <div class="hdr-inner {% if section.settings.container_width == 'full' %}w-full px-4 sm:px-6 lg:px-8{% elsif section.settings.container_width == 'narrow' %}max-w-[1000px] mx-auto px-margin{% else %}max-w-[1440px] mx-auto px-margin{% endif %} flex items-center justify-between gap-space-lg">
+    
     <!-- Brand / Logo -->
-    <div class="flex items-center gap-space-lg">
+    <div class="flex items-center gap-space-lg shrink-0">
       <a class="flex items-center gap-space-sm" href="{{ routes.root_url }}">
         {%- if section.settings.logo != blank -%}
           <img
             alt="{{ section.settings.logo.alt | default: shop.name }}"
-            class="h-8 w-auto object-contain"
-            src="{{ section.settings.logo | image_url: width: 200 }}"
+            class="hdr-logo-img object-contain"
+            src="{{ section.settings.logo | image_url: width: 400 }}"
             width="80"
             height="32"
             loading="eager"
@@ -16,25 +91,27 @@
         {%- elsif section.settings.logo_image_url != blank -%}
           <img
             alt="{{ shop.name }}"
-            class="h-8 w-auto object-contain"
+            class="hdr-logo-img object-contain"
             src="{{ section.settings.logo_image_url }}"
             width="80"
             height="32"
             loading="eager"
           />
         {%- endif -%}
-        <span class="font-headline-md text-headline-md tracking-tight uppercase text-primary">
-          {{ section.settings.logo_text | default: 'milk_shake' }}
-        </span>
+        {% if section.settings.show_logo_text %}
+          <span class="font-headline-md {{ section.settings.logo_font_size | default: 'text-headline-md' }} tracking-tight uppercase text-[var(--hdr-logo-color)]">
+            {{ section.settings.logo_text | default: 'milk_shake' }}
+          </span>
+        {% endif %}
       </a>
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="hidden xl:flex items-center gap-space-md font-label-md text-label-md tracking-wider uppercase">
+    <nav class="hidden xl:flex items-center gap-space-md font-label-md {% if section.settings.nav_font_size == 'xs' %}text-xs{% elsif section.settings.nav_font_size == 'base' %}text-sm{% else %}text-label-md{% endif %} tracking-wider {% if section.settings.nav_text_transform == 'uppercase' %}uppercase{% elsif section.settings.nav_text_transform == 'none' %}normal-case{% endif %} {% if section.settings.nav_alignment == 'left' %}mr-auto ml-space-lg{% elsif section.settings.nav_alignment == 'right' %}ml-auto mr-space-lg{% else %}mx-auto{% endif %}">
       {%- if section.settings.menu != blank and linklists[section.settings.menu].links.size > 0 -%}
         {%- for link in linklists[section.settings.menu].links -%}
           <a
-            class="{% if link.active %}transition-colors bg-primary-container text-on-primary-container rounded-full px-space-md py-space-xs font-semibold{% else %}text-on-surface-variant hover:text-on-surface px-space-sm py-space-xs transition-colors{% endif %}"
+            class="{% if link.active %}is-active transition-colors px-space-md py-space-xs{% else %}px-space-sm py-space-xs transition-colors{% endif %}"
             href="{{ link.url }}"
             {% if link.active %}aria-current="page"{% endif %}
           >
@@ -42,60 +119,63 @@
           </a>
         {%- endfor -%}
       {%- else -%}
-        <a class="text-on-surface-variant hover:text-on-surface px-space-sm py-space-xs transition-colors" href="#bestsellers">Best Sellers</a>
-        <a class="text-on-surface-variant hover:text-on-surface px-space-sm py-space-xs transition-colors" href="#bundles">Hair Routines</a>
-        <a class="text-on-surface-variant hover:text-on-surface px-space-sm py-space-xs transition-colors" href="#hair-concerns">Hair Type</a>
-        <a class="text-on-surface-variant hover:text-on-surface px-space-sm py-space-xs transition-colors" href="#collections">Collections</a>
-        <a aria-current="page" class="transition-colors bg-primary-container text-on-primary-container rounded-full px-space-md py-space-xs font-semibold" href="{{ routes.all_products_collection_url }}">All Products</a>
-        <a class="text-on-surface-variant hover:text-on-surface px-space-sm py-space-xs transition-colors" href="#footer">About Us</a>
+        <a class="px-space-sm py-space-xs transition-colors" href="#bestsellers">Best Sellers</a>
+        <a class="px-space-sm py-space-xs transition-colors" href="#bundles">Hair Routines</a>
+        <a class="px-space-sm py-space-xs transition-colors" href="#hair-concerns">Hair Type</a>
+        <a class="px-space-sm py-space-xs transition-colors" href="#collections">Collections</a>
+        <a aria-current="page" class="is-active px-space-md py-space-xs transition-colors" href="{{ routes.all_products_collection_url }}">All Products</a>
+        <a class="px-space-sm py-space-xs transition-colors" href="#footer">About Us</a>
       {%- endif -%}
     </nav>
 
     <!-- Header Actions -->
-    <div class="flex items-center gap-space-sm md:gap-space-md">
+    <div class="flex items-center gap-space-sm md:gap-space-md shrink-0 ml-auto xl:ml-0">
       <!-- Search Form -->
-      <form action="{{ routes.search_url }}" method="get" role="search" class="relative hidden md:block w-48 lg:w-60">
-        <input
-          class="w-full bg-surface-container-lowest text-on-surface rounded-full pl-space-md pr-space-xl py-space-xs font-body-sm text-body-sm focus:outline-none border border-transparent focus:border-outline-variant transition-all"
-          placeholder="{{ section.settings.search_placeholder | default: 'Search haircare...' }}"
-          type="search"
-          name="q"
-          value="{{ search.terms | escape }}"
-        />
-        <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-0 bg-transparent border-0 cursor-pointer" aria-label="Search">
-          <span class="material-symbols-outlined text-[18px]">search</span>
-        </button>
-      </form>
+      {% if section.settings.show_search %}
+        <form action="{{ routes.search_url }}" method="get" role="search" class="relative hidden md:block w-[var(--hdr-search-width)]">
+          <input
+            class="w-full bg-surface-container-lowest text-on-surface rounded-full pl-space-md pr-space-xl py-space-xs font-body-sm text-body-sm focus:outline-none border border-transparent focus:border-outline-variant transition-all"
+            placeholder="{{ section.settings.search_placeholder | default: 'Search haircare...' }}"
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+          />
+          <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-0 bg-transparent border-0 cursor-pointer" aria-label="Search">
+            <span class="material-symbols-outlined text-[18px]">search</span>
+          </button>
+        </form>
 
-      <!-- Mobile Search Button -->
-      <a href="{{ routes.search_url }}" class="md:hidden w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" aria-label="Search">
-        <span class="material-symbols-outlined text-[20px]">search</span>
-      </a>
+        <!-- Mobile Search Button -->
+        <a href="{{ routes.search_url }}" class="md:hidden w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" aria-label="Search">
+          <span class="material-symbols-outlined text-[20px]">search</span>
+        </a>
+      {% endif %}
 
       <!-- Wishlist Link -->
-      <a class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" href="{{ section.settings.wishlist_url | default: '#wishlist' }}" aria-label="Wishlist">
-        <span class="material-symbols-outlined text-[20px]">favorite</span>
-      </a>
+      {% if section.settings.show_wishlist %}
+        <a class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" href="{{ section.settings.wishlist_url | default: '#wishlist' }}" aria-label="Wishlist">
+          <span class="material-symbols-outlined text-[20px]">favorite</span>
+        </a>
+      {% endif %}
 
       <!-- Cart Button with Dynamic Badge -->
-      <a class="relative w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" href="{{ routes.cart_url }}" aria-label="Cart">
-        <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
-        {%- if cart.item_count > 0 -%}
-          <span class="absolute -top-1 -right-1 bg-badge-sale text-on-error font-label-sm text-label-sm w-4 h-4 rounded-full flex items-center justify-center">
-            {{ cart.item_count }}
+      {% if section.settings.show_cart %}
+        <a class="relative w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high transition-colors" href="{{ routes.cart_url }}" aria-label="Cart">
+          <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
+          <span class="absolute -top-1 -right-1 bg-[var(--hdr-cart-badge-bg)] text-[var(--hdr-cart-badge-text)] font-label-sm w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold leading-none">
+            {{ cart.item_count | default: 0 }}
           </span>
-        {%- else -%}
-          <span class="absolute -top-1 -right-1 bg-badge-sale text-on-error font-label-sm text-label-sm w-4 h-4 rounded-full flex items-center justify-center">
-            0
-          </span>
-        {%- endif -%}
-      </a>
+        </a>
+      {% endif %}
 
       <!-- Account Button -->
-      <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:opacity-90 transition-opacity" aria-label="Account">
-        <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
-      </a>
+      {% if section.settings.show_account %}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="w-8 h-8 rounded-full {% if section.settings.account_style == 'neutral_circle' %}bg-surface-container text-on-surface hover:bg-surface-container-high{% elsif section.settings.account_style == 'plain_icon' %}bg-transparent text-on-surface hover:text-primary{% else %}bg-primary text-on-primary hover:opacity-90{% endif %} flex items-center justify-center transition-all" aria-label="Account">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </a>
+      {% endif %}
     </div>
+
   </div>
 </header>
 
@@ -105,6 +185,10 @@
   "tag": "section",
   "class": "es-milkshake-header-wrapper",
   "settings": [
+    {
+      "type": "header",
+      "content": "Brand and Logo"
+    },
     {
       "type": "image_picker",
       "id": "logo",
@@ -117,15 +201,181 @@
       "default": "https://lh3.googleusercontent.com/aida/AEtjO1XNNPRURg6MR48HImWpxsI-9cjqNEsjGxeMnZXbXF2fqIvIuZVFGBhr7I9jJbHvnrp5uA5cz5r9jmTgCzACZIz1_av9v4MAjuzA9IQj1CfsChgxCdKRgk5G-f0EjDuOEJQXHMpVQzaJb8Iqw3hmRI1K_tCi6OQL0_IDh2AeeMBx6cQroO8vk7cF7iIenOqUrVpXOHxyY0IvvCjurFokAg0dTNZgYQ2ujfhMzD9nN-3anKFveXQTmWDYjg"
     },
     {
+      "type": "range",
+      "id": "logo_width_desktop",
+      "min": 40,
+      "max": 240,
+      "step": 5,
+      "unit": "px",
+      "label": "Logo width (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "logo_width_mobile",
+      "min": 30,
+      "max": 160,
+      "step": 5,
+      "unit": "px",
+      "label": "Logo width (Mobile)",
+      "default": 65
+    },
+    {
+      "type": "checkbox",
+      "id": "show_logo_text",
+      "label": "Show brand name text",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "logo_text",
-      "label": "Logo Brand Name",
+      "label": "Brand Name",
       "default": "milk_shake"
+    },
+    {
+      "type": "select",
+      "id": "logo_font_size",
+      "label": "Brand text size",
+      "options": [
+        {
+          "value": "text-headline-sm",
+          "label": "Small"
+        },
+        {
+          "value": "text-headline-md",
+          "label": "Medium (Default)"
+        },
+        {
+          "value": "text-headline-lg",
+          "label": "Large"
+        }
+      ],
+      "default": "text-headline-md"
+    },
+    {
+      "type": "color",
+      "id": "logo_color",
+      "label": "Brand text color",
+      "default": "#1f1d1b"
+    },
+    {
+      "type": "header",
+      "content": "Navigation Menu"
     },
     {
       "type": "link_list",
       "id": "menu",
       "label": "Main Navigation Menu"
+    },
+    {
+      "type": "select",
+      "id": "nav_alignment",
+      "label": "Menu alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "nav_active_style",
+      "label": "Active menu item style",
+      "options": [
+        {
+          "value": "pill",
+          "label": "Rounded Pill background"
+        },
+        {
+          "value": "underline",
+          "label": "Underline accent"
+        },
+        {
+          "value": "bold",
+          "label": "Bold text only"
+        }
+      ],
+      "default": "pill"
+    },
+    {
+      "type": "select",
+      "id": "nav_font_size",
+      "label": "Menu font size",
+      "options": [
+        {
+          "value": "xs",
+          "label": "Extra Small (11px)"
+        },
+        {
+          "value": "sm",
+          "label": "Small (12px)"
+        },
+        {
+          "value": "base",
+          "label": "Medium (13px)"
+        }
+      ],
+      "default": "sm"
+    },
+    {
+      "type": "select",
+      "id": "nav_text_transform",
+      "label": "Menu letter casing",
+      "options": [
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "none",
+          "label": "Standard (as typed)"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "color",
+      "id": "nav_text_color",
+      "label": "Nav link color",
+      "default": "#53433e"
+    },
+    {
+      "type": "color",
+      "id": "nav_hover_color",
+      "label": "Nav link hover color",
+      "default": "#1f1d1b"
+    },
+    {
+      "type": "color",
+      "id": "nav_active_bg",
+      "label": "Active pill background",
+      "default": "#f4ede4"
+    },
+    {
+      "type": "color",
+      "id": "nav_active_text",
+      "label": "Active item text color",
+      "default": "#2d1600"
+    },
+    {
+      "type": "header",
+      "content": "Actions and Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search bar",
+      "default": true
     },
     {
       "type": "text",
@@ -134,13 +384,157 @@
       "default": "Search haircare..."
     },
     {
+      "type": "range",
+      "id": "search_width",
+      "min": 160,
+      "max": 340,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop search bar width",
+      "default": 240
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist button",
+      "default": true
+    },
+    {
       "type": "url",
       "id": "wishlist_url",
       "label": "Wishlist Page URL"
     },
     {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Show cart button",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "cart_badge_bg",
+      "label": "Cart badge background",
+      "default": "#ba1a1a"
+    },
+    {
+      "type": "color",
+      "id": "cart_badge_text",
+      "label": "Cart badge text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account button",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "account_style",
+      "label": "Account icon button style",
+      "options": [
+        {
+          "value": "primary_circle",
+          "label": "Dark solid circle"
+        },
+        {
+          "value": "neutral_circle",
+          "label": "Light neutral circle"
+        },
+        {
+          "value": "plain_icon",
+          "label": "Plain icon"
+        }
+      ],
+      "default": "primary_circle"
+    },
+    {
       "type": "header",
-      "content": "Layout and Container"
+      "content": "Header Layout and Appearance"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky",
+      "label": "Enable sticky header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_blur",
+      "label": "Enable glassmorphism backdrop blur",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "header_bg",
+      "label": "Header background color",
+      "default": "#fcf9f4"
+    },
+    {
+      "type": "range",
+      "id": "header_bg_opacity",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Header background opacity",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "header_height_desktop",
+      "min": 60,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Header height (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "header_height_mobile",
+      "min": 50,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "label": "Header height (Mobile)",
+      "default": 64
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_border",
+      "label": "Show subtle bottom divider line",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bottom_border_color",
+      "label": "Bottom divider color",
+      "default": "#e5dfd7"
+    },
+    {
+      "type": "select",
+      "id": "shadow_style",
+      "label": "Shadow elevation",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "subtle",
+          "label": "Subtle luxury shadow"
+        },
+        {
+          "value": "medium",
+          "label": "Medium shadow"
+        },
+        {
+          "value": "floating",
+          "label": "Floating with rounded bottom"
+        }
+      ],
+      "default": "subtle"
     },
     {
       "type": "select",
@@ -161,163 +555,6 @@
         }
       ],
       "default": "container"
-    },
-    {
-      "type": "header",
-      "content": "Colors and Background"
-    },
-    {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background color"
-    },
-    {
-      "type": "color_background",
-      "id": "bg_gradient",
-      "label": "Background gradient"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color"
-    },
-    {
-      "type": "header",
-      "content": "Border and Radius"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "Border color",
-      "default": "transparent"
-    },
-    {
-      "type": "range",
-      "id": "border_width",
-      "min": 0,
-      "max": 10,
-      "step": 1,
-      "unit": "px",
-      "label": "Border width",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "border_radius",
-      "min": 0,
-      "max": 48,
-      "step": 2,
-      "unit": "px",
-      "label": "Corner radius",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Responsive Spacing (Desktop)"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_top",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin top (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_bottom",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin bottom (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Responsive Spacing (Mobile and Tablet)"
-    },
-    {
-      "type": "range",
-      "id": "padding_top_tablet",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top (Tablet)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_tablet",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom (Tablet)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_top_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top (Mobile)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom (Mobile)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_top_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin top (Mobile)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_bottom_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin bottom (Mobile)",
-      "default": 0
     },
     {
       "type": "header",
@@ -349,7 +586,7 @@
       "type": "textarea",
       "id": "custom_css",
       "label": "Custom CSS rules",
-      "info": "Write CSS targeting .section-{{ section.id }}-settings or child classes"
+      "info": "Write CSS targeting #Header-{{ section.id }} or child classes"
     }
   ],
   "presets": [

@@ -1,149 +1,328 @@
 {% render 'es-section-style', section: section %}
-<footer class="w-full bg-surface-container pt-space-3xl pb-space-2xl section-{{ section.id }}-settings" id="es-milkshake-footer-{{ section.id }}">
-  <div class="max-w-[1440px] mx-auto px-margin">
+
+<style>
+  #Footer-{{ section.id }} {
+    --ftr-bg: {{ section.settings.footer_bg | default: '#f7f3ee' }};
+    --ftr-text: {{ section.settings.footer_text_color | default: '#1f1d1b' }};
+    --ftr-muted: {{ section.settings.footer_muted_color | default: '#53433e' }};
+    --ftr-border: {{ section.settings.footer_border_color | default: 'rgba(0,0,0,0.08)' }};
+    --ftr-pt-desktop: {{ section.settings.padding_top | default: 72 }}px;
+    --ftr-pb-desktop: {{ section.settings.padding_bottom | default: 56 }}px;
+    --ftr-pt-mobile: {{ section.settings.padding_top_mobile | default: 48 }}px;
+    --ftr-pb-mobile: {{ section.settings.padding_bottom_mobile | default: 36 }}px;
+    --ftr-social-bg: {{ section.settings.social_icon_bg | default: '#ffffff' }};
+    --ftr-social-color: {{ section.settings.social_icon_color | default: '#1f1d1b' }};
+    background-color: var(--ftr-bg);
+    color: var(--ftr-text);
+  }
+
+  #Footer-{{ section.id }} .ftr-wrap {
+    padding-top: var(--ftr-pt-desktop);
+    padding-bottom: var(--ftr-pb-desktop);
+  }
+  @media (max-width: 768px) {
+    #Footer-{{ section.id }} .ftr-wrap {
+      padding-top: var(--ftr-pt-mobile);
+      padding-bottom: var(--ftr-pb-mobile);
+    }
+  }
+
+  #Footer-{{ section.id }} a {
+    color: inherit;
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+  #Footer-{{ section.id }} a:hover {
+    color: var(--ftr-text);
+    opacity: 0.8;
+  }
+
+  #Footer-{{ section.id }} .ftr-social-link {
+    background-color: var(--ftr-social-bg);
+    color: var(--ftr-social-color);
+  }
+  #Footer-{{ section.id }} .ftr-social-link:hover {
+    background-color: var(--ftr-text);
+    color: var(--ftr-bg);
+  }
+</style>
+
+<footer id="Footer-{{ section.id }}" class="w-full section-{{ section.id }}-settings" id="es-milkshake-footer-{{ section.id }}">
+  <div class="ftr-wrap {% if section.settings.container_width == 'full' %}w-full px-4 sm:px-6 lg:px-8{% elsif section.settings.container_width == 'narrow' %}max-w-[1000px] mx-auto px-margin{% else %}max-w-[1440px] mx-auto px-margin{% endif %}">
+    
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl mb-space-3xl">
-      <!-- Brand & Bio -->
-      <div class="lg:col-span-2 flex flex-col gap-space-md pr-space-lg">
-        <div class="flex items-center gap-space-sm">
-          <span class="font-headline-lg text-headline-lg uppercase text-primary font-bold tracking-tight">
-            {{ section.settings.brand_name | default: 'milk_shake' }}
-          </span>
-          {% if section.settings.region_tag != blank %}
-            <span class="font-label-sm text-label-sm uppercase bg-surface-container-high px-space-xs py-0.5 rounded text-on-surface">
-              {{ section.settings.region_tag }}
+      <!-- Brand & Bio (2 Columns on Large screens) -->
+      {% if section.settings.show_brand_column %}
+        <div class="lg:col-span-2 flex flex-col gap-space-md pr-space-lg">
+          <div class="flex items-center gap-space-sm">
+            <span class="font-headline-lg text-headline-lg uppercase text-[var(--ftr-text)] font-bold tracking-tight">
+              {{ section.settings.brand_name | default: 'milk_shake' }}
             </span>
-          {% endif %}
-        </div>
-        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
-          {{ section.settings.brand_desc | default: 'Discover salon-grade Italian haircare formulated with milk proteins and organic fruit extracts. Designed for tailored salon performance and daily sensory indulgence across Egypt.' }}
-        </p>
-        <div class="flex items-center gap-space-sm mt-space-sm">
-          {% if section.settings.social_instagram != blank %}
-            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="{{ section.settings.social_instagram }}" aria-label="Instagram">
-              <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-            </a>
-          {% else %}
-            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="#" aria-label="Instagram">
-              <span class="material-symbols-outlined text-[20px]">photo_camera</span>
-            </a>
-          {% endif %}
-          {% if section.settings.social_tiktok != blank %}
-            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="{{ section.settings.social_tiktok }}" aria-label="TikTok">
-              <span class="material-symbols-outlined text-[20px]">videocam</span>
-            </a>
-          {% else %}
-            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="#" aria-label="TikTok">
-              <span class="material-symbols-outlined text-[20px]">videocam</span>
-            </a>
-          {% endif %}
-          {% if section.settings.social_web != blank %}
-            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="{{ section.settings.social_web }}" aria-label="Official Global Atelier">
-              <span class="material-symbols-outlined text-[20px]">public</span>
-            </a>
-          {% else %}
-            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="#" aria-label="Official Global Atelier">
-              <span class="material-symbols-outlined text-[20px]">public</span>
-            </a>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Client Care Links -->
-      <div class="flex flex-col gap-space-sm">
-        <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface mb-space-xs font-semibold">
-          {{ section.settings.col1_heading | default: 'Client Care' }}
-        </span>
-        {% if section.settings.menu_client_care != blank %}
-          {% for link in linklists[section.settings.menu_client_care].links %}
-            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ link.url }}">
-              {{ link.title }}
-            </a>
-          {% endfor %}
-        {% else %}
-          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Order Tracking</a>
-          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Delivery &amp; Returns</a>
-          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Hair Consultation</a>
-          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Authenticity Guarantee</a>
-          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">FAQ</a>
-        {% endif %}
-      </div>
-
-      <!-- Boutique & Salon Contact -->
-      <div class="flex flex-col gap-space-sm">
-        <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface mb-space-xs font-semibold">
-          {{ section.settings.col2_heading | default: 'Boutique & Salon' }}
-        </span>
-        <div class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-          <p class="font-medium text-on-surface">Flagship Boutique:</p>
-          <p>{{ section.settings.boutique_address | default: '306 Port Said St, Cleopatra,<br/>Alexandria, Egypt' }}</p>
-        </div>
-        <div class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs leading-relaxed">
-          <p class="font-medium text-on-surface">Support Hotline:</p>
-          <a href="tel:{{ section.settings.phone_number | default: '+20035468900' }}" class="hover:text-primary transition-colors">
-            {{ section.settings.phone_label | default: '+20 (0)3 546 8900' }}
-          </a>
-        </div>
-        <div class="font-body-sm text-body-sm text-on-surface-variant">
-          <a href="mailto:{{ section.settings.email_address | default: 'care@milkshakehaireg.com' }}" class="hover:text-primary transition-colors">
-            {{ section.settings.email_address | default: 'care@milkshakehaireg.com' }}
-          </a>
-        </div>
-      </div>
-
-      <!-- Salon Gazette Newsletter -->
-      <div class="flex flex-col gap-space-md">
-        <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface font-semibold">
-          {{ section.settings.newsletter_heading | default: 'Salon Gazette' }}
-        </span>
-        <p class="font-body-sm text-body-sm text-on-surface-variant">
-          {{ section.settings.newsletter_text | default: 'Receive exclusive Egyptian beauty privileges, masterclass invites, and seasonal gifting.' }}
-        </p>
-        {% form 'customer', class: 'flex flex-col gap-space-xs' %}
-          <input type="hidden" name="contact[tags]" value="newsletter">
-          <div class="relative">
-            <input 
-              class="w-full bg-surface-container-lowest text-on-surface rounded-full pl-space-md pr-12 py-space-sm font-body-sm text-body-sm border border-outline-variant/30 focus:outline-none focus:border-primary transition-colors" 
-              placeholder="Your email address" 
-              type="email"
-              name="contact[email]"
-              required
-              aria-label="Email address"
-            />
-            <button class="absolute right-1 top-1 bottom-1 px-space-sm bg-primary text-on-primary rounded-full hover:bg-neutral-800 transition-colors flex items-center justify-center" type="submit" aria-label="Subscribe">
-              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </button>
+            {% if section.settings.region_tag != blank %}
+              <span class="font-label-sm text-label-sm uppercase bg-surface-container-high px-space-xs py-0.5 rounded text-[var(--ftr-text)]">
+                {{ section.settings.region_tag }}
+              </span>
+            {% endif %}
           </div>
-          {% if form.posted_successfully? %}
-            <span class="font-label-sm text-label-sm text-primary font-medium">Thank you for subscribing to Salon Gazette!</span>
-          {% else %}
-            <span class="font-label-sm text-label-sm text-text-muted">
-              {{ section.settings.newsletter_footnote | default: 'Complimentary gift with your first order.' }}
-            </span>
+          <p class="font-body-md text-body-md text-[var(--ftr-muted)] max-w-md leading-relaxed">
+            {{ section.settings.brand_desc | default: 'Discover salon-grade Italian haircare formulated with milk proteins and organic fruit extracts. Designed for tailored salon performance and daily sensory indulgence across Egypt.' }}
+          </p>
+          
+          {% if section.settings.show_social_icons %}
+            <div class="flex items-center gap-space-sm mt-space-sm">
+              {% if section.settings.social_instagram != blank %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="{{ section.settings.social_instagram }}" aria-label="Instagram">
+                  <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+                </a>
+              {% else %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="#" aria-label="Instagram">
+                  <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+                </a>
+              {% endif %}
+
+              {% if section.settings.social_tiktok != blank %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="{{ section.settings.social_tiktok }}" aria-label="TikTok">
+                  <span class="material-symbols-outlined text-[20px]">videocam</span>
+                </a>
+              {% else %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="#" aria-label="TikTok">
+                  <span class="material-symbols-outlined text-[20px]">videocam</span>
+                </a>
+              {% endif %}
+
+              {% if section.settings.social_web != blank %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="{{ section.settings.social_web }}" aria-label="Official Global Atelier">
+                  <span class="material-symbols-outlined text-[20px]">public</span>
+                </a>
+              {% else %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="#" aria-label="Official Global Atelier">
+                  <span class="material-symbols-outlined text-[20px]">public</span>
+                </a>
+              {% endif %}
+
+              {% if section.settings.social_facebook != blank %}
+                <a class="w-10 h-10 {% if section.settings.social_icon_shape == 'circle' %}rounded-full{% elsif section.settings.social_icon_shape == 'rounded' %}rounded-lg{% endif %} ftr-social-link flex items-center justify-center transition-all shadow-sm" href="{{ section.settings.social_facebook }}" aria-label="Facebook">
+                  <span class="material-symbols-outlined text-[20px]">thumb_up</span>
+                </a>
+              {% endif %}
+            </div>
           {% endif %}
-        {% endform %}
-      </div>
+        </div>
+      {% endif %}
+
+      <!-- Dynamic Blocks or Default 3 Columns -->
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'menu' %}
+              <div class="flex flex-col gap-space-sm" {{ block.shopify_attributes }}>
+                <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] mb-space-xs font-semibold">
+                  {{ block.settings.heading }}
+                </span>
+                {% if block.settings.menu != blank %}
+                  {% for link in linklists[block.settings.menu].links %}
+                    <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="{{ link.url }}">
+                      {{ link.title }}
+                    </a>
+                  {% endfor %}
+                {% endif %}
+              </div>
+
+            {% when 'contact' %}
+              <div class="flex flex-col gap-space-sm" {{ block.shopify_attributes }}>
+                <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] mb-space-xs font-semibold">
+                  {{ block.settings.heading | default: 'Boutique & Salon' }}
+                </span>
+                {% if block.settings.address != blank %}
+                  <div class="font-body-sm text-body-sm text-[var(--ftr-muted)] leading-relaxed">
+                    <p class="font-medium text-[var(--ftr-text)]">Flagship Boutique:</p>
+                    <p>{{ block.settings.address }}</p>
+                  </div>
+                {% endif %}
+                {% if block.settings.phone_label != blank %}
+                  <div class="font-body-sm text-body-sm text-[var(--ftr-muted)] mt-space-xs leading-relaxed">
+                    <p class="font-medium text-[var(--ftr-text)]">Support Hotline:</p>
+                    <a href="tel:{{ block.settings.phone_number | default: block.settings.phone_label }}" class="hover:text-primary transition-colors">
+                      {{ block.settings.phone_label }}
+                    </a>
+                  </div>
+                {% endif %}
+                {% if block.settings.email != blank %}
+                  <div class="font-body-sm text-body-sm text-[var(--ftr-muted)]">
+                    <a href="mailto:{{ block.settings.email }}" class="hover:text-primary transition-colors">
+                      {{ block.settings.email }}
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
+
+            {% when 'newsletter' %}
+              <div class="flex flex-col gap-space-md" {{ block.shopify_attributes }}>
+                <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] font-semibold">
+                  {{ block.settings.heading | default: 'Salon Gazette' }}
+                </span>
+                {% if block.settings.text != blank %}
+                  <p class="font-body-sm text-body-sm text-[var(--ftr-muted)]">
+                    {{ block.settings.text }}
+                  </p>
+                {% endif %}
+                {% form 'customer', class: 'flex flex-col gap-space-xs' %}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  <div class="relative">
+                    <input 
+                      class="w-full bg-surface-container-lowest text-on-surface rounded-full pl-space-md pr-12 py-space-sm font-body-sm text-body-sm border border-outline-variant/30 focus:outline-none focus:border-primary transition-colors" 
+                      placeholder="{{ block.settings.placeholder | default: 'Your email address' }}" 
+                      type="email"
+                      name="contact[email]"
+                      required
+                      aria-label="Email address"
+                    />
+                    <button class="absolute right-1 top-1 bottom-1 px-space-sm bg-primary text-on-primary rounded-full hover:bg-neutral-800 transition-colors flex items-center justify-center cursor-pointer border-0" type="submit" aria-label="Subscribe">
+                      <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </button>
+                  </div>
+                  {% if form.posted_successfully? %}
+                    <span class="font-label-sm text-label-sm text-primary font-medium">Thank you for subscribing!</span>
+                  {% else %}
+                    {% if block.settings.footnote != blank %}
+                      <span class="font-label-sm text-label-sm text-[var(--ftr-muted)]">
+                        {{ block.settings.footnote }}
+                      </span>
+                    {% endif %}
+                  {% endif %}
+                {% endform %}
+              </div>
+
+            {% when 'text' %}
+              <div class="flex flex-col gap-space-sm" {{ block.shopify_attributes }}>
+                <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] mb-space-xs font-semibold">
+                  {{ block.settings.heading }}
+                </span>
+                <div class="font-body-sm text-body-sm text-[var(--ftr-muted)] leading-relaxed">
+                  {{ block.settings.content }}
+                </div>
+                {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                  <a href="{{ block.settings.button_link }}" class="inline-flex items-center gap-1 font-label-sm text-label-sm font-semibold uppercase tracking-wider text-[var(--ftr-text)] mt-space-xs hover:underline">
+                    {{ block.settings.button_label }}
+                    <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  </a>
+                {% endif %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+
+      {% else %}
+        <!-- Default Client Care Links -->
+        <div class="flex flex-col gap-space-sm">
+          <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] mb-space-xs font-semibold">
+            {{ section.settings.col1_heading | default: 'Client Care' }}
+          </span>
+          {% if section.settings.menu_client_care != blank %}
+            {% for link in linklists[section.settings.menu_client_care].links %}
+              <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="{{ link.url }}">
+                {{ link.title }}
+              </a>
+            {% endfor %}
+          {% else %}
+            <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="#">Order Tracking</a>
+            <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="#">Delivery &amp; Returns</a>
+            <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="#">Hair Consultation</a>
+            <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="#">Authenticity Guarantee</a>
+            <a class="font-body-sm text-body-sm text-[var(--ftr-muted)] hover:text-[var(--ftr-text)] transition-colors" href="#">FAQ</a>
+          {% endif %}
+        </div>
+
+        <!-- Default Boutique & Salon Contact -->
+        <div class="flex flex-col gap-space-sm">
+          <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] mb-space-xs font-semibold">
+            {{ section.settings.col2_heading | default: 'Boutique & Salon' }}
+          </span>
+          <div class="font-body-sm text-body-sm text-[var(--ftr-muted)] leading-relaxed">
+            <p class="font-medium text-[var(--ftr-text)]">Flagship Boutique:</p>
+            <p>{{ section.settings.boutique_address | default: '306 Port Said St, Cleopatra,<br/>Alexandria, Egypt' }}</p>
+          </div>
+          <div class="font-body-sm text-body-sm text-[var(--ftr-muted)] mt-space-xs leading-relaxed">
+            <p class="font-medium text-[var(--ftr-text)]">Support Hotline:</p>
+            <a href="tel:{{ section.settings.phone_number | default: '+20035468900' }}" class="hover:text-primary transition-colors">
+              {{ section.settings.phone_label | default: '+20 (0)3 546 8900' }}
+            </a>
+          </div>
+          <div class="font-body-sm text-body-sm text-[var(--ftr-muted)]">
+            <a href="mailto:{{ section.settings.email_address | default: 'care@milkshakehaireg.com' }}" class="hover:text-primary transition-colors">
+              {{ section.settings.email_address | default: 'care@milkshakehaireg.com' }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Default Salon Gazette Newsletter -->
+        <div class="flex flex-col gap-space-md">
+          <span class="font-label-lg text-label-lg uppercase tracking-wider text-[var(--ftr-text)] font-semibold">
+            {{ section.settings.newsletter_heading | default: 'Salon Gazette' }}
+          </span>
+          <p class="font-body-sm text-body-sm text-[var(--ftr-muted)]">
+            {{ section.settings.newsletter_text | default: 'Receive exclusive Egyptian beauty privileges, masterclass invites, and seasonal gifting.' }}
+          </p>
+          {% form 'customer', class: 'flex flex-col gap-space-xs' %}
+            <input type="hidden" name="contact[tags]" value="newsletter">
+            <div class="relative">
+              <input 
+                class="w-full bg-surface-container-lowest text-on-surface rounded-full pl-space-md pr-12 py-space-sm font-body-sm text-body-sm border border-outline-variant/30 focus:outline-none focus:border-primary transition-colors" 
+                placeholder="Your email address" 
+                type="email"
+                name="contact[email]"
+                required
+                aria-label="Email address"
+              />
+              <button class="absolute right-1 top-1 bottom-1 px-space-sm bg-primary text-on-primary rounded-full hover:bg-neutral-800 transition-colors flex items-center justify-center cursor-pointer border-0" type="submit" aria-label="Subscribe">
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </button>
+            </div>
+            {% if form.posted_successfully? %}
+              <span class="font-label-sm text-label-sm text-primary font-medium">Thank you for subscribing to Salon Gazette!</span>
+            {% else %}
+              <span class="font-label-sm text-label-sm text-[var(--ftr-muted)]">
+                {{ section.settings.newsletter_footnote | default: 'Complimentary gift with your first order.' }}
+              </span>
+            {% endif %}
+          {% endform %}
+        </div>
+      {% endif %}
     </div>
 
     <!-- Bottom Bar: Payments & Copyright -->
-    <div class="pt-space-xl border-t border-outline-variant/20 flex flex-col md:flex-row items-center justify-between gap-space-md">
-      <div class="flex flex-wrap items-center gap-space-sm sm:gap-space-md font-label-sm text-label-sm uppercase tracking-wider text-text-muted">
-        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Visa</span>
-        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Mastercard</span>
-        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Meeza ميزة</span>
-        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">valU</span>
-        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Cash on Delivery</span>
-      </div>
-      <p class="font-body-sm text-body-sm text-text-muted text-center md:text-right">
+    <div class="pt-space-xl border-t border-[var(--ftr-border)] flex flex-col md:flex-row items-center justify-between gap-space-md">
+      {% if section.settings.show_payment_badges %}
+        <div class="flex flex-wrap items-center gap-space-sm sm:gap-space-md font-label-sm text-label-sm uppercase tracking-wider text-[var(--ftr-muted)]">
+          <span class="px-space-sm py-1 bg-surface-container-high rounded text-[var(--ftr-text)] font-semibold text-xs">Visa</span>
+          <span class="px-space-sm py-1 bg-surface-container-high rounded text-[var(--ftr-text)] font-semibold text-xs">Mastercard</span>
+          <span class="px-space-sm py-1 bg-surface-container-high rounded text-[var(--ftr-text)] font-semibold text-xs">Meeza ميزة</span>
+          <span class="px-space-sm py-1 bg-surface-container-high rounded text-[var(--ftr-text)] font-semibold text-xs">valU</span>
+          <span class="px-space-sm py-1 bg-surface-container-high rounded text-[var(--ftr-text)] font-semibold text-xs">Cash on Delivery</span>
+        </div>
+      {% endif %}
+      <p class="font-body-sm text-body-sm text-[var(--ftr-muted)] text-center md:text-right">
         &copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright_text | default: 'milk_shake hair Egypt (milkshakehaireg.com). All rights reserved.' }}
       </p>
     </div>
+
   </div>
 </footer>
 
 {% schema %}
 {
-  "name": "MS - Footer",
+  "name": "Milkshake Footer",
+  "tag": "footer",
+  "class": "es-milkshake-footer-wrapper",
   "settings": [
+    {
+      "type": "header",
+      "content": "Brand & Bio Column"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_brand_column",
+      "label": "Show Brand column",
+      "default": true
+    },
     {
       "type": "text",
       "id": "brand_name",
@@ -163,6 +342,16 @@
       "default": "Discover salon-grade Italian haircare formulated with milk proteins and organic fruit extracts. Designed for tailored salon performance and daily sensory indulgence across Egypt."
     },
     {
+      "type": "header",
+      "content": "Social Media Links"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_icons",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
       "type": "url",
       "id": "social_instagram",
       "label": "Instagram URL"
@@ -178,8 +367,45 @@
       "label": "Website URL"
     },
     {
+      "type": "url",
+      "id": "social_facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "select",
+      "id": "social_icon_shape",
+      "label": "Social icon shape",
+      "options": [
+        {
+          "value": "circle",
+          "label": "Circle"
+        },
+        {
+          "value": "rounded",
+          "label": "Rounded square"
+        }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "color",
+      "id": "social_icon_bg",
+      "label": "Social icon button background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "social_icon_color",
+      "label": "Social icon color",
+      "default": "#1f1d1b"
+    },
+    {
       "type": "header",
-      "content": "Client Care Column"
+      "content": "Default Column 1 (Client Care)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Used when no custom blocks are added."
     },
     {
       "type": "text",
@@ -194,7 +420,7 @@
     },
     {
       "type": "header",
-      "content": "Boutique & Salon Column"
+      "content": "Default Column 2 (Boutique & Salon)"
     },
     {
       "type": "text",
@@ -228,7 +454,7 @@
     },
     {
       "type": "header",
-      "content": "Salon Gazette (Newsletter)"
+      "content": "Default Column 3 (Salon Gazette Newsletter)"
     },
     {
       "type": "text",
@@ -250,13 +476,87 @@
     },
     {
       "type": "header",
-      "content": "Bottom Bar"
+      "content": "Bottom Bar and Payments"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_badges",
+      "label": "Show payment method badges",
+      "default": true
     },
     {
       "type": "text",
       "id": "copyright_text",
       "label": "Copyright Text",
       "default": "milk_shake hair Egypt (milkshakehaireg.com). All rights reserved."
+    },
+    {
+      "type": "header",
+      "content": "Styling and Colors"
+    },
+    {
+      "type": "color",
+      "id": "footer_bg",
+      "label": "Footer background color",
+      "default": "#f7f3ee"
+    },
+    {
+      "type": "color",
+      "id": "footer_text_color",
+      "label": "Headings & main text color",
+      "default": "#1f1d1b"
+    },
+    {
+      "type": "color",
+      "id": "footer_muted_color",
+      "label": "Muted description and link color",
+      "default": "#53433e"
+    },
+    {
+      "type": "color",
+      "id": "footer_border_color",
+      "label": "Divider border color",
+      "default": "rgba(0,0,0,0.08)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 24,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top (Desktop)",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 24,
+      "max": 140,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom (Desktop)",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top (Mobile)",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom (Mobile)",
+      "default": 36
     },
     {
       "type": "header",
@@ -281,163 +581,6 @@
         }
       ],
       "default": "container"
-    },
-    {
-      "type": "header",
-      "content": "Colors and Background"
-    },
-    {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background color"
-    },
-    {
-      "type": "color_background",
-      "id": "bg_gradient",
-      "label": "Background gradient"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color"
-    },
-    {
-      "type": "header",
-      "content": "Border and Radius"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "Border color",
-      "default": "transparent"
-    },
-    {
-      "type": "range",
-      "id": "border_width",
-      "min": 0,
-      "max": 10,
-      "step": 1,
-      "unit": "px",
-      "label": "Border width",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "border_radius",
-      "min": 0,
-      "max": 48,
-      "step": 2,
-      "unit": "px",
-      "label": "Corner radius",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Responsive Spacing (Desktop)"
-    },
-    {
-      "type": "range",
-      "id": "padding_top",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_top",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin top (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_bottom",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin bottom (Desktop)",
-      "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Responsive Spacing (Mobile and Tablet)"
-    },
-    {
-      "type": "range",
-      "id": "padding_top_tablet",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top (Tablet)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_tablet",
-      "min": 0,
-      "max": 120,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom (Tablet)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_top_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding top (Mobile)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Padding bottom (Mobile)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_top_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin top (Mobile)",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "margin_bottom_mobile",
-      "min": 0,
-      "max": 100,
-      "step": 4,
-      "unit": "px",
-      "label": "Margin bottom (Mobile)",
-      "default": 0
     },
     {
       "type": "header",
@@ -469,12 +612,125 @@
       "type": "textarea",
       "id": "custom_css",
       "label": "Custom CSS rules",
-      "info": "Write CSS targeting .section-{{ section.id }}-settings or child classes"
+      "info": "Write CSS targeting #Footer-{{ section.id }} or child classes"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Navigation Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Column Heading",
+          "default": "Quick Links"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "Contact Details",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Column Heading",
+          "default": "Boutique & Salon"
+        },
+        {
+          "type": "textarea",
+          "id": "address",
+          "label": "Address",
+          "default": "306 Port Said St, Cleopatra,<br/>Alexandria, Egypt"
+        },
+        {
+          "type": "text",
+          "id": "phone_label",
+          "label": "Phone label",
+          "default": "+20 (0)3 546 8900"
+        },
+        {
+          "type": "text",
+          "id": "phone_number",
+          "label": "Phone link number",
+          "default": "+20035468900"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "Email address",
+          "default": "care@milkshakehaireg.com"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter Form",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Newsletter Heading",
+          "default": "Salon Gazette"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Newsletter description",
+          "default": "Receive exclusive Egyptian beauty privileges, masterclass invites, and seasonal gifting."
+        },
+        {
+          "type": "text",
+          "id": "placeholder",
+          "label": "Input placeholder",
+          "default": "Your email address"
+        },
+        {
+          "type": "text",
+          "id": "footnote",
+          "label": "Footnote",
+          "default": "Complimentary gift with your first order."
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Custom Text Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Column Heading",
+          "default": "Editorial Care"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text content",
+          "default": "<p>Formulated in Italy with certified organic ingredients and natural milk proteins.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Link label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Link URL"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "MS - Footer"
+      "name": "Milkshake Footer"
     }
   ]
 }

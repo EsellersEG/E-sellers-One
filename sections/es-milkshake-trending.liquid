@@ -1,5 +1,32 @@
 {% render 'es-section-style', section: section %}
-<section class="w-full py-space-3xl bg-surface-cream section-{{ section.id }}-settings" id="bestsellers" style="{% if section.settings.bg_color != blank %}background-color: {{ section.settings.bg_color }};{% endif %}">
+
+{%- assign is_carousel = false -%}
+{%- if section.settings.layout_type == 'carousel' -%}
+  {%- assign is_carousel = true -%}
+{%- endif -%}
+
+{%- assign img_ratio_class = 'es-aspect-4-5' -%}
+{%- if section.settings.image_ratio == '1/1' -%}
+  {%- assign img_ratio_class = 'es-aspect-1-1' -%}
+{%- elsif section.settings.image_ratio == '3/4' -%}
+  {%- assign img_ratio_class = 'es-aspect-3-4' -%}
+{%- endif -%}
+
+{%- style -%}
+  #bestsellers-{{ section.id }} {
+    --cols-desktop: {{ section.settings.columns_desktop | default: 4 }};
+    --cols-tablet: {{ section.settings.columns_tablet | default: 2 }};
+    --cols-mobile: {{ section.settings.columns_mobile | default: 1 }};
+    --grid-gap: {{ section.settings.grid_gap | default: 24 }}px;
+  }
+  .trending-card-{{ section.id }} {
+    background-color: {{ section.settings.card_bg | default: '#ffffff' }};
+    border-radius: {{ section.settings.card_radius | default: 12 }}px;
+    padding: {{ section.settings.card_padding | default: 16 }}px;
+  }
+{%- endstyle -%}
+
+<section id="bestsellers-{{ section.id }}" class="w-full py-space-3xl bg-surface-cream section-{{ section.id }}-settings" style="{% if section.settings.bg_color != blank %}background-color: {{ section.settings.bg_color }};{% endif %}">
   <div class="max-w-[1440px] mx-auto px-margin">
     <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-space-2xl">
       <div>
@@ -10,17 +37,19 @@
           {{ section.settings.heading | default: 'Back in Stock & Trending Now' }}
         </h2>
       </div>
-      <div class="flex items-center gap-space-sm mt-space-sm sm:mt-0">
-        <button type="button" aria-label="Previous" class="w-11 h-11 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm">
-          <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-        </button>
-        <button type="button" aria-label="Next" class="w-11 h-11 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm">
-          <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-        </button>
-      </div>
+      {%- if is_carousel and section.settings.show_arrows -%}
+        <div class="flex items-center gap-space-sm mt-space-sm sm:mt-0">
+          <button type="button" data-carousel-prev="TrendingTrack-{{ section.id }}" aria-label="Previous" class="w-11 h-11 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+          </button>
+          <button type="button" data-carousel-next="TrendingTrack-{{ section.id }}" aria-label="Next" class="w-11 h-11 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary hover:bg-primary hover:text-on-primary transition-colors shadow-sm cursor-pointer">
+            <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+          </button>
+        </div>
+      {%- endif -%}
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
+    <div id="TrendingTrack-{{ section.id }}" class="{% if is_carousel %}es-carousel-track{% else %}es-collection-grid{% endif %}">
       {%- assign display_products = nil -%}
       {%- if section.settings.product_list != blank and section.settings.product_list.count > 0 -%}
         {%- assign display_products = section.settings.product_list -%}
@@ -28,11 +57,13 @@
         {%- assign display_products = collections[section.settings.collection].products -%}
       {%- endif -%}
 
+      {%- assign max_products = section.settings.products_to_show | default: 4 -%}
+
       {%- if display_products != nil -%}
-        {%- for product in display_products limit: 4 -%}
-          <div class="group relative flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm hover:shadow-md transition-all">
-            <div class="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-              {%- if product.compare_at_price > product.price -%}
+        {%- for product in display_products limit: max_products -%}
+          <div class="group relative flex flex-col trending-card-{{ section.id }} shadow-sm hover:shadow-md transition-all">
+            <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+              {%- if section.settings.show_badge and product.compare_at_price > product.price -%}
                 <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm uppercase tracking-wider">
                   On Sale
                 </span>
@@ -47,21 +78,27 @@
                   />
                 {%- endif -%}
               </a>
-              <form method="post" action="{{ routes.cart_add_url }}" class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                <button type="submit" class="w-full h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase flex items-center justify-center gap-space-xs shadow-md hover:bg-neutral-800 transition-colors">
-                  <span class="material-symbols-outlined text-[18px]">add</span>
-                  Quick Add
-                </button>
-              </form>
+              {%- if section.settings.show_quick_add -%}
+                <form method="post" action="{{ routes.cart_add_url }}" class="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="w-full h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase flex items-center justify-center gap-space-xs shadow-md hover:bg-neutral-800 transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    Quick Add
+                  </button>
+                </form>
+              {%- endif -%}
             </div>
-            <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
-              <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-              <span class="font-body-sm text-body-sm text-text-muted">4.9 (salon verified)</span>
-            </div>
-            <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
-              {{ product.vendor | default: 'milk_shake®' }}
-            </span>
+            {%- if section.settings.show_rating -%}
+              <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
+                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="font-body-sm text-body-sm text-text-muted">4.9 (salon verified)</span>
+              </div>
+            {%- endif -%}
+            {%- if section.settings.show_vendor -%}
+              <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
+                {{ product.vendor | default: 'milk_shake®' }}
+              </span>
+            {%- endif -%}
             <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs line-clamp-2">
               <a href="{{ product.url }}" class="hover:text-neutral-700 transition-colors">{{ product.title }}</a>
             </h3>
@@ -80,22 +117,30 @@
       {%- else -%}
         <!-- Fallback to exact 4 Stitch Products -->
         <!-- Product 1 -->
-        <div class="group relative flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm hover:shadow-md transition-all">
-          <div class="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm uppercase tracking-wider">
-              On Sale
-            </span>
+        <div class="group relative flex flex-col trending-card-{{ section.id }} shadow-sm hover:shadow-md transition-all">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            {%- if section.settings.show_badge -%}
+              <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm uppercase tracking-wider">
+                On Sale
+              </span>
+            {%- endif -%}
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="incredible milk leave in spray" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuMln9dRfRPNurVA1hb5vjqm1N5hR-il_uTSfZ_-zJqbzDYAFe2FdRVWsHnhuAqn2A0lG2atPaAK5TyPA0QpYLqJUNNA5K4rmqXVFw0GU6u7VwhzW2Re9TL3qWVrGG2QOyMnvgdwe0loiTCbfkNCwn5N3A1M0KW4f7VZDu0d3sUE4sMbODpfztuHlMqRYBnAhsqH8fUKP6klwS5vENzwz31W5qHK3gqmedmMYgTaDxZmlq1pTgwDs" loading="lazy" />
-            <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md">
-              <span class="material-symbols-outlined text-[18px]">add</span>
-              Quick Add
-            </button>
+            {%- if section.settings.show_quick_add -%}
+              <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Quick Add
+              </button>
+            {%- endif -%}
           </div>
-          <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
-            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-            <span class="font-body-sm text-body-sm text-text-muted">4.9 (184 reviews)</span>
-          </div>
-          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- if section.settings.show_rating -%}
+            <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
+              <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="font-body-sm text-body-sm text-text-muted">4.9 (184 reviews)</span>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_vendor -%}
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- endif -%}
           <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs line-clamp-2">
             incredible milk leave in spray (12 benefits)
           </h3>
@@ -106,22 +151,30 @@
         </div>
 
         <!-- Product 2 -->
-        <div class="group relative flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm hover:shadow-md transition-all">
-          <div class="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
-              Save 10%
-            </span>
+        <div class="group relative flex flex-col trending-card-{{ section.id }} shadow-sm hover:shadow-md transition-all">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            {%- if section.settings.show_badge -%}
+              <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm uppercase tracking-wider">
+                Save 10%
+              </span>
+            {%- endif -%}
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="icy blond neutralising shampoo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOjrB22Rd3e5lnZNOEjRiRn8eqMP_4dVxr3MLOCORmMVQN2uPEWRs-D_bLtkfv5nvHSVv2ENhvbJFPTj-_oeAeOBeG4SSDxHhjaUpAsjCr_v9ACHmM86LZd3qC8WF1wS7OwRwk4f_zDj0MbBk_YHqnmqm2hqPRvxvfytqBpJ2AITgpNwapSwm5iWNMLfJwoyn3jOJfxYHoXWBcXdEY_uRX4MkxPED-RXzMEsN9H3DeE_ee8TXVSAk" loading="lazy" />
-            <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md">
-              <span class="material-symbols-outlined text-[18px]">add</span>
-              Quick Add
-            </button>
+            {%- if section.settings.show_quick_add -%}
+              <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Quick Add
+              </button>
+            {%- endif -%}
           </div>
-          <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
-            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-            <span class="font-body-sm text-body-sm text-text-muted">4.8 (92 reviews)</span>
-          </div>
-          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- if section.settings.show_rating -%}
+            <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
+              <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="font-body-sm text-body-sm text-text-muted">4.8 (92 reviews)</span>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_vendor -%}
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- endif -%}
           <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs line-clamp-2">
             icy blond neutralising shampoo
           </h3>
@@ -132,22 +185,30 @@
         </div>
 
         <!-- Product 3 -->
-        <div class="group relative flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm hover:shadow-md transition-all">
-          <div class="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-pastel-silver-shine text-primary font-label-sm text-label-sm uppercase tracking-wider">
-              Best Seller
-            </span>
+        <div class="group relative flex flex-col trending-card-{{ section.id }} shadow-sm hover:shadow-md transition-all">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            {%- if section.settings.show_badge -%}
+              <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-pastel-silver-shine text-primary font-label-sm text-label-sm uppercase tracking-wider">
+                Best Seller
+              </span>
+            {%- endif -%}
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="silver shine whipped cream 200 ml" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV24lCvNmghyzuNuOftYfztpDTTi90aHP5yb0VmF-D7tBewZ3z6ZnLX7Zts-QYLfPxrxRmOBjbcUENx5d8kSibonJ4YEKrTPIik5PD51XLBs3FlOyTyNl7SZSSixaUP8cJtRoBuA6CXgnp8oCKXBWlBZrqYnn-wsArcv08EO3qDrx1T2zMRED7peZ-1Sj0cai04rrFG_0jpYzFww54tPdi0lXVYpE1r3NFRjPPReRiSKTqYZWIlps" loading="lazy" />
-            <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md">
-              <span class="material-symbols-outlined text-[18px]">add</span>
-              Quick Add
-            </button>
+            {%- if section.settings.show_quick_add -%}
+              <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Quick Add
+              </button>
+            {%- endif -%}
           </div>
-          <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
-            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-            <span class="font-body-sm text-body-sm text-text-muted">5.0 (310 reviews)</span>
-          </div>
-          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- if section.settings.show_rating -%}
+            <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
+              <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="font-body-sm text-body-sm text-text-muted">5.0 (310 reviews)</span>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_vendor -%}
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- endif -%}
           <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs line-clamp-2">
             silver shine whipped cream 200 ml
           </h3>
@@ -158,22 +219,30 @@
         </div>
 
         <!-- Product 4 -->
-        <div class="group relative flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm hover:shadow-md transition-all">
-          <div class="relative w-full aspect-[4/5] rounded-lg overflow-hidden bg-surface-container mb-space-md">
-            <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-pastel-moisture-plus text-primary font-label-sm text-label-sm uppercase tracking-wider">
-              Hydration
-            </span>
+        <div class="group relative flex flex-col trending-card-{{ section.id }} shadow-sm hover:shadow-md transition-all">
+          <div class="relative w-full {{ img_ratio_class }} rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            {%- if section.settings.show_badge -%}
+              <span class="absolute top-3 left-3 z-10 px-space-sm py-0.5 rounded-full bg-pastel-moisture-plus text-primary font-label-sm text-label-sm uppercase tracking-wider">
+                Hydration
+              </span>
+            {%- endif -%}
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="moisture&more concentrated serum" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-mfnHhV7P0N9Va9la8gS77kewNFtYT2YSX80i1L7FgC-Od47SEcWhPeU8jSfU8HUHyMk7dI5C5HErq_An60iw3jn1g_Nx4TPhQIPFn-f-R_qy6_W5tYUB2nSDWtytvX7Jv8zdf6vDFraGEt-5QycxIwXoueFObrXk_9WhNAWaY3koFvxttDGeNoASrhn_9YxOI4Lp9YR0h-laLSI8IUU4kfsEFQ3zVOvkNsS15E83ntq1jSpMZ3c" loading="lazy" />
-            <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md">
-              <span class="material-symbols-outlined text-[18px]">add</span>
-              Quick Add
-            </button>
+            {%- if section.settings.show_quick_add -%}
+              <button type="button" class="absolute bottom-3 left-3 right-3 h-11 rounded-full bg-primary text-on-primary font-label-md text-label-md tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-space-xs shadow-md cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Quick Add
+              </button>
+            {%- endif -%}
           </div>
-          <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
-            <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
-            <span class="font-body-sm text-body-sm text-text-muted">4.9 (118 reviews)</span>
-          </div>
-          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- if section.settings.show_rating -%}
+            <div class="flex items-center gap-1 text-[#D4AF37] mb-1">
+              <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="font-body-sm text-body-sm text-text-muted">4.9 (118 reviews)</span>
+            </div>
+          {%- endif -%}
+          {%- if section.settings.show_vendor -%}
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">milk_shake®</span>
+          {%- endif -%}
           <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs line-clamp-2">
             moisture&amp;more concentrated serum
           </h3>
@@ -216,16 +285,157 @@
       "label": "Specific Products (Optional - takes priority if chosen)"
     },
     {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Section Background",
-      "default": "#fcf9f4"
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 1,
+      "label": "Maximum products to show",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Layout & Carousel Mode"
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "label": "Layout Mode",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Standard Grid"
+        },
+        {
+          "value": "carousel",
+          "label": "Carousel / Slider"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "label": "Desktop columns",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 3,
+      "step": 1,
+      "label": "Tablet columns",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "label": "Mobile columns",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Grid / Carousel gap",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show carousel arrows",
+      "default": true,
+      "info": "Active when Carousel mode is selected"
+    },
+    {
+      "type": "header",
+      "content": "Product Card Styling"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "4/5",
+          "label": "Portrait (4:5)"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Classic (3:4)"
+        }
+      ],
+      "default": "4/5"
     },
     {
       "type": "color",
       "id": "card_bg",
       "label": "Product Card Background",
       "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge",
+      "label": "Show sale / promo badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show Quick Add button",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#fcf9f4"
     },
     {
       "type": "header",
