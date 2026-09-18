@@ -17,30 +17,44 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-md">
       {%- if section.blocks.size > 0 -%}
         {%- for block in section.blocks -%}
+          {%- assign target_url = block.settings.link -%}
+          {%- assign target_title = block.settings.title -%}
+          {%- if block.settings.collection != blank -%}
+            {%- assign coll = collections[block.settings.collection] -%}
+            {%- assign target_url = coll.url -%}
+            {%- if target_title == blank -%}{%- assign target_title = coll.title -%}{%- endif -%}
+          {%- endif -%}
           <a
             class="group flex flex-col items-center text-center p-space-md rounded-xl bg-surface-container-lowest {{ block.settings.hover_class | default: 'hover:bg-pastel-moisture-plus/40' }} transition-all duration-300 shadow-sm"
-            href="{{ block.settings.link | default: '#' }}"
+            href="{{ target_url | default: '#' }}"
             {{ block.shopify_attributes }}
           >
             <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden mb-space-md bg-surface-container shadow-sm group-hover:scale-105 transition-transform">
               {%- if block.settings.image != blank -%}
                 <img
                   class="w-full h-full object-cover"
-                  alt="{{ block.settings.title | escape }}"
+                  alt="{{ target_title | escape }}"
                   src="{{ block.settings.image | image_url: width: 300 }}"
+                  loading="lazy"
+                />
+              {%- elsif block.settings.collection != blank and collections[block.settings.collection].featured_image != blank -%}
+                <img
+                  class="w-full h-full object-cover"
+                  alt="{{ target_title | escape }}"
+                  src="{{ collections[block.settings.collection].featured_image | image_url: width: 300 }}"
                   loading="lazy"
                 />
               {%- else -%}
                 <img
                   class="w-full h-full object-cover"
-                  alt="{{ block.settings.title | escape }}"
+                  alt="{{ target_title | escape }}"
                   src="{{ block.settings.image_url }}"
                   loading="lazy"
                 />
               {%- endif -%}
             </div>
             <span class="font-headline-sm text-headline-sm text-primary mb-1">
-              {{ block.settings.title }}
+              {{ target_title }}
             </span>
             <span class="font-body-sm text-body-sm text-text-muted">
               {{ block.settings.subtitle }}
@@ -119,6 +133,12 @@
       "id": "description",
       "label": "Description",
       "default": "Targeted formulations infused with active milk whey, murumuru butter, and berry extracts for customized restorative hair therapy."
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#fcf9f4"
     }
   ],
   "blocks": [
@@ -126,6 +146,11 @@
       "type": "concern",
       "name": "Hair Concern",
       "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Link to Collection (Optional)"
+        },
         {
           "type": "image_picker",
           "id": "image",
@@ -151,7 +176,7 @@
         {
           "type": "url",
           "id": "link",
-          "label": "Link"
+          "label": "Custom Link (used if no collection is selected)"
         },
         {
           "type": "text",

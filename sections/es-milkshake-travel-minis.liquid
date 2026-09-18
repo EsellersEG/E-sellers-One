@@ -64,9 +64,16 @@
                 <button type="button" onclick="openNotifyModal('{{ block.settings.title | escape }}')" class="h-10 px-space-md rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase transition-colors">
                   {{ block.settings.button_text | default: 'Notify Me' }}
                 </button>
+              {% elsif block.settings.product != blank %}
+                <form method="post" action="/cart/add">
+                  <input type="hidden" name="id" value="{{ block.settings.product.selected_or_first_available_variant.id }}" />
+                  <button type="submit" class="h-10 px-space-md rounded-full bg-primary text-on-primary hover:bg-neutral-800 font-label-sm text-label-sm uppercase transition-colors">
+                    {{ block.settings.button_text | default: 'Add To Bag' }}
+                  </button>
+                </form>
               {% else %}
                 <button type="button" class="h-10 px-space-md rounded-full bg-primary text-on-primary hover:bg-neutral-800 font-label-sm text-label-sm uppercase transition-colors">
-                  Add To Bag
+                  {{ block.settings.button_text | default: 'Add To Bag' }}
                 </button>
               {% endif %}
             </div>
@@ -259,6 +266,11 @@
           "id": "compare_price",
           "label": "Regular Price",
           "default": "LE 1,500.00"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Shopify Product (Optional)"
         },
         {
           "type": "checkbox",

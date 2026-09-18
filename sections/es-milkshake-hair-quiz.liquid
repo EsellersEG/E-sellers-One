@@ -145,6 +145,14 @@
     </div>
   </div>
 
+  <!-- Floating Sticky Action for Tablet & Mobile Viewports -->
+  <div class="fixed bottom-4 right-4 z-30 flex items-center gap-2 md:hidden" data-purpose="floating-tablet-action">
+    <button type="button" onclick="document.getElementById('es-hair-quiz-modal').classList.remove('hidden')" class="flex items-center gap-2 bg-espresso text-cream text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg hover:bg-terracotta transition-all border border-white/20">
+      <span>✨</span>
+      <span>Diagnostic Quiz</span>
+    </button>
+  </div>
+
   <script>
     let currentQuizStep = 1;
     function nextQuizStep(routineName, reason) {
