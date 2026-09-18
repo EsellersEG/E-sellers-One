@@ -15,32 +15,294 @@
         "slide_1": {
           "type": "image",
           "settings": {
+            "content_max_width": 780,
+            "desktop_text_position": "pos-middle-center",
+            "mobile_text_position": "pos-middle-center",
             "subheading": "New season",
             "title": "Your headline here",
+            "heading_tag": "h0",
             "button_text": "Shop all",
-            "button_link": "/collections/all"
+            "button_link": "/collections/all",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#0f172a",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
           }
         }
       },
-      "block_order": ["slide_1"],
-      "settings": {}
+      "block_order": [
+        "slide_1"
+      ],
+      "settings": {
+        "full_width": true,
+        "allow_transparent_header": true,
+        "image_size": "auto",
+        "controls_type": "dots",
+        "autoplay": true,
+        "cycle_speed": 6,
+        "background": "#0f172a",
+        "background_gradient": ""
+      }
     },
     "featured_collection": {
       "type": "es-featured-collection",
-      "settings": {}
+      "settings": {
+        "collection": "",
+        "subheading": "",
+        "heading": "Featured collection",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "show_view_all": false,
+        "bg_color": "#ffffff",
+        "heading_color": "#121212",
+        "text_color": "#121212",
+        "padding_top": 40,
+        "padding_bottom": 60
+      }
     },
     "rich_text": {
       "type": "es-rich-text",
       "blocks": {
-        "heading": { "type": "heading", "settings": { "text": "Tell your story" } },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "text": "Tell your story",
+            "heading_tag": "h2",
+            "heading_size": "h2",
+            "text_color": "",
+            "gradient": ""
+          }
+        },
         "text": {
           "type": "richtext",
-          "settings": { "content": "<p>Share what makes your store different.</p>" }
+          "settings": {
+            "content": "<p>Share what makes your store different.</p>"
+          }
         }
       },
-      "block_order": ["heading", "text"],
-      "settings": {}
+      "block_order": [
+        "heading",
+        "text"
+      ],
+      "settings": {
+        "full_width": false,
+        "content_width": "medium",
+        "text_position": "center",
+        "block_gap": 20,
+        "background": "",
+        "background_gradient": "",
+        "text_color": "",
+        "divider_color": "#e5e5e5",
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "es_buy_together_TE3aKT": {
+      "type": "es-buy-together",
+      "blocks": {
+        "bundle_GpTD7m": {
+          "type": "bundle",
+          "settings": {
+            "show_bundle_title": true,
+            "bundle_title": "Full Size + Free Mini",
+            "product_1": "gift-card",
+            "product_2": "gift-card",
+            "button_label": "section.settings.default_button_label",
+            "total_label": "section.settings.default_total_label"
+          }
+        },
+        "bundle_w8tKhP": {
+          "type": "bundle",
+          "settings": {
+            "show_bundle_title": true,
+            "bundle_title": "Full Size + Free Mini",
+            "product_1": "gift-card",
+            "product_2": "gift-card",
+            "button_label": "section.settings.default_button_label",
+            "total_label": "section.settings.default_total_label"
+          }
+        }
+      },
+      "block_order": [
+        "bundle_GpTD7m",
+        "bundle_w8tKhP"
+      ],
+      "name": "Buy together",
+      "settings": {
+        "title": "The Perfect Pair ✨",
+        "subtitle": "Get the travel companion gift free when you buy the full size.",
+        "default_total_label": "Bundle Price:",
+        "default_button_label": "Claim My Free Gift",
+        "desktop_width_percent": 100,
+        "background_color": "#ffffff",
+        "product_card_bg": "#f8fafc",
+        "text_color": "#0f172a",
+        "savings_color": "#059669",
+        "button_bg": "#0f172a",
+        "button_text_color": "#ffffff",
+        "button_hover_bg": "#1e293b",
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "border_radius": 24,
+        "bundles_gap": 32,
+        "bundles_per_row": 1,
+        "button_radius": 60,
+        "button_text_size": 16,
+        "compare_price_color": "#94a3b8",
+        "compare_price_size": 14,
+        "free_original_price_size": 14,
+        "free_tag_bg": "#059669",
+        "free_tag_size": 14,
+        "free_tag_text_color": "#ffffff",
+        "image_radius": 16,
+        "padding": "",
+        "product_card_radius": 20,
+        "product_price_color": "#111827",
+        "product_price_size": 20,
+        "product_title_color": "#111827",
+        "product_title_size": 16,
+        "products_gap": 16,
+        "subtitle_size": 16,
+        "title_size": 32,
+        "total_label_size": 16,
+        "total_price_color": "#111827",
+        "total_price_size": 26
+      }
+    },
+    "es_featured_product_spotlight_LdmPgq": {
+      "type": "es-featured-product-spotlight",
+      "blocks": {
+        "vendor_Eb8FxE": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title_GVrxYd": {
+          "type": "title",
+          "settings": {
+            "heading_tag": "h2"
+          }
+        },
+        "price_FryXxP": {
+          "type": "price",
+          "settings": {}
+        },
+        "description_e4qaT3": {
+          "type": "description",
+          "settings": {}
+        },
+        "variant_picker_L4VXcA": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "quantity_selector_RkADjE": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons_aVcVEb": {
+          "type": "buy_buttons",
+          "settings": {
+            "atc_button_background": "#121212",
+            "atc_button_text_color": "#ffffff"
+          }
+        },
+        "offer_iKAx3U": {
+          "type": "offer",
+          "settings": {
+            "title": "Free Shipping & Returns",
+            "content": "<p>Orders ship within 24 hours with full tracking.</p>",
+            "background": "#eaf2ed",
+            "text_color": "#00a341"
+          }
+        }
+      },
+      "block_order": [
+        "vendor_Eb8FxE",
+        "title_GVrxYd",
+        "price_FryXxP",
+        "description_e4qaT3",
+        "variant_picker_L4VXcA",
+        "quantity_selector_RkADjE",
+        "buy_buttons_aVcVEb",
+        "offer_iKAx3U"
+      ],
+      "name": "E-sellers 2",
+      "settings": {
+        "full_width": false,
+        "product": "",
+        "desktop_media_width": 50,
+        "background": "",
+        "background_gradient": "",
+        "text_color": "#121212",
+        "button_background": "#121212",
+        "button_text_color": "#ffffff"
+      }
+    },
+    "es_image_cards_WqzHD3": {
+      "type": "es-image-cards",
+      "blocks": {
+        "card_MeWpp4": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/2.png",
+            "card_link": "shopify://collections/automated-collection",
+            "image_overlay_opacity": 25,
+            "heading": "Category",
+            "description": "",
+            "show_badge": false,
+            "badge_text": "New"
+          }
+        },
+        "card_qWfm7x": {
+          "type": "card",
+          "settings": {
+            "image": "shopify://shop_images/MILKSHAKEINTEGRITYTREATMENTMASK10ML8032274106203_c7ad18a6-d27c-4883-af1f-c08ebd9816d4.png",
+            "card_link": "shopify://products/gift-card",
+            "image_overlay_opacity": 25,
+            "heading": "Category",
+            "description": "",
+            "show_badge": false,
+            "badge_text": "New"
+          }
+        },
+        "card_DVrVM9": {
+          "type": "card",
+          "settings": {
+            "card_link": "",
+            "image_overlay_opacity": 25,
+            "heading": "Category",
+            "description": "",
+            "show_badge": false,
+            "badge_text": "New"
+          }
+        }
+      },
+      "block_order": [
+        "card_MeWpp4",
+        "card_qWfm7x",
+        "card_DVrVM9"
+      ],
+      "name": "E-sellers Image Cards",
+      "settings": {
+        "subheading": "",
+        "heading": "",
+        "description": "",
+        "image_ratio": "3/4",
+        "columns_desktop": 3,
+        "columns_mobile": 1,
+        "column_gap": 20,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
     }
   },
-  "order": ["hero_slideshow", "featured_collection", "rich_text"]
+  "order": [
+    "hero_slideshow",
+    "featured_collection",
+    "rich_text",
+    "es_buy_together_TE3aKT",
+    "es_featured_product_spotlight_LdmPgq",
+    "es_image_cards_WqzHD3"
+  ]
 }
