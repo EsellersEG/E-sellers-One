@@ -1,0 +1,291 @@
+<section class="w-full py-space-3xl bg-surface" id="hair-quiz">
+  <div class="max-w-[1440px] mx-auto px-margin">
+    <div class="relative rounded-xl bg-primary text-on-primary overflow-hidden p-space-xl lg:p-space-3xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center relative z-10">
+        <div class="lg:col-span-7 flex flex-col">
+          {% if section.settings.badge_text != blank %}
+            <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-highest/20 text-pastel-make-my-day self-start mb-space-md">
+              {% if section.settings.badge_icon != blank %}
+                <span class="material-symbols-outlined text-[16px]">
+                  {{ section.settings.badge_icon }}
+                </span>
+              {% endif %}
+              <span class="font-label-sm text-label-sm uppercase tracking-widest">
+                {{ section.settings.badge_text }}
+              </span>
+            </div>
+          {% endif %}
+
+          {% if section.settings.heading != blank %}
+            <h2 class="font-headline-xl text-headline-xl text-on-primary mb-space-md">
+              {{ section.settings.heading }}
+            </h2>
+          {% endif %}
+
+          {% if section.settings.description != blank %}
+            <p class="font-body-lg text-body-lg text-neutral-300 max-w-xl mb-space-xl">
+              {{ section.settings.description }}
+            </p>
+          {% endif %}
+
+          <!-- Diagnostic Quick Selector Simulation -->
+          <div class="grid grid-cols-3 gap-space-sm max-w-lg mb-space-xl">
+            <div class="p-space-sm rounded-lg bg-white/10 text-center">
+              <span class="font-label-sm text-label-sm block text-neutral-400">
+                {{ section.settings.step1_label | default: 'Step 1' }}
+              </span>
+              <span class="font-headline-sm text-headline-sm text-white">
+                {{ section.settings.step1_title | default: 'Hair Density' }}
+              </span>
+            </div>
+            <div class="p-space-sm rounded-lg bg-white/10 text-center">
+              <span class="font-label-sm text-label-sm block text-neutral-400">
+                {{ section.settings.step2_label | default: 'Step 2' }}
+              </span>
+              <span class="font-headline-sm text-headline-sm text-white">
+                {{ section.settings.step2_title | default: 'Chemical State' }}
+              </span>
+            </div>
+            <div class="p-space-sm rounded-lg bg-white/10 text-center">
+              <span class="font-label-sm text-label-sm block text-neutral-400">
+                {{ section.settings.step3_label | default: 'Step 3' }}
+              </span>
+              <span class="font-headline-sm text-headline-sm text-white">
+                {{ section.settings.step3_title | default: 'Egypt Hard Water' }}
+              </span>
+            </div>
+          </div>
+
+          <div>
+            {% if section.settings.quiz_link != blank %}
+              <a href="{{ section.settings.quiz_link }}" class="inline-flex items-center justify-center h-14 px-space-2xl rounded-full bg-on-primary text-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-200 transition-colors shadow-md">
+                {{ section.settings.button_text | default: 'Start Hair Quiz' }}
+              </a>
+            {% else %}
+              <button type="button" onclick="document.getElementById('es-hair-quiz-modal').classList.remove('hidden')" class="h-14 px-space-2xl rounded-full bg-on-primary text-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-200 transition-colors shadow-md">
+                {{ section.settings.button_text | default: 'Start Hair Quiz' }}
+              </button>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Diagnostic Graphic illustration -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-surface-container/10 flex items-center justify-center p-8">
+            <div class="w-full h-full rounded-full border border-dashed border-white/20 animate-spin-slow flex items-center justify-center">
+              <div class="w-48 h-48 rounded-full bg-pastel-make-my-day/20 flex flex-col items-center justify-center p-6 text-center backdrop-blur-sm">
+                <span class="material-symbols-outlined text-[36px] text-pastel-make-my-day mb-1">
+                  spa
+                </span>
+                <span class="font-headline-sm text-headline-sm text-white">
+                  {{ section.settings.graphic_title | default: 'Custom Formula' }}
+                </span>
+                <span class="font-label-sm text-label-sm text-neutral-300">
+                  {{ section.settings.graphic_subtitle | default: 'In 60 Seconds' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ambient Background Glow -->
+      <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-secondary/20 blur-3xl pointer-events-none"></div>
+    </div>
+  </div>
+
+  <!-- Interactive Quiz Modal -->
+  <div id="es-hair-quiz-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-surface rounded-2xl max-w-lg w-full p-6 sm:p-8 text-primary shadow-2xl relative">
+      <button type="button" onclick="document.getElementById('es-hair-quiz-modal').classList.add('hidden')" class="absolute top-5 right-5 text-text-muted hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+
+      <div id="es-quiz-content">
+        <div class="inline-flex items-center gap-1 text-secondary font-label-sm uppercase tracking-wider mb-2">
+          <span class="material-symbols-outlined text-[16px]">diagnosis</span>
+          <span id="es-quiz-step-indicator">Question 1 of 3</span>
+        </div>
+        <h3 id="es-quiz-question" class="font-headline-md text-headline-md mb-4">
+          What is your primary hair concern in Egypt?
+        </h3>
+        <div id="es-quiz-options" class="space-y-3 mb-6">
+          <button type="button" onclick="nextQuizStep('Moisture & More', 'Extreme dryness & Nile water buildup')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Severe dryness &amp; dehydration</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+          <button type="button" onclick="nextQuizStep('Silver Shine', 'Brassiness & color fade from sun/chlorine')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Yellow brassiness in blonde or grey hair</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+          <button type="button" onclick="nextQuizStep('Integrity Intensive', 'Chemical damage & heat styling')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Damaged, bleached, or split ends</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+          <button type="button" onclick="nextQuizStep('Curl Passion', 'Frizz & coastal Alexandria humidity')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Unruly curls and stubborn humidity frizz</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="es-quiz-result" class="hidden text-center py-4">
+        <div class="w-16 h-16 rounded-full bg-pastel-flower-vibes/50 text-secondary mx-auto flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-[32px]">auto_awesome</span>
+        </div>
+        <span class="font-label-sm uppercase tracking-wider text-text-muted block mb-1">Your Italian Salon Prescription</span>
+        <h4 id="es-quiz-result-title" class="font-headline-lg text-headline-lg text-primary mb-2">Moisture &amp; More Routine</h4>
+        <p id="es-quiz-result-desc" class="font-body-sm text-body-sm text-on-surface-variant max-w-sm mx-auto mb-6">
+          Formulated with organic papaya extract and hyaluronic acid to neutralize water hardness and restore moisture bounce.
+        </p>
+        <a href="/collections/all" class="inline-flex items-center justify-center h-12 px-space-xl rounded-full bg-primary text-on-primary font-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors w-full">
+          Shop Recommended Routine
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentQuizStep = 1;
+    function nextQuizStep(routineName, reason) {
+      currentQuizStep++;
+      if (currentQuizStep === 2) {
+        document.getElementById('es-quiz-step-indicator').innerText = 'Question 2 of 3';
+        document.getElementById('es-quiz-question').innerText = 'Where is your home water source located?';
+        document.getElementById('es-quiz-options').innerHTML = `
+          <button type="button" onclick="nextQuizStep('${routineName}', '${reason}')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Greater Cairo &amp; Giza (Chlorinated River Water)</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+          <button type="button" onclick="nextQuizStep('${routineName}', '${reason}')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Alexandria &amp; North Coast (Salt air + hard water)</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+          <button type="button" onclick="nextQuizStep('${routineName}', '${reason}')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Red Sea / Sinai (Desalinated mineral water)</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">chevron_right</span>
+          </button>
+        `;
+      } else if (currentQuizStep === 3) {
+        document.getElementById('es-quiz-step-indicator').innerText = 'Question 3 of 3';
+        document.getElementById('es-quiz-question').innerText = 'What is your hair density and texture?';
+        document.getElementById('es-quiz-options').innerHTML = `
+          <button type="button" onclick="finishQuiz('${routineName}')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Fine or thinning (Needs weightless lift)</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">check_circle</span>
+          </button>
+          <button type="button" onclick="finishQuiz('${routineName}')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Medium / Wavy (Balanced hydration)</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">check_circle</span>
+          </button>
+          <button type="button" onclick="finishQuiz('${routineName}')" class="w-full text-left p-3.5 rounded-xl border border-outline-variant hover:border-primary hover:bg-surface-container transition-all flex items-center justify-between">
+            <span>Thick, Coarse or Afro-texture (Needs deep lipid seal)</span>
+            <span class="material-symbols-outlined text-text-muted text-[20px]">check_circle</span>
+          </button>
+        `;
+      }
+    }
+
+    function finishQuiz(routineName) {
+      document.getElementById('es-quiz-content').classList.add('hidden');
+      document.getElementById('es-quiz-result').classList.remove('hidden');
+      document.getElementById('es-quiz-result-title').innerText = routineName + ' Routine';
+    }
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "ES Hair Diagnosis Quiz",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_icon",
+      "label": "Badge Icon",
+      "default": "psychology_alt"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Italian Salon Diagnosis"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Not sure what your hair needs?"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Take our 60-second hair quiz for a customized Italian salon routine tailored to your water type (Cairo, Alexandria, Giza), styling habits, and hair porosity."
+    },
+    {
+      "type": "text",
+      "id": "step1_label",
+      "label": "Step 1 Label",
+      "default": "Step 1"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Step 1 Title",
+      "default": "Hair Density"
+    },
+    {
+      "type": "text",
+      "id": "step2_label",
+      "label": "Step 2 Label",
+      "default": "Step 2"
+    },
+    {
+      "type": "text",
+      "id": "step2_title",
+      "label": "Step 2 Title",
+      "default": "Chemical State"
+    },
+    {
+      "type": "text",
+      "id": "step3_label",
+      "label": "Step 3 Label",
+      "default": "Step 3"
+    },
+    {
+      "type": "text",
+      "id": "step3_title",
+      "label": "Step 3 Title",
+      "default": "Egypt Hard Water"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Start Hair Quiz"
+    },
+    {
+      "type": "url",
+      "id": "quiz_link",
+      "label": "Direct Quiz URL (Leave empty for on-page modal)"
+    },
+    {
+      "type": "text",
+      "id": "graphic_title",
+      "label": "Graphic Badge Title",
+      "default": "Custom Formula"
+    },
+    {
+      "type": "text",
+      "id": "graphic_subtitle",
+      "label": "Graphic Badge Subtitle",
+      "default": "In 60 Seconds"
+    }
+  ],
+  "presets": [
+    {
+      "name": "ES Hair Diagnosis Quiz"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,322 @@
+<section class="w-full py-space-3xl bg-surface-cream" id="es-milkshake-travel-minis-{{ section.id }}">
+  <div class="max-w-[1440px] mx-auto px-margin">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-space-2xl">
+      <div>
+        {% if section.settings.subtitle != blank %}
+          <span class="font-label-sm text-label-sm uppercase tracking-widest text-text-muted mb-space-xs block">
+            {{ section.settings.subtitle }}
+          </span>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="font-headline-xl text-headline-xl text-primary">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+      </div>
+      {% if section.settings.description != blank %}
+        <span class="font-body-sm text-body-sm text-text-muted mt-space-sm sm:mt-0">
+          {{ section.settings.description }}
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm" {{ block.shopify_attributes }}>
+            <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+              {% if block.settings.badge_text != blank %}
+                <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider z-10">
+                  {{ block.settings.badge_text }}
+                </span>
+              {% endif %}
+              {% if block.settings.image != blank %}
+                <img class="w-full h-full object-cover {% if block.settings.is_sold_out %}grayscale-[30%]{% endif %}" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
+              {% elsif block.settings.image_url != blank %}
+                <img class="w-full h-full object-cover {% if block.settings.is_sold_out %}grayscale-[30%]{% endif %}" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
+              {% else %}
+                <div class="w-full h-full flex items-center justify-center text-text-muted">No Image</div>
+              {% endif %}
+            </div>
+
+            {% if block.settings.category != blank %}
+              <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
+                {{ block.settings.category }}
+              </span>
+            {% endif %}
+
+            <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs">
+              {{ block.settings.title }}
+            </h3>
+
+            <div class="mt-auto pt-space-md flex items-center justify-between">
+              <div>
+                <span class="font-price-sale text-price-sale text-primary">
+                  {{ block.settings.price }}
+                </span>
+                {% if block.settings.compare_price != blank %}
+                  <span class="font-price-regular text-price-regular line-through text-text-muted ml-2">
+                    {{ block.settings.compare_price }}
+                  </span>
+                {% endif %}
+              </div>
+              {% if block.settings.is_sold_out %}
+                <button type="button" onclick="openNotifyModal('{{ block.settings.title | escape }}')" class="h-10 px-space-md rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase transition-colors">
+                  {{ block.settings.button_text | default: 'Notify Me' }}
+                </button>
+              {% else %}
+                <button type="button" class="h-10 px-space-md rounded-full bg-primary text-on-primary hover:bg-neutral-800 font-label-sm text-label-sm uppercase transition-colors">
+                  Add To Bag
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Fallback 1: Moisture & More Mini -->
+        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
+          <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
+              Sold Out
+            </span>
+            <img class="w-full h-full object-cover grayscale-[30%]" alt="milk_shake moisture and more mini set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtSdhgQ2SWVg21XDwG5AUU2L-BFAdEdpxVYetX0S8HhY_NHSvBulhzDVnQN3Uc23KW_zOrTvNVtMBjJcFYq5RuLMLc0ZEad_8-0o9FXGUepIV4NSDyvVYOonAPoNkuMFrQEBDgaVHTkL5_coC23LEglCrySXvL7kRxGdQ82eD10A2uWnBEXA4xm_cy1i3ZIAA1BtyhkUVukvMkVGUqAgk02vdq9CU_SO9HWdDSSDCEBJJiHpDEeLA" loading="lazy"/>
+          </div>
+          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
+            milk_shake® Travel
+          </span>
+          <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs">
+            moisture &amp; more mini + Travel Pouch Free
+          </h3>
+          <div class="mt-auto pt-space-md flex items-center justify-between">
+            <div>
+              <span class="font-price-sale text-price-sale text-primary">LE 1,050.00</span>
+              <span class="font-price-regular text-price-regular line-through text-text-muted ml-2">LE 1,500.00</span>
+            </div>
+            <button type="button" onclick="openNotifyModal('moisture & more mini + Travel Pouch Free')" class="h-10 px-space-md rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase transition-colors">
+              Notify Me
+            </button>
+          </div>
+        </div>
+
+        <!-- Fallback 2: Make My Day Mini -->
+        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
+          <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
+              Sold Out
+            </span>
+            <img class="w-full h-full object-cover grayscale-[30%]" alt="milk_shake make my day mini bundle set" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuCz8iktVEBMRS--vBf2EUmZm8rypuDu3B1r0cOoZNX-UXCXRwrIOW5GRsxtrVI1hEh2BkyufGZiBDtyIIMcFGHA-8ZNmQlHUAs3HXfQl2XObu9QG2Bnnc9fqBJ9OccH5XbPVm9ArU8vg_7lBeZPnTBzZNyRGlH7D7-TkuGt_LsJfz23BC_GhT-yDyblbkpv1FyOfJTEqVzLcea1KczPWn3k9g0x47DMfs7WUNNdaeSaVIrK2AY9A" loading="lazy"/>
+          </div>
+          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
+            milk_shake® Travel
+          </span>
+          <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs">
+            make my day mini + Travel Pouch Free
+          </h3>
+          <div class="mt-auto pt-space-md flex items-center justify-between">
+            <div>
+              <span class="font-price-sale text-price-sale text-primary">LE 1,050.00</span>
+              <span class="font-price-regular text-price-regular line-through text-text-muted ml-2">LE 1,500.00</span>
+            </div>
+            <button type="button" onclick="openNotifyModal('make my day mini + Travel Pouch Free')" class="h-10 px-space-md rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase transition-colors">
+              Notify Me
+            </button>
+          </div>
+        </div>
+
+        <!-- Fallback 3: Silver Shine Mini -->
+        <div class="flex flex-col rounded-xl bg-surface-container-lowest p-space-md shadow-sm">
+          <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-surface-container mb-space-md">
+            <span class="absolute top-3 left-3 px-space-sm py-0.5 rounded-full bg-badge-soldout text-on-primary font-label-sm text-label-sm uppercase tracking-wider">
+              Sold Out
+            </span>
+            <img class="w-full h-full object-cover grayscale-[30%]" alt="milk_shake silver shine travel mini bottles" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBq9DcmQDprQEGouvSyIpis-9SwEuP5JpvVDmKBEAL_ctb_FU572c8EWUb9UMaupF9z6gqUyrgsVPlN02QxTQE-O9iuBGhWpa37QDPwSz9tTAs-fgtUXiV98TLw47CpjbeYScUeyTIZ3fMz8D4T-npKkEoxqA5O43J6MxJiF7C7iuKMErK0RyhaYFs-jAwhfweRCL_o1F0Q7N1yAprLdTrW8aohYyyAjSv1PMy6TQt4IPXixd3PfTw" loading="lazy"/>
+          </div>
+          <span class="font-label-sm text-label-sm uppercase tracking-wider text-text-muted mb-1">
+            milk_shake® Travel
+          </span>
+          <h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs">
+            silver shine mini + Travel Pouch Free
+          </h3>
+          <div class="mt-auto pt-space-md flex items-center justify-between">
+            <div>
+              <span class="font-price-sale text-price-sale text-primary">LE 1,050.00</span>
+              <span class="font-price-regular text-price-regular line-through text-text-muted ml-2">LE 1,500.00</span>
+            </div>
+            <button type="button" onclick="openNotifyModal('silver shine mini + Travel Pouch Free')" class="h-10 px-space-md rounded-full bg-surface-container-high hover:bg-surface-container-highest text-primary font-label-sm text-label-sm uppercase transition-colors">
+              Notify Me
+            </button>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Restock Notification Modal -->
+  <div id="es-notify-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-surface rounded-2xl max-w-md w-full p-6 sm:p-8 text-primary shadow-2xl relative">
+      <button type="button" onclick="document.getElementById('es-notify-modal').classList.add('hidden')" class="absolute top-4 right-4 text-text-muted hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary mb-4">
+        <span class="material-symbols-outlined text-[24px]">notifications_active</span>
+      </div>
+      <h3 class="font-headline-sm text-headline-sm mb-1">Get Notified on Restock</h3>
+      <p id="es-notify-product-name" class="font-body-sm text-body-sm text-text-muted mb-4"></p>
+      <div id="es-notify-form-wrap">
+        <form onsubmit="handleNotifySubmit(event)" class="space-y-3">
+          <input type="email" required placeholder="Enter your email address" class="w-full h-11 px-4 rounded-xl border border-outline-variant bg-surface-container focus:outline-none focus:border-primary text-sm font-body-sm" />
+          <button type="submit" class="w-full h-11 rounded-full bg-primary text-on-primary font-label-md uppercase tracking-wider hover:bg-neutral-800 transition-colors">
+            Notify When Available
+          </button>
+        </form>
+      </div>
+      <div id="es-notify-success" class="hidden text-center py-4">
+        <span class="material-symbols-outlined text-green-600 text-[36px] mb-2">check_circle</span>
+        <p class="font-body-sm text-body-sm text-on-surface">Thank you! We will email you the moment stock arrives in Egypt.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openNotifyModal(productName) {
+      document.getElementById('es-notify-product-name').innerText = productName;
+      document.getElementById('es-notify-form-wrap').classList.remove('hidden');
+      document.getElementById('es-notify-success').classList.add('hidden');
+      document.getElementById('es-notify-modal').classList.remove('hidden');
+    }
+    function handleNotifySubmit(e) {
+      e.preventDefault();
+      document.getElementById('es-notify-form-wrap').classList.add('hidden');
+      document.getElementById('es-notify-success').classList.remove('hidden');
+    }
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "ES Travel Minis",
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Flight Ready"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Traveling? Minis on the Go"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description Note",
+      "default": "TSA-approved salon formulas + complimentary Italian travel pouch"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mini_item",
+      "name": "Travel Mini Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge Text",
+          "default": "Sold Out"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category Subtitle",
+          "default": "milk_shake® Travel"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "moisture & more mini + Travel Pouch Free"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Sale Price",
+          "default": "LE 1,050.00"
+        },
+        {
+          "type": "text",
+          "id": "compare_price",
+          "label": "Regular Price",
+          "default": "LE 1,500.00"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_sold_out",
+          "label": "Is Sold Out",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "Notify Me"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ES Travel Minis",
+      "blocks": [
+        {
+          "type": "mini_item",
+          "settings": {
+            "badge_text": "Sold Out",
+            "image_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuDtSdhgQ2SWVg21XDwG5AUU2L-BFAdEdpxVYetX0S8HhY_NHSvBulhzDVnQN3Uc23KW_zOrTvNVtMBjJcFYq5RuLMLc0ZEad_8-0o9FXGUepIV4NSDyvVYOonAPoNkuMFrQEBDgaVHTkL5_coC23LEglCrySXvL7kRxGdQ82eD10A2uWnBEXA4xm_cy1i3ZIAA1BtyhkUVukvMkVGUqAgk02vdq9CU_SO9HWdDSSDCEBJJiHpDEeLA",
+            "category": "milk_shake® Travel",
+            "title": "moisture & more mini + Travel Pouch Free",
+            "price": "LE 1,050.00",
+            "compare_price": "LE 1,500.00",
+            "is_sold_out": true
+          }
+        },
+        {
+          "type": "mini_item",
+          "settings": {
+            "badge_text": "Sold Out",
+            "image_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuDuCz8iktVEBMRS--vBf2EUmZm8rypuDu3B1r0cOoZNX-UXCXRwrIOW5GRsxtrVI1hEh2BkyufGZiBDtyIIMcFGHA-8ZNmQlHUAs3HXfQl2XObu9QG2Bnnc9fqBJ9OccH5XbPVm9ArU8vg_7lBeZPnTBzZNyRGlH7D7-TkuGt_LsJfz23BC_GhT-yDyblbkpv1FyOfJTEqVzLcea1KczPWn3k9g0x47DMfs7WUNNdaeSaVIrK2AY9A",
+            "category": "milk_shake® Travel",
+            "title": "make my day mini + Travel Pouch Free",
+            "price": "LE 1,050.00",
+            "compare_price": "LE 1,500.00",
+            "is_sold_out": true
+          }
+        },
+        {
+          "type": "mini_item",
+          "settings": {
+            "badge_text": "Sold Out",
+            "image_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuBq9DcmQDprQEGouvSyIpis-9SwEuP5JpvVDmKBEAL_ctb_FU572c8EWUb9UMaupF9z6gqUyrgsVPlN02QxTQE-O9iuBGhWpa37QDPwSz9tTAs-fgtUXiV98TLw47CpjbeYScUeyTIZ3fMz8D4T-npKkEoxqA5O43J6MxJiF7C7iuKMErK0RyhaYFs-jAwhfweRCL_o1F0Q7N1yAprLdTrW8aohYyyAjSv1PMy6TQt4IPXixd3PfTw",
+            "category": "milk_shake® Travel",
+            "title": "silver shine mini + Travel Pouch Free",
+            "price": "LE 1,050.00",
+            "compare_price": "LE 1,500.00",
+            "is_sold_out": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

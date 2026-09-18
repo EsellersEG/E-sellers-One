@@ -1,0 +1,72 @@
+/* 
+  E-sellers One - Milkshake Luxury Italian Salon Design System Assets
+  Preserves exact 16px rem scaling, Bodoni Moda display typography, 
+  Plus Jakarta Sans UI typography, and modal/toast helpers.
+*/
+
+html {
+  font-size: 16px !important;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #1c1c19;
+  background-color: #fcf9f4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-headline,
+.font-headline-xl,
+.font-headline-lg,
+.font-headline-md,
+.font-display-hero,
+.font-display-hero-mobile {
+  font-family: 'Bodoni Moda', serif !important;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide scrollbars where requested */
+.no-scrollbar::-webkit-scrollbar,
+::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Modal and Interactive transitions */
+.modal-open {
+  overflow: hidden;
+}
+
+.fade-in {
+  animation: esFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes esFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,135 @@
+<section class="mt-space-2xl max-w-[1440px] mx-auto px-margin">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md p-space-lg rounded-xl bg-surface-container-lowest shadow-sm border border-border-subtle/50">
+    {%- if section.blocks.size > 0 -%}
+      {%- for block in section.blocks -%}
+        <div class="flex items-center gap-space-md" {{ block.shopify_attributes }}>
+          <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-primary text-[24px]">
+              {{ block.settings.icon | default: 'verified' }}
+            </span>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-label-lg text-label-lg text-primary uppercase">
+              {{ block.settings.title }}
+            </span>
+            <span class="font-body-sm text-body-sm text-text-muted">
+              {{ block.settings.subtitle }}
+            </span>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      <!-- Default Badges Fallback -->
+      <div class="flex items-center gap-space-md">
+        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary text-[24px]">verified</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-label-lg text-label-lg text-primary uppercase">100% Authentic</span>
+          <span class="font-body-sm text-body-sm text-text-muted">Imported from Varese, Italy</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-space-md">
+        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary text-[24px]">local_shipping</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-label-lg text-label-lg text-primary uppercase">Fast Express Egypt</span>
+          <span class="font-body-sm text-body-sm text-text-muted">2-4 Days nationwide dispatch</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-space-md">
+        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary text-[24px]">redeem</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-label-lg text-label-lg text-primary uppercase">Free Delivery</span>
+          <span class="font-body-sm text-body-sm text-text-muted">On all orders above 2,499 EGP</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-space-md">
+        <div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary text-[24px]">payments</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-label-lg text-label-lg text-primary uppercase">Flexible Payment</span>
+          <span class="font-body-sm text-body-sm text-text-muted">Cash on Delivery &amp; valU installments</span>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Milkshake Trust Badges",
+  "tag": "section",
+  "class": "es-milkshake-trust-badges-wrapper",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Trust Badge",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Material Symbol Icon Name",
+          "default": "verified"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Badge Title",
+          "default": "100% Authentic"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Badge Subtitle",
+          "default": "Imported from Varese, Italy"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Milkshake Trust Badges",
+      "blocks": [
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "verified",
+            "title": "100% Authentic",
+            "subtitle": "Imported from Varese, Italy"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "local_shipping",
+            "title": "Fast Express Egypt",
+            "subtitle": "2-4 Days nationwide dispatch"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "redeem",
+            "title": "Free Delivery",
+            "subtitle": "On all orders above 2,499 EGP"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "payments",
+            "title": "Flexible Payment",
+            "subtitle": "Cash on Delivery & valU installments"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

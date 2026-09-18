@@ -1,46 +1,66 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
-    "hero_slideshow": {
-      "type": "es-slideshow",
-      "blocks": {
-        "slide_1": {
-          "type": "image",
-          "settings": {
-            "subheading": "New season",
-            "title": "Your headline here",
-            "button_text": "Shop all",
-            "button_link": "/collections/all"
-          }
-        }
-      },
-      "block_order": ["slide_1"],
+    "es_milkshake_topbar": {
+      "type": "es-milkshake-topbar",
       "settings": {}
     },
-    "featured_collection": {
-      "type": "es-featured-collection",
+    "es_milkshake_header": {
+      "type": "es-milkshake-header",
       "settings": {}
     },
-    "rich_text": {
-      "type": "es-rich-text",
-      "blocks": {
-        "heading": { "type": "heading", "settings": { "text": "Tell your story" } },
-        "text": {
-          "type": "richtext",
-          "settings": { "content": "<p>Share what makes your store different.</p>" }
-        }
-      },
-      "block_order": ["heading", "text"],
+    "es_milkshake_hero": {
+      "type": "es-milkshake-hero",
+      "settings": {}
+    },
+    "es_milkshake_trust_badges": {
+      "type": "es-milkshake-trust-badges",
+      "settings": {}
+    },
+    "es_milkshake_hair_concerns": {
+      "type": "es-milkshake-hair-concerns",
+      "settings": {}
+    },
+    "es_milkshake_trending": {
+      "type": "es-milkshake-trending",
+      "settings": {}
+    },
+    "es_milkshake_travel_promo": {
+      "type": "es-milkshake-travel-promo",
+      "settings": {}
+    },
+    "es_milkshake_bundles": {
+      "type": "es-milkshake-bundles",
+      "settings": {}
+    },
+    "es_milkshake_hair_quiz": {
+      "type": "es-milkshake-hair-quiz",
+      "settings": {}
+    },
+    "es_milkshake_travel_minis": {
+      "type": "es-milkshake-travel-minis",
+      "settings": {}
+    },
+    "es_milkshake_social_proof": {
+      "type": "es-milkshake-social-proof",
+      "settings": {}
+    },
+    "es_milkshake_footer": {
+      "type": "es-milkshake-footer",
       "settings": {}
     }
   },
-  "order": ["hero_slideshow", "featured_collection", "rich_text"]
+  "order": [
+    "es_milkshake_topbar",
+    "es_milkshake_header",
+    "es_milkshake_hero",
+    "es_milkshake_trust_badges",
+    "es_milkshake_hair_concerns",
+    "es_milkshake_trending",
+    "es_milkshake_travel_promo",
+    "es_milkshake_bundles",
+    "es_milkshake_hair_quiz",
+    "es_milkshake_travel_minis",
+    "es_milkshake_social_proof",
+    "es_milkshake_footer"
+  ]
 }

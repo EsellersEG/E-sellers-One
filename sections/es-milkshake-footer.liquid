@@ -1,0 +1,267 @@
+<footer class="w-full bg-surface-container pt-space-3xl pb-space-2xl" id="es-milkshake-footer-{{ section.id }}">
+  <div class="max-w-[1440px] mx-auto px-margin">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl mb-space-3xl">
+      <!-- Brand & Bio -->
+      <div class="lg:col-span-2 flex flex-col gap-space-md pr-space-lg">
+        <div class="flex items-center gap-space-sm">
+          <span class="font-headline-lg text-headline-lg uppercase text-primary font-bold tracking-tight">
+            {{ section.settings.brand_name | default: 'milk_shake' }}
+          </span>
+          {% if section.settings.region_tag != blank %}
+            <span class="font-label-sm text-label-sm uppercase bg-surface-container-high px-space-xs py-0.5 rounded text-on-surface">
+              {{ section.settings.region_tag }}
+            </span>
+          {% endif %}
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          {{ section.settings.brand_desc | default: 'Discover salon-grade Italian haircare formulated with milk proteins and organic fruit extracts. Designed for tailored salon performance and daily sensory indulgence across Egypt.' }}
+        </p>
+        <div class="flex items-center gap-space-sm mt-space-sm">
+          {% if section.settings.social_instagram != blank %}
+            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="{{ section.settings.social_instagram }}" aria-label="Instagram">
+              <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+            </a>
+          {% else %}
+            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="#" aria-label="Instagram">
+              <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+            </a>
+          {% endif %}
+          {% if section.settings.social_tiktok != blank %}
+            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="{{ section.settings.social_tiktok }}" aria-label="TikTok">
+              <span class="material-symbols-outlined text-[20px]">videocam</span>
+            </a>
+          {% else %}
+            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="#" aria-label="TikTok">
+              <span class="material-symbols-outlined text-[20px]">videocam</span>
+            </a>
+          {% endif %}
+          {% if section.settings.social_web != blank %}
+            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="{{ section.settings.social_web }}" aria-label="Official Global Atelier">
+              <span class="material-symbols-outlined text-[20px]">public</span>
+            </a>
+          {% else %}
+            <a class="w-10 h-10 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface hover:bg-primary hover:text-on-primary transition-all shadow-sm" href="#" aria-label="Official Global Atelier">
+              <span class="material-symbols-outlined text-[20px]">public</span>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Client Care Links -->
+      <div class="flex flex-col gap-space-sm">
+        <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface mb-space-xs font-semibold">
+          {{ section.settings.col1_heading | default: 'Client Care' }}
+        </span>
+        {% if section.settings.menu_client_care != blank %}
+          {% for link in linklists[section.settings.menu_client_care].links %}
+            <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ link.url }}">
+              {{ link.title }}
+            </a>
+          {% endfor %}
+        {% else %}
+          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Order Tracking</a>
+          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Delivery &amp; Returns</a>
+          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Hair Consultation</a>
+          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">Authenticity Guarantee</a>
+          <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">FAQ</a>
+        {% endif %}
+      </div>
+
+      <!-- Boutique & Salon Contact -->
+      <div class="flex flex-col gap-space-sm">
+        <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface mb-space-xs font-semibold">
+          {{ section.settings.col2_heading | default: 'Boutique & Salon' }}
+        </span>
+        <div class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          <p class="font-medium text-on-surface">Flagship Boutique:</p>
+          <p>{{ section.settings.boutique_address | default: '306 Port Said St, Cleopatra,<br/>Alexandria, Egypt' }}</p>
+        </div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs leading-relaxed">
+          <p class="font-medium text-on-surface">Support Hotline:</p>
+          <a href="tel:{{ section.settings.phone_number | default: '+20035468900' }}" class="hover:text-primary transition-colors">
+            {{ section.settings.phone_label | default: '+20 (0)3 546 8900' }}
+          </a>
+        </div>
+        <div class="font-body-sm text-body-sm text-on-surface-variant">
+          <a href="mailto:{{ section.settings.email_address | default: 'care@milkshakehaireg.com' }}" class="hover:text-primary transition-colors">
+            {{ section.settings.email_address | default: 'care@milkshakehaireg.com' }}
+          </a>
+        </div>
+      </div>
+
+      <!-- Salon Gazette Newsletter -->
+      <div class="flex flex-col gap-space-md">
+        <span class="font-label-lg text-label-lg uppercase tracking-wider text-on-surface font-semibold">
+          {{ section.settings.newsletter_heading | default: 'Salon Gazette' }}
+        </span>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">
+          {{ section.settings.newsletter_text | default: 'Receive exclusive Egyptian beauty privileges, masterclass invites, and seasonal gifting.' }}
+        </p>
+        {% form 'customer', class: 'flex flex-col gap-space-xs' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <div class="relative">
+            <input 
+              class="w-full bg-surface-container-lowest text-on-surface rounded-full pl-space-md pr-12 py-space-sm font-body-sm text-body-sm border border-outline-variant/30 focus:outline-none focus:border-primary transition-colors" 
+              placeholder="Your email address" 
+              type="email"
+              name="contact[email]"
+              required
+              aria-label="Email address"
+            />
+            <button class="absolute right-1 top-1 bottom-1 px-space-sm bg-primary text-on-primary rounded-full hover:bg-neutral-800 transition-colors flex items-center justify-center" type="submit" aria-label="Subscribe">
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+          </div>
+          {% if form.posted_successfully? %}
+            <span class="font-label-sm text-label-sm text-primary font-medium">Thank you for subscribing to Salon Gazette!</span>
+          {% else %}
+            <span class="font-label-sm text-label-sm text-text-muted">
+              {{ section.settings.newsletter_footnote | default: 'Complimentary gift with your first order.' }}
+            </span>
+          {% endif %}
+        {% endform %}
+      </div>
+    </div>
+
+    <!-- Bottom Bar: Payments & Copyright -->
+    <div class="pt-space-xl border-t border-outline-variant/20 flex flex-col md:flex-row items-center justify-between gap-space-md">
+      <div class="flex flex-wrap items-center gap-space-sm sm:gap-space-md font-label-sm text-label-sm uppercase tracking-wider text-text-muted">
+        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Visa</span>
+        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Mastercard</span>
+        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Meeza ميزة</span>
+        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">valU</span>
+        <span class="px-space-sm py-1 bg-surface-container-high rounded text-on-surface font-semibold text-xs">Cash on Delivery</span>
+      </div>
+      <p class="font-body-sm text-body-sm text-text-muted text-center md:text-right">
+        &copy; {{ 'now' | date: '%Y' }} {{ section.settings.copyright_text | default: 'milk_shake hair Egypt (milkshakehaireg.com). All rights reserved.' }}
+      </p>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "MS - Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand Name",
+      "default": "milk_shake"
+    },
+    {
+      "type": "text",
+      "id": "region_tag",
+      "label": "Region Tag",
+      "default": "Egypt"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_desc",
+      "label": "Brand Description",
+      "default": "Discover salon-grade Italian haircare formulated with milk proteins and organic fruit extracts. Designed for tailored salon performance and daily sensory indulgence across Egypt."
+    },
+    {
+      "type": "url",
+      "id": "social_instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "social_tiktok",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "url",
+      "id": "social_web",
+      "label": "Website URL"
+    },
+    {
+      "type": "header",
+      "content": "Client Care Column"
+    },
+    {
+      "type": "text",
+      "id": "col1_heading",
+      "label": "Column 1 Heading",
+      "default": "Client Care"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_client_care",
+      "label": "Client Care Menu"
+    },
+    {
+      "type": "header",
+      "content": "Boutique & Salon Column"
+    },
+    {
+      "type": "text",
+      "id": "col2_heading",
+      "label": "Column 2 Heading",
+      "default": "Boutique & Salon"
+    },
+    {
+      "type": "textarea",
+      "id": "boutique_address",
+      "label": "Boutique Address",
+      "default": "306 Port Said St, Cleopatra,<br/>Alexandria, Egypt"
+    },
+    {
+      "type": "text",
+      "id": "phone_label",
+      "label": "Phone Display Label",
+      "default": "+20 (0)3 546 8900"
+    },
+    {
+      "type": "text",
+      "id": "phone_number",
+      "label": "Phone Tel Link",
+      "default": "+20035468900"
+    },
+    {
+      "type": "text",
+      "id": "email_address",
+      "label": "Email Address",
+      "default": "care@milkshakehaireg.com"
+    },
+    {
+      "type": "header",
+      "content": "Salon Gazette (Newsletter)"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter Heading",
+      "default": "Salon Gazette"
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter Text",
+      "default": "Receive exclusive Egyptian beauty privileges, masterclass invites, and seasonal gifting."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_footnote",
+      "label": "Newsletter Footnote",
+      "default": "Complimentary gift with your first order."
+    },
+    {
+      "type": "header",
+      "content": "Bottom Bar"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Copyright Text",
+      "default": "milk_shake hair Egypt (milkshakehaireg.com). All rights reserved."
+    }
+  ],
+  "presets": [
+    {
+      "name": "MS - Footer"
+    }
+  ]
+}
+{% endschema %}

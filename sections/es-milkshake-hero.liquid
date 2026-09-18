@@ -1,0 +1,203 @@
+<section class="relative w-full overflow-hidden bg-surface-cream pb-space-3xl pt-space-xl">
+  <div class="max-w-[1440px] mx-auto px-margin">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+      <!-- Left Editorial Column -->
+      <div class="lg:col-span-6 flex flex-col z-10">
+        {%- if section.settings.badge_text != blank -%}
+          <div class="inline-flex items-center gap-space-xs self-start px-space-md py-space-xs rounded-full bg-pastel-make-my-day/60 text-primary mb-space-md">
+            <span class="material-symbols-outlined text-[16px] text-secondary">{{ section.settings.badge_icon | default: 'eco' }}</span>
+            <span class="font-label-sm text-label-sm tracking-widest uppercase">{{ section.settings.badge_text }}</span>
+          </div>
+        {%- endif -%}
+
+        <h1 class="font-display-hero text-display-hero tracking-tight text-primary uppercase mb-space-md leading-[1.08]">
+          {{ section.settings.heading_line_1 | default: 'The Sweetness of Nature' }}
+          <span class="italic font-normal block lowercase text-outline">{{ section.settings.heading_line_2 | default: 'for your hair.' }}</span>
+        </h1>
+
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-space-xl">
+          {{ section.settings.subheading | default: 'Professional Italian Salon Care Delivered Across Egypt. Enriched with bio-organic milk proteins, active fruit extracts, and iconic gourmand fragrances formulated to master Egyptian humidity and water textures.' }}
+        </p>
+
+        <div class="flex flex-wrap items-center gap-space-md mb-space-xl">
+          {%- if section.settings.button_1_label != blank -%}
+            <a
+              class="h-14 px-space-xl rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase flex items-center justify-center hover:bg-neutral-800 transition-all shadow-md"
+              href="{{ section.settings.button_1_link | default: '#bestsellers' }}"
+            >
+              {{ section.settings.button_1_label }}
+            </a>
+          {%- endif -%}
+
+          {%- if section.settings.button_2_label != blank -%}
+            <a
+              class="h-14 px-space-xl rounded-full bg-transparent text-primary font-label-lg text-label-lg tracking-wider uppercase flex items-center justify-center hover:bg-surface-container-high transition-all shadow-sm"
+              href="{{ section.settings.button_2_link | default: '#hair-quiz' }}"
+            >
+              {{ section.settings.button_2_label }}
+            </a>
+          {%- endif -%}
+        </div>
+
+        <!-- Micro Metas -->
+        <div class="flex items-center gap-space-lg pt-space-md">
+          <div class="flex items-center gap-space-xs">
+            <div class="flex text-[#D4AF37]">
+              {%- for i in (1..5) -%}
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              {%- endfor -%}
+            </div>
+            <span class="font-headline-sm text-headline-sm text-primary">{{ section.settings.rating_score | default: '4.9/5' }}</span>
+          </div>
+          <div class="h-4 w-px bg-surface-container-highest"></div>
+          <span class="font-body-sm text-body-sm text-text-muted">{{ section.settings.rating_subtitle | default: 'Over 14,000+ Salons & Clients across Cairo, Alex & Giza' }}</span>
+        </div>
+      </div>
+
+      <!-- Right Visual Showcase / Asymmetric Composition -->
+      <div class="lg:col-span-6 relative flex items-center justify-center">
+        <div class="relative w-full max-w-[540px] aspect-[4/5] rounded-xl overflow-hidden shadow-xl bg-surface-container-high">
+          {%- if section.settings.hero_image != blank -%}
+            <img
+              class="w-full h-full object-cover"
+              alt="{{ section.settings.hero_image.alt | default: 'milk_shake Hero Showcase' }}"
+              src="{{ section.settings.hero_image | image_url: width: 1080 }}"
+              loading="eager"
+            />
+          {%- else -%}
+            <img
+              class="w-full h-full object-cover"
+              alt="High-end editorial studio product photograph of milk shake Italian haircare line"
+              src="{{ section.settings.hero_image_url | default: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB0epWRVX1rL41yJKkcaaTt6sVXfxOcVVPeXW1ujD1tJYTo3i1I25H_vWC-TlZ714ldZKJQwLEO_Zr0YJs2NTHkfLiHU3MNzLrCHxtpBXhjXQYfUFLSsWPft5u_0bQ8kcTVErZ0FxsHLrtVoOX6aBVshnZZ6Odj2OPetQLmuMxwapo8zvz82o3SDNuLMZAD8AIcueU8SGcEaf4G-Sz0X1DGaiBI8A3DsRvseVhWFwZeCJXLXc6M4ZM' }}"
+              loading="eager"
+            />
+          {%- endif -%}
+
+          <!-- Floating Frosted Glass Tag -->
+          <div class="absolute bottom-6 left-6 right-6 p-space-md rounded-lg bg-surface/90 backdrop-blur-md shadow-md flex items-center justify-between">
+            <div class="flex flex-col">
+              <span class="font-label-sm text-label-sm text-text-muted uppercase">{{ section.settings.floating_subtitle | default: 'Signature Line' }}</span>
+              <span class="font-headline-sm text-headline-sm text-primary">{{ section.settings.floating_title | default: 'Whipped Cream Leave-In' }}</span>
+            </div>
+            <span class="px-space-md py-1 rounded-full bg-pastel-flower-vibes font-label-md text-label-md text-primary">
+              {{ section.settings.floating_badge | default: '12 Benefits' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Decorative Ambient Ring SVG -->
+        <svg class="absolute -top-12 -right-12 w-64 h-64 text-pastel-make-my-day/40 pointer-events-none -z-0" fill="currentColor" viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="80"></circle>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Milkshake Hero",
+  "tag": "section",
+  "class": "es-milkshake-hero-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_icon",
+      "label": "Badge Icon Name",
+      "default": "eco"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Botanical Badge Text",
+      "default": "Pure Italian Salon Botanicals"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_1",
+      "label": "Headline Line 1",
+      "default": "The Sweetness of Nature"
+    },
+    {
+      "type": "text",
+      "id": "heading_line_2",
+      "label": "Headline Line 2 (Italic)",
+      "default": "for your hair."
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Hero Subtitle Description",
+      "default": "Professional Italian Salon Care Delivered Across Egypt. Enriched with bio-organic milk proteins, active fruit extracts, and iconic gourmand fragrances formulated to master Egyptian humidity and water textures."
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Primary Button Label",
+      "default": "Shop Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secondary Button Label",
+      "default": "Find Your Routine"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "rating_score",
+      "label": "Rating Score",
+      "default": "4.9/5"
+    },
+    {
+      "type": "text",
+      "id": "rating_subtitle",
+      "label": "Rating Subtitle",
+      "default": "Over 14,000+ Salons & Clients across Cairo, Alex & Giza"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Custom Hero Showcase Image"
+    },
+    {
+      "type": "text",
+      "id": "hero_image_url",
+      "label": "Hero Image URL (Fallback)",
+      "default": "https://lh3.googleusercontent.com/aida-public/AB6AXuB0epWRVX1rL41yJKkcaaTt6sVXfxOcVVPeXW1ujD1tJYTo3i1I25H_vWC-TlZ714ldZKJQwLEO_Zr0YJs2NTHkfLiHU3MNzLrCHxtpBXhjXQYfUFLSsWPft5u_0bQ8kcTVErZ0FxsHLrtVoOX6aBVshnZZ6Odj2OPetQLmuMxwapo8zvz82o3SDNuLMZAD8AIcueU8SGcEaf4G-Sz0X1DGaiBI8A3DsRvseVhWFwZeCJXLXc6M4ZM"
+    },
+    {
+      "type": "text",
+      "id": "floating_subtitle",
+      "label": "Floating Card Subtitle",
+      "default": "Signature Line"
+    },
+    {
+      "type": "text",
+      "id": "floating_title",
+      "label": "Floating Card Title",
+      "default": "Whipped Cream Leave-In"
+    },
+    {
+      "type": "text",
+      "id": "floating_badge",
+      "label": "Floating Card Badge",
+      "default": "12 Benefits"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Milkshake Hero"
+    }
+  ]
+}
+{% endschema %}

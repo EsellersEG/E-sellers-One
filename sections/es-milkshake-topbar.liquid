@@ -1,0 +1,82 @@
+<div class="bg-primary text-on-primary py-space-xs">
+  <div class="max-w-[1440px] mx-auto px-margin flex items-center justify-between font-label-sm text-label-sm tracking-widest uppercase">
+    <div class="hidden md:flex items-center gap-space-lg text-neutral-300">
+      {%- if section.settings.shipping_text != blank -%}
+        <span>{{ section.settings.shipping_text }}</span>
+      {%- endif -%}
+      {%- if section.settings.delivery_text != blank -%}
+        <span class="opacity-40">•</span>
+        <span>{{ section.settings.delivery_text }}</span>
+      {%- endif -%}
+      {%- if section.settings.chat_text != blank -%}
+        <span class="opacity-40">•</span>
+        <a class="hover:text-on-primary transition-colors" href="{{ section.settings.chat_link | default: '#' }}">
+          {{ section.settings.chat_text }}
+        </a>
+      {%- endif -%}
+    </div>
+    <div class="flex items-center gap-space-md ml-auto">
+      {%- if section.settings.currency_text != blank -%}
+        <button type="button" class="hover:text-neutral-300 transition-colors">
+          {{ section.settings.currency_text }}
+        </button>
+      {%- endif -%}
+      {%- if section.settings.lang_text != blank -%}
+        <span class="opacity-40">|</span>
+        <button type="button" class="hover:text-neutral-300 transition-colors">
+          {{ section.settings.lang_text }}
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Milkshake Topbar",
+  "tag": "section",
+  "class": "es-milkshake-topbar-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "shipping_text",
+      "label": "Shipping announcement",
+      "default": "FREE Shipping above 2499 EGP"
+    },
+    {
+      "type": "text",
+      "id": "delivery_text",
+      "label": "Delivery announcement",
+      "default": "Express Delivery Egypt"
+    },
+    {
+      "type": "text",
+      "id": "chat_text",
+      "label": "Chat link label",
+      "default": "Chat with Specialist"
+    },
+    {
+      "type": "url",
+      "id": "chat_link",
+      "label": "Chat link"
+    },
+    {
+      "type": "text",
+      "id": "currency_text",
+      "label": "Currency label",
+      "default": "EGP (ج.م)"
+    },
+    {
+      "type": "text",
+      "id": "lang_text",
+      "label": "Language label",
+      "default": "العربية"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Milkshake Topbar"
+    }
+  ]
+}
+{% endschema %}

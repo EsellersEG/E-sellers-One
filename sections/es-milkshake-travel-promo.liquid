@@ -1,0 +1,304 @@
+<section class="w-full py-space-3xl bg-surface" id="es-milkshake-travel-promo-{{ section.id }}">
+  <div class="max-w-[1440px] mx-auto px-margin">
+    <div class="relative rounded-xl overflow-hidden bg-surface-container p-space-xl lg:p-space-2xl">
+      <div class="max-w-xl mb-space-2xl">
+        {% if section.settings.badge_text != blank %}
+          <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-badge-sale text-on-error font-label-sm text-label-sm tracking-widest uppercase mb-space-sm">
+            {{ section.settings.badge_text }}
+          </div>
+        {% endif %}
+        {% if section.settings.heading != blank %}
+          <h2 class="font-headline-xl text-headline-xl text-primary mb-space-sm">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <p class="font-body-md text-body-md text-on-surface-variant">
+            {{ section.settings.description }}
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xl">
+        {% if section.blocks.size > 0 %}
+          {% for block in section.blocks %}
+            <div class="flex flex-col sm:flex-row gap-space-lg p-space-lg rounded-lg bg-surface-container-lowest shadow-sm" {{ block.shopify_attributes }}>
+              <div class="w-full sm:w-1/2 aspect-[4/5] rounded {{ block.settings.bg_color_class | default: 'bg-pastel-flower-vibes/30' }} overflow-hidden relative p-4 flex items-center justify-center">
+                {% if block.settings.image != blank %}
+                  <img class="h-full w-auto object-contain" src="{{ block.settings.image | image_url: width: 600 }}" alt="{{ block.settings.image.alt | default: block.settings.title }}" loading="lazy">
+                {% elsif block.settings.image_url != blank %}
+                  <img class="h-full w-auto object-contain" src="{{ block.settings.image_url }}" alt="{{ block.settings.title }}" loading="lazy">
+                {% else %}
+                  <img class="h-full w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_wyg26K3iQXg4163y_DNDnYZAq6OX-H-j7q8RvYI2w_vPnaGhVDzhOsgYEDkiqSZNZa4aw92LXkOCu-K7TGeYJv5ZcWJGt0WdofrJs_zCP_zrEb_HCSNEf1NBc36imb4MAJ_P-g3CWA-sBjcE8FjREhzlvUyKl5HjITzNhNlBoHvicNOykdWB74fxEips8gEBXzBtI2XR6ANeGY-5rbl-hQdDjAgvrHQ0UcZhJ3B7kEsxrwe2UU" alt="{{ block.settings.title }}" loading="lazy">
+                {% endif %}
+                {% if block.settings.edition_tag != blank %}
+                  <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary">
+                    {{ block.settings.edition_tag }}
+                  </span>
+                {% endif %}
+              </div>
+              <div class="w-full sm:w-1/2 flex flex-col justify-between">
+                <div>
+                  {% if block.settings.ritual_subtitle != blank %}
+                    <span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">
+                      {{ block.settings.ritual_subtitle }}
+                    </span>
+                  {% endif %}
+                  <h3 class="font-headline-sm text-headline-sm text-primary mt-1 mb-space-xs">
+                    {{ block.settings.title }}
+                  </h3>
+                  <div class="space-y-space-xs my-space-md">
+                    <div class="flex items-center justify-between p-space-xs bg-surface-container rounded font-body-sm text-body-sm">
+                      <span>{{ block.settings.full_size_title | default: '350 ML / Full Size' }}</span>
+                      <span class="font-semibold">{{ block.settings.full_size_price | default: 'LE 1,150.00' }}</span>
+                    </div>
+                    <div class="flex items-center justify-center text-text-muted">
+                      <span class="material-symbols-outlined text-[18px]">add</span>
+                    </div>
+                    <div class="flex items-center justify-between p-space-xs bg-pastel-flower-vibes/50 text-primary rounded font-body-sm text-body-sm">
+                      <span>{{ block.settings.mini_size_title | default: '75 ML / Mini Size' }}</span>
+                      <span class="font-semibold text-badge-sale">{{ block.settings.mini_size_badge | default: 'FREE (Valued LE 449)' }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-baseline justify-between mb-space-sm">
+                    <span class="font-body-sm text-body-sm text-text-muted">Total Bundle:</span>
+                    <span class="font-headline-sm text-headline-sm text-primary">{{ block.settings.total_price | default: 'LE 1,150.00' }}</span>
+                  </div>
+                  <a href="{{ block.settings.button_link | default: '/collections/all' }}" class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
+                    {{ block.settings.button_text | default: 'Get The Travel Size Free' }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <!-- Offer Card 1: Flower Vibes Fallback -->
+          <div class="flex flex-col sm:flex-row gap-space-lg p-space-lg rounded-lg bg-surface-container-lowest shadow-sm">
+            <div class="w-full sm:w-1/2 aspect-[4/5] rounded bg-pastel-flower-vibes/30 overflow-hidden relative p-4 flex items-center justify-center">
+              <img class="h-full w-auto object-contain" alt="milk_shake leave in conditioner flower 350ml full bottle paired side by side with a 75ml mini travel bottle on delicate pink petals" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0_wyg26K3iQXg4163y_DNDnYZAq6OX-H-j7q8RvYI2w_vPnaGhVDzhOsgYEDkiqSZNZa4aw92LXkOCu-K7TGeYJv5ZcWJGt0WdofrJs_zCP_zrEb_HCSNEf1NBc36imb4MAJ_P-g3CWA-sBjcE8FjREhzlvUyKl5HjITzNhNlBoHvicNOykdWB74fxEips8gEBXzBtI2XR6ANeGY-5rbl-hQdDjAgvrHQ0UcZhJ3B7kEsxrwe2UU" loading="lazy"/>
+              <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary">
+                Flower Edition
+              </span>
+            </div>
+            <div class="w-full sm:w-1/2 flex flex-col justify-between">
+              <div>
+                <span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Leave-in Ritual</span>
+                <h3 class="font-headline-sm text-headline-sm text-primary mt-1 mb-space-xs">milk_shake® leave in conditioner flower</h3>
+                <div class="space-y-space-xs my-space-md">
+                  <div class="flex items-center justify-between p-space-xs bg-surface-container rounded font-body-sm text-body-sm">
+                    <span>350 ML / Full Size</span>
+                    <span class="font-semibold">LE 1,150.00</span>
+                  </div>
+                  <div class="flex items-center justify-center text-text-muted">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                  </div>
+                  <div class="flex items-center justify-between p-space-xs bg-pastel-flower-vibes/50 text-primary rounded font-body-sm text-body-sm">
+                    <span>75 ML / Mini Size</span>
+                    <span class="font-semibold text-badge-sale">FREE (Valued LE 449)</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-baseline justify-between mb-space-sm">
+                  <span class="font-body-sm text-body-sm text-text-muted">Total Bundle:</span>
+                  <span class="font-headline-sm text-headline-sm text-primary">LE 1,150.00</span>
+                </div>
+                <a href="/collections/all" class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
+                  Get The Travel Size Free
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Offer Card 2: Vanilla Original Fallback -->
+          <div class="flex flex-col sm:flex-row gap-space-lg p-space-lg rounded-lg bg-surface-container-lowest shadow-sm">
+            <div class="w-full sm:w-1/2 aspect-[4/5] rounded bg-pastel-make-my-day/30 overflow-hidden relative p-4 flex items-center justify-center">
+              <img class="h-full w-auto object-contain" alt="milk_shake leave in conditioner vanilla 350ml bottle alongside its 75ml travel mini bottle on creamy warm custard background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrEU51I4TF9u_z_pespuakB9y1O_IPof07r9zvBm5eDRo-Red6gNodLu0963l35zbO5JCIZiYAm5RhXlhIZWSQTDDEOC0fQylBJTLGhNd0WaD16-CmO4RVMdNZrXGYKKCSY0nfxkWtPJb0vJVCgD2Ding20uAld7oh3a-O_7PA8yQmM3ohhyUuYi4Wp_8fysD3vit3zPzcUwSXsiZvFyhJSFls6B5mgx9XkY1RBLPcLB-skdlx78s" loading="lazy"/>
+              <span class="absolute top-3 left-3 px-space-xs py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm uppercase text-primary">
+                Vanilla Gourmand
+              </span>
+            </div>
+            <div class="w-full sm:w-1/2 flex flex-col justify-between">
+              <div>
+                <span class="font-label-sm text-label-sm text-text-muted uppercase tracking-wider">Leave-in Ritual</span>
+                <h3 class="font-headline-sm text-headline-sm text-primary mt-1 mb-space-xs">milk_shake® leave in conditioner vanilla</h3>
+                <div class="space-y-space-xs my-space-md">
+                  <div class="flex items-center justify-between p-space-xs bg-surface-container rounded font-body-sm text-body-sm">
+                    <span>350 ML / Full Size</span>
+                    <span class="font-semibold">LE 1,150.00</span>
+                  </div>
+                  <div class="flex items-center justify-center text-text-muted">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                  </div>
+                  <div class="flex items-center justify-between p-space-xs bg-pastel-make-my-day/60 text-primary rounded font-body-sm text-body-sm">
+                    <span>75 ML / Mini Size</span>
+                    <span class="font-semibold text-badge-sale">FREE (Valued LE 449)</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-baseline justify-between mb-space-sm">
+                  <span class="font-body-sm text-body-sm text-text-muted">Total Bundle:</span>
+                  <span class="font-headline-sm text-headline-sm text-primary">LE 1,150.00</span>
+                </div>
+                <a href="/collections/all" class="w-full h-12 rounded-full bg-primary text-on-primary font-label-lg text-label-lg tracking-wider uppercase hover:bg-neutral-800 transition-colors shadow-sm inline-flex items-center justify-center">
+                  Get The Travel Size Free
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ES Travel Size Promo",
+  "settings": [
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Badge Text",
+      "default": "Limited Egyptian Salon Gift"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Buy Full Size, Get Travel Size for Free"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Purchase the 350 ML Leave-In Conditioner in your chosen signature scent at LE 1,150.00 and receive the matching 75 ML travel edition completely complimentary (Free LE 449.00 Value)."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "offer",
+      "name": "Offer Card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "edition_tag",
+          "label": "Edition Tag",
+          "default": "Flower Edition"
+        },
+        {
+          "type": "text",
+          "id": "ritual_subtitle",
+          "label": "Ritual Subtitle",
+          "default": "Leave-in Ritual"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Product Title",
+          "default": "milk_shake® leave in conditioner flower"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product Image"
+        },
+        {
+          "type": "text",
+          "id": "image_url",
+          "label": "Image URL (fallback)"
+        },
+        {
+          "type": "text",
+          "id": "bg_color_class",
+          "label": "Image Background Class",
+          "default": "bg-pastel-flower-vibes/30"
+        },
+        {
+          "type": "text",
+          "id": "full_size_title",
+          "label": "Full Size Title",
+          "default": "350 ML / Full Size"
+        },
+        {
+          "type": "text",
+          "id": "full_size_price",
+          "label": "Full Size Price",
+          "default": "LE 1,150.00"
+        },
+        {
+          "type": "text",
+          "id": "mini_size_title",
+          "label": "Mini Size Title",
+          "default": "75 ML / Mini Size"
+        },
+        {
+          "type": "text",
+          "id": "mini_size_badge",
+          "label": "Mini Size Value Text",
+          "default": "FREE (Valued LE 449)"
+        },
+        {
+          "type": "text",
+          "id": "total_price",
+          "label": "Total Bundle Price",
+          "default": "LE 1,150.00"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Text",
+          "default": "Get The Travel Size Free"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ES Travel Size Promo",
+      "blocks": [
+        {
+          "type": "offer",
+          "settings": {
+            "edition_tag": "Flower Edition",
+            "ritual_subtitle": "Leave-in Ritual",
+            "title": "milk_shake® leave in conditioner flower",
+            "image_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuD0_wyg26K3iQXg4163y_DNDnYZAq6OX-H-j7q8RvYI2w_vPnaGhVDzhOsgYEDkiqSZNZa4aw92LXkOCu-K7TGeYJv5ZcWJGt0WdofrJs_zCP_zrEb_HCSNEf1NBc36imb4MAJ_P-g3CWA-sBjcE8FjREhzlvUyKl5HjITzNhNlBoHvicNOykdWB74fxEips8gEBXzBtI2XR6ANeGY-5rbl-hQdDjAgvrHQ0UcZhJ3B7kEsxrwe2UU",
+            "bg_color_class": "bg-pastel-flower-vibes/30",
+            "full_size_title": "350 ML / Full Size",
+            "full_size_price": "LE 1,150.00",
+            "mini_size_title": "75 ML / Mini Size",
+            "mini_size_badge": "FREE (Valued LE 449)",
+            "total_price": "LE 1,150.00",
+            "button_text": "Get The Travel Size Free"
+          }
+        },
+        {
+          "type": "offer",
+          "settings": {
+            "edition_tag": "Vanilla Gourmand",
+            "ritual_subtitle": "Leave-in Ritual",
+            "title": "milk_shake® leave in conditioner vanilla",
+            "image_url": "https://lh3.googleusercontent.com/aida-public/AB6AXuDrEU51I4TF9u_z_pespuakB9y1O_IPof07r9zvBm5eDRo-Red6gNodLu0963l35zbO5JCIZiYAm5RhXlhIZWSQTDDEOC0fQylBJTLGhNd0WaD16-CmO4RVMdNZrXGYKKCSY0nfxkWtPJb0vJVCgD2Ding20uAld7oh3a-O_7PA8yQmM3ohhyUuYi4Wp_8fysD3vit3zPzcUwSXsiZvFyhJSFls6B5mgx9XkY1RBLPcLB-skdlx78s",
+            "bg_color_class": "bg-pastel-make-my-day/30",
+            "full_size_title": "350 ML / Full Size",
+            "full_size_price": "LE 1,150.00",
+            "mini_size_title": "75 ML / Mini Size",
+            "mini_size_badge": "FREE (Valued LE 449)",
+            "total_price": "LE 1,150.00",
+            "button_text": "Get The Travel Size Free"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
