@@ -1,573 +1,598 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "hero": {
-      "type": "es-ms-hero",
+    "es_slideshow_3inLqE": {
+      "type": "es-slideshow",
+      "blocks": {
+        "image_PXDpAw": {
+          "type": "image",
+          "settings": {
+            "content_max_width": 780,
+            "desktop_text_position": "pos-middle-center",
+            "mobile_text_position": "pos-middle-center",
+            "subheading": "New Season Arrival",
+            "title": "Modern Luxury & Innovation",
+            "heading_tag": "h0",
+            "button_text": "Explore Collection",
+            "button_link": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#0f172a",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        },
+        "image_Gbzkie": {
+          "type": "image",
+          "settings": {
+            "content_max_width": 780,
+            "desktop_text_position": "pos-middle-center",
+            "mobile_text_position": "pos-middle-center",
+            "subheading": "Signature Craftsmanship",
+            "title": "Engineered for Everyday Excellence",
+            "heading_tag": "h0",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "text_color": "#ffffff",
+            "button_background": "#ffffff",
+            "button_text_color": "#0f172a",
+            "overlay_color": "#000000",
+            "overlay_opacity": 30
+          }
+        }
+      },
+      "block_order": [
+        "image_PXDpAw",
+        "image_Gbzkie"
+      ],
+      "name": "Slideshow",
       "settings": {
-        "badge_text": "Direct from Varese, Italy • Certified Salon Grade",
-        "heading": "Salon-Grade Italian Haircare, Tailored for Egyptian Hair",
-        "subheading": "Transform dry, treated or sun-stressed locks with Italy's most celebrated whipped conditioners, silver toning elixirs and moisture infusions tailored for the Egyptian climate.",
-        "text_alignment": "left",
-        "btn_primary_text": "Shop Best Sellers",
-        "btn_primary_url": "/collections/all",
-        "btn_secondary_text": "Take Italian Hair Quiz",
-        "btn_secondary_url": "#hair-quiz",
-        "show_social_proof": true,
-        "social_proof_text": "from 3,200+ verified salons & clients across Cairo & Alexandria",
-        "image_position": "right",
-        "image_ratio": "es-aspect-4-5",
-        "background": "#FAF7F2",
-        "heading_color": "#2B231D",
-        "text_color": "#5C5248",
-        "btn_primary_bg": "#2B231D",
-        "btn_primary_text_color": "#FFFFFF",
-        "btn_primary_hover_bg": "#D48D53",
-        "btn_secondary_bg": "#FFFFFF",
-        "btn_secondary_text_color": "#2B231D",
-        "btn_secondary_border": "#E8DECB",
-        "padding_top": 60,
-        "padding_bottom": 60
+        "full_width": true,
+        "allow_transparent_header": true,
+        "image_size": "auto",
+        "controls_type": "dots",
+        "autoplay": true,
+        "cycle_speed": 6,
+        "background": "#0f172a",
+        "background_gradient": ""
       }
     },
-    "trust_badges": {
+    "es_ms_trust_badges_WmcRha": {
       "type": "es-ms-trust-badges",
+      "blocks": {
+        "trust_item_NxhVjh": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "verified_user",
+            "title": "100% Authentic Italian",
+            "text": "Direct importation from z.one concept laboratory in Varese, Italy.",
+            "link": ""
+          }
+        },
+        "trust_item_Q6xweX": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "verified_user",
+            "title": "100% Authentic Italian",
+            "text": "Direct importation from z.one concept laboratory in Varese, Italy.",
+            "link": ""
+          }
+        },
+        "trust_item_UFHdcL": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "verified_user",
+            "title": "100% Authentic Italian",
+            "text": "Direct importation from z.one concept laboratory in Varese, Italy.",
+            "link": ""
+          }
+        },
+        "trust_item_GjefbE": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "verified_user",
+            "title": "100% Authentic Italian",
+            "text": "Direct importation from z.one concept laboratory in Varese, Italy.",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "trust_item_NxhVjh",
+        "trust_item_Q6xweX",
+        "trust_item_UFHdcL",
+        "trust_item_GjefbE"
+      ],
+      "name": "MS Trust Badges",
       "settings": {
-        "section_heading": "Why Egyptian Salons Trust milk_shake®",
+        "section_heading": "",
         "layout_type": "grid",
+        "show_progress_bar": true,
         "columns_desktop": 4,
         "columns_tablet": 2,
         "columns_mobile": "1",
         "title_max_lines": 1,
         "background": "#FFFFFF",
+        "background_gradient": "",
+        "border_color": "#F0EAE1",
         "card_background": "#FAF7F2",
+        "card_border_color": "#F0EAE1",
+        "heading_color": "#2B231D",
+        "text_color": "#5C5248",
+        "icon_bg": "#FFFFFF",
+        "icon_color": "#D48D53",
         "padding_top": 30,
         "padding_bottom": 30
-      },
+      }
+    },
+    "es_brand_logos_LrwAap": {
+      "type": "es-brand-logos",
       "blocks": {
-        "trust_1": {
-          "type": "trust_item",
+        "logo_kcMwzn": {
+          "type": "logo",
           "settings": {
-            "icon": "verified_user",
-            "title": "100% Authentic Italian Formula",
-            "text": "Imported directly from z.one concept laboratory in Varese, Italy. Guaranteed batch codes."
+            "image_link": ""
           }
         },
-        "trust_2": {
-          "type": "trust_item",
+        "logo_DUKE6D": {
+          "type": "logo",
           "settings": {
-            "icon": "local_shipping",
-            "title": "Cairo & Alex Next-Day Delivery",
-            "text": "Express temperature-controlled dispatch across Greater Cairo, Giza & Alexandria. Sahel express all summer."
+            "image_link": ""
           }
         },
-        "trust_3": {
-          "type": "trust_item",
+        "logo_AbaPUE": {
+          "type": "logo",
           "settings": {
-            "icon": "flight_takeoff",
-            "title": "Sahel & Red Sea Ready Minis",
-            "text": "TSA-approved 50ml & 100ml sizes formulated to counter extreme sun, saltwater, and chlorine."
+            "image_link": ""
           }
         },
-        "trust_4": {
-          "type": "trust_item",
+        "logo_caJ88z": {
+          "type": "logo",
           "settings": {
-            "icon": "chat",
-            "title": "Licensed Trichologist Advice",
-            "text": "Chat directly on WhatsApp with our Cairo-based haircare specialists for personalized routine advice."
+            "image_link": ""
+          }
+        },
+        "logo_axP3hg": {
+          "type": "logo",
+          "settings": {
+            "image_link": ""
           }
         }
       },
-      "block_order": ["trust_1", "trust_2", "trust_3", "trust_4"]
-    },
-    "hair_concerns": {
-      "type": "es-ms-hair-concerns",
+      "block_order": [
+        "logo_kcMwzn",
+        "logo_DUKE6D",
+        "logo_AbaPUE",
+        "logo_caJ88z",
+        "logo_axP3hg"
+      ],
+      "name": "E-sellers Brand Logos",
       "settings": {
-        "subheading": "Italian Salon Solutions",
-        "heading": "Targeted Solutions for Egyptian Hair Needs",
-        "description": "Formulated to counter high humidity, hard Nile water & intense Mediterranean sun.",
-        "layout_type": "grid",
-        "show_progress_bar": true,
+        "subheading": "",
+        "heading": "As seen in",
+        "description": "",
+        "heading_alignment": "center",
+        "button_label": "",
+        "button_link": "",
+        "grid_bordered": false,
         "columns_desktop": 6,
-        "columns_tablet": 3,
-        "columns_mobile": "2",
-        "image_ratio": "es-aspect-circle",
-        "title_max_lines": 1,
-        "background": "#FAF7F2",
-        "card_background": "#FFFFFF",
-        "padding_top": 60,
-        "padding_bottom": 60
-      },
-      "blocks": {
-        "concern_1": {
-          "type": "concern",
-          "settings": {
-            "badge": "Papaya",
-            "title": "Dry & Dehydrated",
-            "subtitle": "Moisture Plus Hyaluronic Acid",
-            "link": "/collections/moisture-plus"
-          }
-        },
-        "concern_2": {
-          "type": "concern",
-          "settings": {
-            "badge": "Integrity 41",
-            "title": "Color & Bleached",
-            "subtitle": "Anti-Fade Sun Protection",
-            "link": "/collections/color-care"
-          }
-        },
-        "concern_3": {
-          "type": "concern",
-          "settings": {
-            "badge": "Violet",
-            "title": "Blondes & Silver",
-            "subtitle": "Silver Shine Anti-Brass",
-            "link": "/collections/silver-shine"
-          }
-        },
-        "concern_4": {
-          "type": "concern",
-          "settings": {
-            "badge": "Anti-Frizz",
-            "title": "Frizzy & Humidity",
-            "subtitle": "K-Respect Smoothing Shield",
-            "link": "/collections/anti-frizz"
-          }
-        },
-        "concern_5": {
-          "type": "concern",
-          "settings": {
-            "badge": "Pracaxi",
-            "title": "Curly & Coily",
-            "subtitle": "Curl Passion Bouncy Definition",
-            "link": "/collections/curl-passion"
-          }
-        },
-        "concern_6": {
-          "type": "concern",
-          "settings": {
-            "badge": "Detox",
-            "title": "Scalp & Hard Water",
-            "subtitle": "Fruit Acid Nile Detox",
-            "link": "/collections/deep-cleansing"
-          }
-        }
-      },
-      "block_order": ["concern_1", "concern_2", "concern_3", "concern_4", "concern_5", "concern_6"]
+        "columns_mobile": 3,
+        "column_gap": 0,
+        "image_width": 120,
+        "image_padding": 24,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
     },
-    "trending": {
+    "es_ms_trending_KCjMm3": {
       "type": "es-ms-trending",
+      "name": "MS Trending Collection",
       "settings": {
+        "collection": "back-in-stock",
+        "products_to_show": 11,
         "subheading": "Back In Stock & Salon Favorites",
         "heading": "Back in Stock & Trending Now",
         "content": "<p>Our most requested Italian salon formulas, freshly restocked from Milan.</p>",
         "link_text": "View All Best Sellers",
-        "link_url": "/collections/all",
-        "layout_type": "grid",
+        "link_url": "",
+        "full_width": true,
+        "layout_type": "carousel",
         "show_progress_bar": true,
-        "columns_desktop": 4,
+        "columns_desktop": 6,
         "columns_tablet": 2,
         "columns_mobile": "1",
-        "image_ratio": "es-aspect-4-5",
+        "image_ratio": "es-aspect-natural",
         "title_max_lines": 2,
         "background": "#FFFFFF",
+        "background_gradient": "",
+        "heading_color": "#2B231D",
+        "heading_gradient": "",
+        "text_color": "#5C5248",
         "card_background": "#FFFFFF",
+        "card_border_color": "#F0EAE1",
+        "card_hover_border": "#D48D53",
+        "card_text_color": "#2B231D",
+        "btn_bg": "#2B231D",
+        "btn_text": "#FFFFFF",
+        "btn_hover_bg": "#D48D53",
         "padding_top": 60,
         "padding_bottom": 60
-      },
+      }
+    },
+    "es_ms_travel_minis_wFAGYf": {
+      "type": "es-ms-travel-minis",
       "blocks": {
-        "trend_1": {
-          "type": "product_card",
+        "mini_item_jFkede": {
+          "type": "mini_item",
           "settings": {
-            "badge": "Top Seller",
-            "title": "Whipped Cream Leave-In Foam (200ml)",
-            "price": "890 EGP",
-            "compare_price": "1,050 EGP",
-            "link": "/products/whipped-cream"
-          }
-        },
-        "trend_2": {
-          "type": "product_card",
-          "settings": {
-            "badge": "Brass Neutralizer",
-            "title": "Silver Shine Purple Shampoo (300ml)",
-            "price": "760 EGP",
-            "compare_price": "900 EGP",
-            "link": "/products/silver-shine-shampoo"
-          }
-        },
-        "trend_3": {
-          "type": "product_card",
-          "settings": {
-            "badge": "Hyaluronic Acid",
-            "title": "Moisture Plus Hydrating Shampoo (300ml)",
-            "price": "720 EGP",
-            "compare_price": "850 EGP",
-            "link": "/products/moisture-plus-shampoo"
-          }
-        },
-        "trend_4": {
-          "type": "product_card",
-          "settings": {
-            "badge": "12-in-1 Hero",
-            "title": "Incredible Milk 12 Effects (150ml)",
-            "price": "940 EGP",
-            "compare_price": "1,100 EGP",
-            "link": "/products/incredible-milk"
+            "product": "hair-skin-summer-duo-milk_shake®-travel-pouch-free",
+            "fallback_image_url": "",
+            "badge": "SAHEL BESTSELLER",
+            "title": "Whipped Cream Leave-in Foam (50ml)",
+            "description": "Signature sweet milk fragrance with antioxidant papaya extract.",
+            "price": "450 EGP",
+            "is_sold_out": false
           }
         }
       },
-      "block_order": ["trend_1", "trend_2", "trend_3", "trend_4"]
-    },
-    "travel_promo": {
-      "type": "es-ms-travel-promo",
+      "block_order": [
+        "mini_item_jFkede"
+      ],
+      "disabled": true,
+      "name": "MS Travel Minis",
       "settings": {
-        "heading": "Limited Sahel & Summer Specials",
-        "subheading": "EXCLUSIVE DUO OFFERS",
+        "subheading": "ON-THE-GO LUXURY",
+        "heading": "Traveling? Minis on the Go",
+        "description": "Airport TSA compliant 50ml & 100ml editions. Perfect for Sahel weekenders, Gouna escapes, and gym bags.",
         "layout_type": "grid",
-        "columns_desktop": 2,
+        "columns_desktop": 3,
         "columns_tablet": 2,
-        "columns_mobile": "1",
-        "image_ratio": "es-aspect-16-10",
+        "columns_mobile": "2",
+        "image_ratio": "es-aspect-4-5",
         "title_max_lines": 2,
+        "show_carousel_progress": true,
         "background": "#FAFAF7",
+        "background_gradient": "",
+        "text_color": "#2D2825",
+        "heading_color": "#2D2825",
         "card_bg": "#FFFFFF",
+        "card_text": "#2D2825",
+        "card_border": "rgba(217, 196, 178, 0.35)",
+        "button_bg": "#2D2825",
+        "button_text": "#FFFFFF",
+        "badge_bg": "#F2E8DC",
+        "badge_text": "#7A3E2D",
         "padding_top": 64,
         "padding_bottom": 64
-      },
+      }
+    },
+    "es_image_link_blocks_DMLdJ7": {
+      "type": "es-image-link-blocks",
       "blocks": {
-        "promo_1": {
-          "type": "promo_card",
+        "item_qeGydD": {
+          "type": "item",
           "settings": {
-            "badge": "BESTSELLER DUO",
-            "title": "Moisture Plus Trio Routine",
-            "subtitle": "Hyaluronic Acid & Organic Papaya Extract",
-            "fallback_image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1000&q=80",
-            "included_item_1": "300ml Moisture Plus Shampoo",
-            "included_item_2": "50ml Travel Size Whipped Cream (Free)",
-            "price": "1,250 EGP",
-            "compare_at_price": "1,700 EGP",
-            "savings_label": "Save 450 EGP",
-            "button_text": "Claim Moisture Duo • 1,250 EGP"
+            "image": "shopify://shop_images/MS-life-styling-dry-shampoo-2-Phone.png",
+            "stretch_image": true,
+            "link_text": "New Arrivals",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
           }
         },
-        "promo_2": {
-          "type": "promo_card",
+        "item_FXLxX3": {
+          "type": "item",
           "settings": {
-            "badge": "LIMITED EDITION",
-            "title": "Silver Shine Blonde Care",
-            "subtitle": "Blueberry Extract & Violet Pigment",
-            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=1000&q=80",
-            "included_item_1": "300ml Silver Shine Shampoo",
-            "included_item_2": "50ml Travel Silver Shine Whipped (Free)",
-            "price": "1,350 EGP",
-            "compare_at_price": "1,830 EGP",
-            "savings_label": "Save 480 EGP",
-            "button_text": "Claim Silver Shine Duo • 1,350 EGP"
+            "image": "shopify://shop_images/MM-Hero-offer-sep-Phone.png",
+            "stretch_image": true,
+            "link_text": "Best Sellers",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
+          }
+        },
+        "item_6nKJcm": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Flower_mobile_edit.png",
+            "stretch_image": true,
+            "link_text": "Special Offers",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
+          }
+        },
+        "item_3PqnqT": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/5843627671835840309.jpg",
+            "stretch_image": true,
+            "link_text": "Staff Picks",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
+          }
+        },
+        "item_TrAtd7": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Offer-website.png",
+            "stretch_image": true,
+            "link_text": "Collection Title",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
+          }
+        },
+        "item_V6LpYC": {
+          "type": "item",
+          "settings": {
+            "stretch_image": true,
+            "link_text": "Collection Title",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
+          }
+        },
+        "item_K4aaty": {
+          "type": "item",
+          "settings": {
+            "stretch_image": true,
+            "link_text": "Collection Title",
+            "link_url": "",
+            "background": "",
+            "text_color": "#ffffff",
+            "overlay_color": "#000000",
+            "overlay_opacity": 25
           }
         }
       },
-      "block_order": ["promo_1", "promo_2"]
-    },
-    "bundles": {
-      "type": "es-ms-bundles",
+      "block_order": [
+        "item_qeGydD",
+        "item_FXLxX3",
+        "item_6nKJcm",
+        "item_3PqnqT",
+        "item_TrAtd7",
+        "item_V6LpYC",
+        "item_K4aaty"
+      ],
+      "name": "E-sellers Image Link Blocks",
       "settings": {
-        "subheading": "CURATED ROUTINES",
-        "heading": "Custom 3-Step Italian Rituals",
-        "description": "Designed by master colorists in Udine and proven across top Egyptian salons for maximum hair recovery.",
+        "full_width": true,
+        "block_size": "medium",
+        "subheading": "Curated Collections",
+        "title": "",
+        "content": "",
+        "link_url": "",
+        "link_text": "View all",
+        "background": "",
+        "background_gradient": "",
+        "text_color": "#121212",
+        "heading_color": "#0f172a",
+        "heading_gradient": "",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "es_shop_the_feed_XmyNgA": {
+      "type": "es-shop-the-feed",
+      "blocks": {
+        "feed_dyPKGF": {
+          "type": "feed",
+          "settings": {
+            "image": "shopify://shop_images/5850557850676039715.jpg",
+            "product": ""
+          }
+        },
+        "feed_t8Ayg4": {
+          "type": "feed",
+          "settings": {
+            "product": ""
+          }
+        },
+        "feed_EQKzX6": {
+          "type": "feed",
+          "settings": {
+            "product": ""
+          }
+        },
+        "feed_3wpMiK": {
+          "type": "feed",
+          "settings": {
+            "product": ""
+          }
+        },
+        "feed_Kx9E8R": {
+          "type": "feed",
+          "settings": {
+            "product": ""
+          }
+        }
+      },
+      "block_order": [
+        "feed_dyPKGF",
+        "feed_t8Ayg4",
+        "feed_EQKzX6",
+        "feed_3wpMiK",
+        "feed_Kx9E8R"
+      ],
+      "name": "E-sellers Shop The Feed",
+      "settings": {
+        "subheading": "",
+        "heading": "Shop the feed",
+        "description": "",
+        "button_label": "Follow us",
+        "link": "",
+        "columns_desktop": 5,
+        "column_gap": 4,
+        "padding_top": 56,
+        "padding_bottom": 56
+      }
+    },
+    "es_ms_bundles_MVG7RT": {
+      "type": "es-ms-bundles",
+      "blocks": {
+        "bundle_item_zFKBbc": {
+          "type": "bundle_item",
+          "settings": {
+            "bundle_product": "",
+            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=80",
+            "save_badge": "SAVE 20%",
+            "steps_label": "Cleanse • Condition • Hydrate",
+            "title": "The Ultimate Moisture Routine",
+            "benefit": "Restores hydration balance depleted by AC & desert air",
+            "items_included": "Moisture Plus Shampoo (300ml), Moisture Plus Conditioner (250ml), Whipped Cream Leave-in (200ml)",
+            "price": "2,450 EGP",
+            "compare_at_price": "3,060 EGP",
+            "button_text": "Add Ritual to Bag",
+            "button_url": ""
+          }
+        },
+        "bundle_item_Pa7E3k": {
+          "type": "bundle_item",
+          "settings": {
+            "bundle_product": "",
+            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80",
+            "save_badge": "SAVE 25%",
+            "steps_label": "Anti-Brass • Tone • Soften",
+            "title": "Silver Shine Blonde Care Set",
+            "benefit": "Neutralizes warm/yellow brassiness from hard Nile water",
+            "items_included": "Silver Shine Shampoo (300ml), Silver Shine Conditioner (250ml), Silver Shine Whipped (200ml)",
+            "price": "2,600 EGP",
+            "compare_at_price": "3,470 EGP",
+            "button_text": "Add Ritual to Bag",
+            "button_url": ""
+          }
+        },
+        "bundle_item_P3Xk7C": {
+          "type": "bundle_item",
+          "settings": {
+            "bundle_product": "",
+            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=800&q=80",
+            "save_badge": "SAVE 20%",
+            "steps_label": "Reconstruct • Strengthen • Seal",
+            "title": "Integrity Intensive Repair System",
+            "benefit": "Murumuru butter reconstruction for heat & chemical damage",
+            "items_included": "Integrity Shampoo (300ml), Integrity Conditioner (300ml), Intensive Treatment (200ml)",
+            "price": "2,850 EGP",
+            "compare_at_price": "3,560 EGP",
+            "button_text": "Add Ritual to Bag",
+            "button_url": ""
+          }
+        },
+        "bundle_item_Ui3qQ9": {
+          "type": "bundle_item",
+          "settings": {
+            "bundle_product": "",
+            "fallback_image_url": "https://images.unsplash.com/photo-1608248597359-251f92e3be61?auto=format&fit=crop&w=800&q=80",
+            "save_badge": "SAVE 15%",
+            "steps_label": "Cleanse • Define • Anti-Frizz",
+            "title": "Curl Passion Definition Trio",
+            "benefit": "Brazilian pracaxi & babassu oils for bouncy, frizz-free curls",
+            "items_included": "Curl Passion Shampoo (300ml), Curl Passion Conditioner (300ml), Leave-in Treatment (300ml)",
+            "price": "2,350 EGP",
+            "compare_at_price": "2,760 EGP",
+            "button_text": "Add Ritual to Bag",
+            "button_url": ""
+          }
+        },
+        "bundle_item_xTpcRX": {
+          "type": "bundle_item",
+          "settings": {
+            "bundle_product": "",
+            "fallback_image_url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
+            "save_badge": "SAHEL ESSENTIAL",
+            "steps_label": "UV Shield • Sea Salt Detox • Nourish",
+            "title": "Sun & Sahel Protection Kit",
+            "benefit": "Shields against Mediterranean salt water and intense UV",
+            "items_included": "Sun & More Shampoo (250ml), Sun & More Mask (200ml), Incredible Milk 12 Effects (150ml)",
+            "price": "2,150 EGP",
+            "compare_at_price": "2,550 EGP",
+            "button_text": "Add Ritual to Bag",
+            "button_url": ""
+          }
+        },
+        "bundle_item_9daRAw": {
+          "type": "bundle_item",
+          "settings": {
+            "bundle_product": "",
+            "fallback_image_url": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+            "save_badge": "SAVE 15%",
+            "steps_label": "Purify • Volumize • Refresh",
+            "title": "Daily Cleanse & Volume Duo+",
+            "benefit": "Gentle daily scalp care suitable for gym & high activity",
+            "items_included": "Daily Frequent Shampoo (300ml), Daily Frequent Conditioner (300ml), Dry Shampoo (225ml)",
+            "price": "1,950 EGP",
+            "compare_at_price": "2,300 EGP",
+            "button_text": "Add Ritual to Bag",
+            "button_url": ""
+          }
+        }
+      },
+      "block_order": [
+        "bundle_item_zFKBbc",
+        "bundle_item_Pa7E3k",
+        "bundle_item_P3Xk7C",
+        "bundle_item_Ui3qQ9",
+        "bundle_item_xTpcRX",
+        "bundle_item_9daRAw"
+      ],
+      "name": "MS Ritual Bundles",
+      "settings": {
+        "subheading": "SAVE UP TO 25% WITH COMPLETE SETS",
+        "heading": "Curated 3-Step Italian Rituals",
+        "description": "Formulated to work synergistically. Cleanse, condition, and protect with our signature 3-piece sets tailored for Middle Eastern hair needs.",
         "layout_type": "grid",
         "columns_desktop": 3,
         "columns_tablet": 2,
         "columns_mobile": "1",
         "image_ratio": "es-aspect-16-10",
         "title_max_lines": 2,
+        "show_carousel_progress": true,
         "background": "#FDFBF7",
+        "background_gradient": "",
+        "text_color": "#2D2825",
+        "heading_color": "#2D2825",
         "card_bg": "#FFFFFF",
+        "card_text": "#2D2825",
+        "card_border": "rgba(217, 196, 178, 0.35)",
+        "button_bg": "#2D2825",
+        "button_text": "#FFFFFF",
+        "badge_bg": "#EAF0E6",
+        "badge_text": "#2E5A27",
         "padding_top": 64,
         "padding_bottom": 64
-      },
-      "blocks": {
-        "bundle_1": {
-          "type": "bundle_item",
-          "settings": {
-            "save_badge": "SAVE 20%",
-            "steps_label": "Cleanse • Condition • Hydrate",
-            "title": "The Ultimate Moisture Routine",
-            "benefit": "Restores hydration balance depleted by AC & desert air",
-            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=80",
-            "items_included": "Moisture Plus Shampoo (300ml), Moisture Plus Conditioner (250ml), Whipped Cream Leave-in (200ml)",
-            "price": "2,450 EGP",
-            "compare_at_price": "3,060 EGP"
-          }
-        },
-        "bundle_2": {
-          "type": "bundle_item",
-          "settings": {
-            "save_badge": "SAVE 25%",
-            "steps_label": "Anti-Brass • Tone • Soften",
-            "title": "Silver Shine Blonde Care Set",
-            "benefit": "Neutralizes warm/yellow brassiness from hard Nile water",
-            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80",
-            "items_included": "Silver Shine Shampoo (300ml), Silver Shine Conditioner (250ml), Silver Shine Whipped (200ml)",
-            "price": "2,600 EGP",
-            "compare_at_price": "3,470 EGP"
-          }
-        },
-        "bundle_3": {
-          "type": "bundle_item",
-          "settings": {
-            "save_badge": "SAVE 20%",
-            "steps_label": "Reconstruct • Strengthen • Seal",
-            "title": "Integrity Intensive Repair System",
-            "benefit": "Murumuru butter reconstruction for heat & chemical damage",
-            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=800&q=80",
-            "items_included": "Integrity Shampoo (300ml), Integrity Conditioner (300ml), Intensive Treatment (200ml)",
-            "price": "2,850 EGP",
-            "compare_at_price": "3,560 EGP"
-          }
-        },
-        "bundle_4": {
-          "type": "bundle_item",
-          "settings": {
-            "save_badge": "SAVE 15%",
-            "steps_label": "Cleanse • Define • Anti-Frizz",
-            "title": "Curl Passion Definition Trio",
-            "benefit": "Brazilian pracaxi & babassu oils for bouncy, frizz-free curls",
-            "fallback_image_url": "https://images.unsplash.com/photo-1608248597359-251f92e3be61?auto=format&fit=crop&w=800&q=80",
-            "items_included": "Curl Passion Shampoo (300ml), Curl Passion Conditioner (300ml), Leave-in Treatment (300ml)",
-            "price": "2,350 EGP",
-            "compare_at_price": "2,760 EGP"
-          }
-        },
-        "bundle_5": {
-          "type": "bundle_item",
-          "settings": {
-            "save_badge": "SAHEL ESSENTIAL",
-            "steps_label": "UV Shield • Sea Salt Detox • Nourish",
-            "title": "Sun & Sahel Protection Kit",
-            "benefit": "Shields against Mediterranean salt water and intense UV",
-            "fallback_image_url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
-            "items_included": "Sun & More Shampoo (250ml), Sun & More Mask (200ml), Incredible Milk 12 Effects (150ml)",
-            "price": "2,150 EGP",
-            "compare_at_price": "2,550 EGP"
-          }
-        },
-        "bundle_6": {
-          "type": "bundle_item",
-          "settings": {
-            "save_badge": "SAVE 15%",
-            "steps_label": "Purify • Volumize • Refresh",
-            "title": "Daily Cleanse & Volume Duo+",
-            "benefit": "Gentle daily scalp care suitable for gym & high activity",
-            "fallback_image_url": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
-            "items_included": "Daily Frequent Shampoo (300ml), Daily Frequent Conditioner (300ml), Dry Shampoo (225ml)",
-            "price": "1,950 EGP",
-            "compare_at_price": "2,300 EGP"
-          }
-        }
-      },
-      "block_order": ["bundle_1", "bundle_2", "bundle_3", "bundle_4", "bundle_5", "bundle_6"]
-    },
-    "hair_quiz": {
-      "type": "es-ms-hair-quiz",
-      "settings": {
-        "badge": "TAILORED FOR EGYPTIAN CLIMATE",
-        "heading": "Not Sure Which Formula Matches Your Hair?",
-        "description": "Answer 3 quick questions about your hair type, water hardness level in your city (Cairo, Alex, Giza, or Red Sea), and styling habits. Our Italian trichology algorithm will recommend your ideal routine.",
-        "button_text": "Start 60-Second Hair Diagnostic",
-        "button_url": "/pages/hair-quiz",
-        "background": "#2D2825",
-        "heading_color": "#FFFFFF",
-        "text_color": "#F2E8DC",
-        "padding_top": 64,
-        "padding_bottom": 64
-      },
-      "blocks": {
-        "quiz_1": {
-          "type": "quiz_step",
-          "settings": {
-            "title": "Climate & Water",
-            "description": "Identify whether your water source is Nile treated, Red Sea desalinated, or Sahel well water."
-          }
-        },
-        "quiz_2": {
-          "type": "quiz_step",
-          "settings": {
-            "title": "Texture & Porosity",
-            "description": "Fine, coarse, natural curls, or chemically straightened / bleached hair profile."
-          }
-        },
-        "quiz_3": {
-          "type": "quiz_step",
-          "settings": {
-            "title": "Custom Prescription",
-            "description": "Get matched with your exact 3-step routine + receive 10% off your diagnostic bundle."
-          }
-        }
-      },
-      "block_order": ["quiz_1", "quiz_2", "quiz_3"]
-    },
-    "travel_minis": {
-      "type": "es-ms-travel-minis",
-      "settings": {
-        "subheading": "BEACH BAG READY",
-        "heading": "Sahel & Weekend Minis (50ml & 100ml)",
-        "description": "High-potency formulas in TSA-approved sizes. Perfect for your gym bag, weekend trip to Alexandria, or long summer in Sahel.",
-        "layout_type": "grid",
-        "columns_desktop": 4,
-        "columns_tablet": 2,
-        "columns_mobile": "2",
-        "image_ratio": "es-aspect-4-5",
-        "title_max_lines": 2,
-        "background": "#FAFAF7",
-        "card_bg": "#FFFFFF",
-        "padding_top": 64,
-        "padding_bottom": 64
-      },
-      "blocks": {
-        "mini_1": {
-          "type": "mini_item",
-          "settings": {
-            "badge": "SAHEL BESTSELLER",
-            "title": "Whipped Cream Leave-in Foam (50ml)",
-            "description": "Signature sweet milk fragrance with antioxidant papaya extract.",
-            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=600&q=80",
-            "price": "450 EGP",
-            "is_sold_out": false
-          }
-        },
-        "mini_2": {
-          "type": "mini_item",
-          "settings": {
-            "badge": "BLONDE HERO",
-            "title": "Silver Shine Shampoo Mini (100ml)",
-            "description": "Violet toning pigment to counteract yellow tones on holiday.",
-            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=600&q=80",
-            "price": "480 EGP",
-            "is_sold_out": false
-          }
-        },
-        "mini_3": {
-          "type": "mini_item",
-          "settings": {
-            "badge": "SOLD OUT IN SAHEL",
-            "title": "Moisture Plus Conditioner Mini (100ml)",
-            "description": "Intense hydrating moisture with hyaluronic acid for sun-drenched strands.",
-            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80",
-            "price": "490 EGP",
-            "is_sold_out": true
-          }
-        },
-        "mini_4": {
-          "type": "mini_item",
-          "settings": {
-            "badge": "12-IN-1 HERO",
-            "title": "Incredible Milk 12 Effects Mini (50ml)",
-            "description": "All-in-one leave-in with UV filter and thermal protection.",
-            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=600&q=80",
-            "price": "520 EGP",
-            "is_sold_out": false
-          }
-        }
-      },
-      "block_order": ["mini_1", "mini_2", "mini_3", "mini_4"]
-    },
-    "testimonials_social": {
-      "type": "es-ms-testimonials-social",
-      "settings": {
-        "subheading": "VERIFIED SALON PATRONS",
-        "heading": "Loved Across Cairo, Alexandria & Sahel",
-        "description": "Read real experiences from women who transformed their hair with milk_shake® formulas in the Egyptian climate.",
-        "testimonials_layout": "grid",
-        "test_cols_desktop": 3,
-        "test_cols_tablet": 2,
-        "test_cols_mobile": "1",
-        "show_social_feed": true,
-        "social_subheading": "@MILKSHAKE.EGYPT",
-        "social_heading": "As Seen in Egypt's Leading Salons",
-        "social_instagram_handle": "@milkshake.egypt",
-        "social_cols_desktop": 4,
-        "social_aspect_ratio": "es-aspect-1-1",
-        "background": "#FDFBF7",
-        "card_bg": "#FFFFFF",
-        "padding_top": 64,
-        "padding_bottom": 64
-      },
-      "blocks": {
-        "review_1": {
-          "type": "testimonial",
-          "settings": {
-            "stars": 5,
-            "review_text": "The Whipped Cream is irreplaceable in Sahel! After swimming in the Mediterranean all day, my hair used to feel like straw. One palm-full of this mousse, and it's instantly silky soft with that heavenly vanilla bakery aroma.",
-            "author": "Nouran El-Gamil",
-            "location": "Hacienda Bay, North Coast",
-            "verified_badge": "Verified Buyer • Whipped Cream 200ml"
-          }
-        },
-        "review_2": {
-          "type": "testimonial",
-          "settings": {
-            "stars": 5,
-            "review_text": "Cairo water completely ruined my platinum highlights within two weeks until Mohamed at the Zamalek atelier recommended Silver Shine. It keeps my blonde cool and icy without turning it purple or drying the ends.",
-            "author": "Farida Mansour",
-            "location": "Zamalek, Cairo",
-            "verified_badge": "Verified Buyer • Silver Shine Duo"
-          }
-        },
-        "review_3": {
-          "type": "testimonial",
-          "settings": {
-            "stars": 5,
-            "review_text": "I have 3B curls and finding lightweight hydration that survives the August Alexandria humidity felt impossible. Curl Passion conditioner + leave-in gave me defined ringlets with zero crunch.",
-            "author": "Laila Sherif",
-            "location": "Kafr Abdo, Alexandria",
-            "verified_badge": "Verified Buyer • Curl Passion Set"
-          }
-        },
-        "social_1": {
-          "type": "social_post",
-          "settings": {
-            "handle": "@cairo.hair.atelier",
-            "caption": "Whipped Cream Styling Session",
-            "fallback_image_url": "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80"
-          }
-        },
-        "social_2": {
-          "type": "social_post",
-          "settings": {
-            "handle": "@sahel.curls",
-            "caption": "Sahel Sun Protection",
-            "fallback_image_url": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
-          }
-        },
-        "social_3": {
-          "type": "social_post",
-          "settings": {
-            "handle": "@zamalek.blonde.bar",
-            "caption": "Silver Shine Cool Toning",
-            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=600&q=80"
-          }
-        },
-        "social_4": {
-          "type": "social_post",
-          "settings": {
-            "handle": "@alexandria.curls",
-            "caption": "Curl Passion Definition",
-            "fallback_image_url": "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80"
-          }
-        }
-      },
-      "block_order": ["review_1", "review_2", "review_3", "social_1", "social_2", "social_3", "social_4"]
+      }
     }
   },
   "order": [
-    "hero",
-    "trust_badges",
-    "hair_concerns",
-    "trending",
-    "travel_promo",
-    "bundles",
-    "hair_quiz",
-    "travel_minis",
-    "testimonials_social"
+    "es_slideshow_3inLqE",
+    "es_ms_trust_badges_WmcRha",
+    "es_brand_logos_LrwAap",
+    "es_ms_trending_KCjMm3",
+    "es_ms_travel_minis_wFAGYf",
+    "es_image_link_blocks_DMLdJ7",
+    "es_shop_the_feed_XmyNgA",
+    "es_ms_bundles_MVG7RT"
   ]
 }
