@@ -65,6 +65,38 @@
         "background_gradient": ""
       }
     },
+    "es_ms_hero_KWyFxF": {
+      "type": "es-ms-hero",
+      "name": "MS Hero",
+      "settings": {
+        "badge_text": "Direct from Varese, Italy • Certified Salon Grade",
+        "heading": "Sensory Haircare Infused with Real Organic Milk & Fruit Extracts",
+        "subheading": "Transform dry, treated or sun-stressed locks with Italy's most celebrated whipped conditioners, silver toning elixirs and moisture infusions tailored for the Egyptian climate.",
+        "text_alignment": "left",
+        "btn_primary_text": "Shop Best Sellers",
+        "btn_primary_url": "",
+        "btn_secondary_text": "Take Italian Hair Quiz",
+        "btn_secondary_url": "",
+        "show_social_proof": true,
+        "social_proof_text": "from 1,840+ verified salons & clients across Cairo & Alexandria",
+        "image_position": "right",
+        "image_ratio": "es-aspect-4-5",
+        "background": "#FAF7F2",
+        "background_gradient": "",
+        "heading_color": "#2B231D",
+        "heading_gradient": "",
+        "text_color": "#5C5248",
+        "btn_primary_bg": "#2B231D",
+        "btn_primary_text_color": "#FFFFFF",
+        "btn_primary_hover_bg": "#D48D53",
+        "btn_secondary_bg": "#FFFFFF",
+        "btn_secondary_text_color": "#2B231D",
+        "btn_secondary_border": "#E8DECB",
+        "btn_secondary_hover_bg": "#F4EDE2",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
     "es_ms_trust_badges_WmcRha": {
       "type": "es-ms-trust-badges",
       "blocks": {
@@ -120,76 +152,17 @@
         "columns_tablet": 2,
         "columns_mobile": "1",
         "title_max_lines": 1,
-        "background": "#FFFFFF",
+        "background": "#ffffff",
         "background_gradient": "",
-        "border_color": "#F0EAE1",
-        "card_background": "#FAF7F2",
-        "card_border_color": "#F0EAE1",
-        "heading_color": "#2B231D",
-        "text_color": "#5C5248",
-        "icon_bg": "#FFFFFF",
-        "icon_color": "#D48D53",
+        "border_color": "#f0eae1",
+        "card_background": "#faf7f2",
+        "card_border_color": "#f0eae1",
+        "heading_color": "#2b231d",
+        "text_color": "#5c5248",
+        "icon_bg": "#ffffff",
+        "icon_color": "#d48d53",
         "padding_top": 30,
         "padding_bottom": 30
-      }
-    },
-    "es_brand_logos_LrwAap": {
-      "type": "es-brand-logos",
-      "blocks": {
-        "logo_kcMwzn": {
-          "type": "logo",
-          "settings": {
-            "image_link": ""
-          }
-        },
-        "logo_DUKE6D": {
-          "type": "logo",
-          "settings": {
-            "image_link": ""
-          }
-        },
-        "logo_AbaPUE": {
-          "type": "logo",
-          "settings": {
-            "image_link": ""
-          }
-        },
-        "logo_caJ88z": {
-          "type": "logo",
-          "settings": {
-            "image_link": ""
-          }
-        },
-        "logo_axP3hg": {
-          "type": "logo",
-          "settings": {
-            "image_link": ""
-          }
-        }
-      },
-      "block_order": [
-        "logo_kcMwzn",
-        "logo_DUKE6D",
-        "logo_AbaPUE",
-        "logo_caJ88z",
-        "logo_axP3hg"
-      ],
-      "name": "E-sellers Brand Logos",
-      "settings": {
-        "subheading": "",
-        "heading": "As seen in",
-        "description": "",
-        "heading_alignment": "center",
-        "button_label": "",
-        "button_link": "",
-        "grid_bordered": false,
-        "columns_desktop": 6,
-        "columns_mobile": 3,
-        "column_gap": 0,
-        "image_width": 120,
-        "image_padding": 24,
-        "padding_top": 56,
-        "padding_bottom": 56
       }
     },
     "es_ms_trending_KCjMm3": {
@@ -206,23 +179,23 @@
         "full_width": true,
         "layout_type": "carousel",
         "show_progress_bar": true,
-        "columns_desktop": 6,
+        "columns_desktop": 4,
         "columns_tablet": 2,
         "columns_mobile": "1",
         "image_ratio": "es-aspect-natural",
         "title_max_lines": 2,
-        "background": "#FFFFFF",
+        "background": "#ffffff",
         "background_gradient": "",
-        "heading_color": "#2B231D",
+        "heading_color": "#2b231d",
         "heading_gradient": "",
-        "text_color": "#5C5248",
-        "card_background": "#FFFFFF",
-        "card_border_color": "#F0EAE1",
-        "card_hover_border": "#D48D53",
-        "card_text_color": "#2B231D",
-        "btn_bg": "#2B231D",
-        "btn_text": "#FFFFFF",
-        "btn_hover_bg": "#D48D53",
+        "text_color": "#5c5248",
+        "card_background": "#ffffff",
+        "card_border_color": "#f0eae1",
+        "card_hover_border": "#d48d53",
+        "card_text_color": "#2b231d",
+        "btn_bg": "#2b231d",
+        "btn_text": "#ffffff",
+        "btn_hover_bg": "#d48d53",
         "padding_top": 60,
         "padding_bottom": 60
       }
@@ -259,17 +232,17 @@
         "image_ratio": "es-aspect-4-5",
         "title_max_lines": 2,
         "show_carousel_progress": true,
-        "background": "#FAFAF7",
+        "background": "#fafaf7",
         "background_gradient": "",
-        "text_color": "#2D2825",
-        "heading_color": "#2D2825",
-        "card_bg": "#FFFFFF",
-        "card_text": "#2D2825",
-        "card_border": "rgba(217, 196, 178, 0.35)",
-        "button_bg": "#2D2825",
-        "button_text": "#FFFFFF",
-        "badge_bg": "#F2E8DC",
-        "badge_text": "#7A3E2D",
+        "text_color": "#2d2825",
+        "heading_color": "#2d2825",
+        "card_bg": "#ffffff",
+        "card_text": "#2d2825",
+        "card_border": "#d9c4b259",
+        "button_bg": "#2d2825",
+        "button_text": "#ffffff",
+        "badge_bg": "#f2e8dc",
+        "badge_text": "#7a3e2d",
         "padding_top": 64,
         "padding_bottom": 64
       }
@@ -394,205 +367,210 @@
         "padding_bottom": 48
       }
     },
-    "es_shop_the_feed_XmyNgA": {
-      "type": "es-shop-the-feed",
+    "es_ms_hair_concerns_Ur4EjG": {
+      "type": "es-ms-hair-concerns",
       "blocks": {
-        "feed_dyPKGF": {
-          "type": "feed",
+        "concern_h8UNNd": {
+          "type": "concern",
           "settings": {
-            "image": "shopify://shop_images/5850557850676039715.jpg",
-            "product": ""
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus with Hyaluronic Acid",
+            "link": ""
           }
         },
-        "feed_t8Ayg4": {
-          "type": "feed",
+        "concern_4rKrBV": {
+          "type": "concern",
           "settings": {
-            "product": ""
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus with Hyaluronic Acid",
+            "link": ""
           }
         },
-        "feed_EQKzX6": {
-          "type": "feed",
+        "concern_FRDMcH": {
+          "type": "concern",
           "settings": {
-            "product": ""
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus with Hyaluronic Acid",
+            "link": ""
           }
         },
-        "feed_3wpMiK": {
-          "type": "feed",
+        "concern_iQAhJA": {
+          "type": "concern",
           "settings": {
-            "product": ""
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus with Hyaluronic Acid",
+            "link": ""
           }
         },
-        "feed_Kx9E8R": {
-          "type": "feed",
+        "concern_VgNAij": {
+          "type": "concern",
           "settings": {
-            "product": ""
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus with Hyaluronic Acid",
+            "link": ""
+          }
+        },
+        "concern_X8nBJC": {
+          "type": "concern",
+          "settings": {
+            "badge": "Papaya",
+            "title": "Dry & Dehydrated",
+            "subtitle": "Moisture Plus with Hyaluronic Acid",
+            "link": ""
           }
         }
       },
       "block_order": [
-        "feed_dyPKGF",
-        "feed_t8Ayg4",
-        "feed_EQKzX6",
-        "feed_3wpMiK",
-        "feed_Kx9E8R"
+        "concern_h8UNNd",
+        "concern_4rKrBV",
+        "concern_FRDMcH",
+        "concern_iQAhJA",
+        "concern_VgNAij",
+        "concern_X8nBJC"
       ],
-      "name": "E-sellers Shop The Feed",
+      "name": "MS Hair Concerns",
       "settings": {
-        "subheading": "",
-        "heading": "Shop the feed",
-        "description": "",
-        "button_label": "Follow us",
-        "link": "",
-        "columns_desktop": 5,
-        "column_gap": 4,
-        "padding_top": 56,
-        "padding_bottom": 56
+        "subheading": "Italian Salon Solutions",
+        "heading": "Targeted Solutions for Egyptian Hair Needs",
+        "description": "Formulated to counter high humidity, hard Nile water & intense Mediterranean sun.",
+        "layout_type": "grid",
+        "show_progress_bar": true,
+        "columns_desktop": 6,
+        "columns_tablet": 3,
+        "columns_mobile": "2",
+        "image_ratio": "es-aspect-circle",
+        "title_max_lines": 1,
+        "background": "#FAF7F2",
+        "background_gradient": "",
+        "heading_color": "#2B231D",
+        "heading_gradient": "",
+        "text_color": "#5C5248",
+        "card_background": "#FFFFFF",
+        "card_border_color": "#F0EAE1",
+        "card_hover_border": "#D48D53",
+        "padding_top": 60,
+        "padding_bottom": 60
       }
     },
-    "es_ms_bundles_MVG7RT": {
-      "type": "es-ms-bundles",
+    "es_brands_showcase_mcEq8A": {
+      "type": "es-brands-showcase",
       "blocks": {
-        "bundle_item_zFKBbc": {
-          "type": "bundle_item",
+        "brand_DAbCV4": {
+          "type": "brand",
           "settings": {
-            "bundle_product": "",
-            "fallback_image_url": "https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=800&q=80",
-            "save_badge": "SAVE 20%",
-            "steps_label": "Cleanse • Condition • Hydrate",
-            "title": "The Ultimate Moisture Routine",
-            "benefit": "Restores hydration balance depleted by AC & desert air",
-            "items_included": "Moisture Plus Shampoo (300ml), Moisture Plus Conditioner (250ml), Whipped Cream Leave-in (200ml)",
-            "price": "2,450 EGP",
-            "compare_at_price": "3,060 EGP",
-            "button_text": "Add Ritual to Bag",
+            "brand_name": "Brand one",
+            "description": "<p>Describe this brand. Share what makes it distinct and why customers choose it.</p>",
+            "cat1_title": "Style",
+            "cat1_items": "<p>Athletic</p><p>Tactical</p><p>Work boots</p><p>Outdoor</p>",
+            "cat1_cta_text": "View all",
+            "cat1_cta_url": "",
+            "cat2_title": "Features",
+            "cat2_items": "<p>Electrical hazard protection</p><p>Waterproof</p><p>Metatarsal guard</p><p>Composite toe</p>",
+            "cat2_cta_text": "View all",
+            "cat2_cta_url": "",
+            "cat3_title": "Activity",
+            "cat3_items": "<p>Construction</p><p>Manufacturing</p><p>Hospitality</p><p>Outdoor</p>",
+            "cat3_cta_text": "View all",
+            "cat3_cta_url": "",
+            "button_text": "",
             "button_url": ""
           }
         },
-        "bundle_item_Pa7E3k": {
-          "type": "bundle_item",
+        "brand_eG7fx9": {
+          "type": "brand",
           "settings": {
-            "bundle_product": "",
-            "fallback_image_url": "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=800&q=80",
-            "save_badge": "SAVE 25%",
-            "steps_label": "Anti-Brass • Tone • Soften",
-            "title": "Silver Shine Blonde Care Set",
-            "benefit": "Neutralizes warm/yellow brassiness from hard Nile water",
-            "items_included": "Silver Shine Shampoo (300ml), Silver Shine Conditioner (250ml), Silver Shine Whipped (200ml)",
-            "price": "2,600 EGP",
-            "compare_at_price": "3,470 EGP",
-            "button_text": "Add Ritual to Bag",
+            "brand_name": "Brand two",
+            "description": "<p>Describe this brand. Share what makes it distinct and why customers choose it.</p>",
+            "cat1_title": "Men",
+            "cat1_items": "<p>Uniform</p><p>Slip resistant</p>",
+            "cat1_cta_text": "View all",
+            "cat1_cta_url": "",
+            "cat2_title": "Women",
+            "cat2_items": "<p>Uniform</p><p>Slip resistant</p>",
+            "cat2_cta_text": "View all",
+            "cat2_cta_url": "",
+            "cat3_title": "",
+            "cat3_items": "",
+            "cat3_cta_text": "",
+            "cat3_cta_url": "",
+            "button_text": "",
             "button_url": ""
           }
         },
-        "bundle_item_P3Xk7C": {
-          "type": "bundle_item",
+        "brand_UADiUL": {
+          "type": "brand",
           "settings": {
-            "bundle_product": "",
-            "fallback_image_url": "https://images.unsplash.com/photo-1519735777090-ec97164dc2a0?auto=format&fit=crop&w=800&q=80",
-            "save_badge": "SAVE 20%",
-            "steps_label": "Reconstruct • Strengthen • Seal",
-            "title": "Integrity Intensive Repair System",
-            "benefit": "Murumuru butter reconstruction for heat & chemical damage",
-            "items_included": "Integrity Shampoo (300ml), Integrity Conditioner (300ml), Intensive Treatment (200ml)",
-            "price": "2,850 EGP",
-            "compare_at_price": "3,560 EGP",
-            "button_text": "Add Ritual to Bag",
-            "button_url": ""
-          }
-        },
-        "bundle_item_Ui3qQ9": {
-          "type": "bundle_item",
-          "settings": {
-            "bundle_product": "",
-            "fallback_image_url": "https://images.unsplash.com/photo-1608248597359-251f92e3be61?auto=format&fit=crop&w=800&q=80",
-            "save_badge": "SAVE 15%",
-            "steps_label": "Cleanse • Define • Anti-Frizz",
-            "title": "Curl Passion Definition Trio",
-            "benefit": "Brazilian pracaxi & babassu oils for bouncy, frizz-free curls",
-            "items_included": "Curl Passion Shampoo (300ml), Curl Passion Conditioner (300ml), Leave-in Treatment (300ml)",
-            "price": "2,350 EGP",
-            "compare_at_price": "2,760 EGP",
-            "button_text": "Add Ritual to Bag",
-            "button_url": ""
-          }
-        },
-        "bundle_item_xTpcRX": {
-          "type": "bundle_item",
-          "settings": {
-            "bundle_product": "",
-            "fallback_image_url": "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
-            "save_badge": "SAHEL ESSENTIAL",
-            "steps_label": "UV Shield • Sea Salt Detox • Nourish",
-            "title": "Sun & Sahel Protection Kit",
-            "benefit": "Shields against Mediterranean salt water and intense UV",
-            "items_included": "Sun & More Shampoo (250ml), Sun & More Mask (200ml), Incredible Milk 12 Effects (150ml)",
-            "price": "2,150 EGP",
-            "compare_at_price": "2,550 EGP",
-            "button_text": "Add Ritual to Bag",
-            "button_url": ""
-          }
-        },
-        "bundle_item_9daRAw": {
-          "type": "bundle_item",
-          "settings": {
-            "bundle_product": "",
-            "fallback_image_url": "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
-            "save_badge": "SAVE 15%",
-            "steps_label": "Purify • Volumize • Refresh",
-            "title": "Daily Cleanse & Volume Duo+",
-            "benefit": "Gentle daily scalp care suitable for gym & high activity",
-            "items_included": "Daily Frequent Shampoo (300ml), Daily Frequent Conditioner (300ml), Dry Shampoo (225ml)",
-            "price": "1,950 EGP",
-            "compare_at_price": "2,300 EGP",
-            "button_text": "Add Ritual to Bag",
+            "brand_name": "Brand three",
+            "description": "<p>Describe this brand. Share what makes it distinct and why customers choose it.</p>",
+            "cat1_title": "Style",
+            "cat1_items": "<p>Item one</p><p>Item two</p><p>Item three</p>",
+            "cat1_cta_text": "View all",
+            "cat1_cta_url": "",
+            "cat2_title": "",
+            "cat2_items": "",
+            "cat2_cta_text": "",
+            "cat2_cta_url": "",
+            "cat3_title": "",
+            "cat3_items": "",
+            "cat3_cta_text": "",
+            "cat3_cta_url": "",
+            "button_text": "",
             "button_url": ""
           }
         }
       },
       "block_order": [
-        "bundle_item_zFKBbc",
-        "bundle_item_Pa7E3k",
-        "bundle_item_P3Xk7C",
-        "bundle_item_Ui3qQ9",
-        "bundle_item_xTpcRX",
-        "bundle_item_9daRAw"
+        "brand_DAbCV4",
+        "brand_eG7fx9",
+        "brand_UADiUL"
       ],
-      "name": "MS Ritual Bundles",
+      "name": "Brands showcase",
       "settings": {
-        "subheading": "SAVE UP TO 25% WITH COMPLETE SETS",
-        "heading": "Curated 3-Step Italian Rituals",
-        "description": "Formulated to work synergistically. Cleanse, condition, and protect with our signature 3-piece sets tailored for Middle Eastern hair needs.",
-        "layout_type": "grid",
-        "columns_desktop": 3,
-        "columns_tablet": 2,
-        "columns_mobile": "1",
-        "image_ratio": "es-aspect-16-10",
-        "title_max_lines": 2,
-        "show_carousel_progress": true,
-        "background": "#FDFBF7",
+        "title": "Our Brands",
+        "section_padding": 40,
+        "logo_height": 52,
+        "inactive_grayscale": 100,
+        "inactive_opacity": 45,
+        "active_logo_scale": 110,
+        "hover_logo_scale": 105,
+        "tablet_logos_per_row": 3,
+        "show_active_indicator": false,
+        "animation_speed": 1000,
+        "slide_distance": 160,
+        "description_size": 20,
+        "description_weight": "700",
+        "cat_title_size": 20,
+        "cat_items_size": 17,
+        "image_max_width": 520,
+        "background": "",
         "background_gradient": "",
-        "text_color": "#2D2825",
-        "heading_color": "#2D2825",
-        "card_bg": "#FFFFFF",
-        "card_text": "#2D2825",
-        "card_border": "rgba(217, 196, 178, 0.35)",
-        "button_bg": "#2D2825",
-        "button_text": "#FFFFFF",
-        "badge_bg": "#EAF0E6",
-        "badge_text": "#2E5A27",
-        "padding_top": 64,
-        "padding_bottom": 64
+        "nav_background": "#ffffff",
+        "text_color": "",
+        "heading_color": "",
+        "heading_gradient": "",
+        "brand_heading_color": "#5cb85c",
+        "accent_color": "#0057a8",
+        "indicator_color": "#1a3a6b",
+        "nav_border_color": "#d0d0d0",
+        "nav_divider_color": "#d0d0d0",
+        "padding_top": 0,
+        "padding_bottom": 0
       }
     }
   },
   "order": [
     "es_slideshow_3inLqE",
+    "es_ms_hero_KWyFxF",
     "es_ms_trust_badges_WmcRha",
-    "es_brand_logos_LrwAap",
     "es_ms_trending_KCjMm3",
     "es_ms_travel_minis_wFAGYf",
     "es_image_link_blocks_DMLdJ7",
-    "es_shop_the_feed_XmyNgA",
-    "es_ms_bundles_MVG7RT"
+    "es_ms_hair_concerns_Ur4EjG",
+    "es_brands_showcase_mcEq8A"
   ]
 }
